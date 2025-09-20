@@ -1,5 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import Swal from "sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
 
 interface Room {
   id: string;
@@ -19,14 +21,16 @@ export default function UploadSlip() {
   const [surname, setSurname] = useState("");
   const [phone, setPhone] = useState("");
   const [slip, setSlip] = useState<File | null>(null);
-  const [checkInDate, setCheckInDate] = useState("");
+  const [checkin, setCheckin] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [bookingId, setBookingId] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!slip) {
-      alert("กรุณาแนบสลิปการโอนเงิน");
+      Swal.fire("❌ ข้อผิดพลาด", "กรุณาแนบสลิปการโอนเงิน", "error");
       return;
     }
 
@@ -38,27 +42,44 @@ export default function UploadSlip() {
       formData.append("name", name);
       formData.append("surname", surname);
       formData.append("phone", phone);
-      formData.append("checkInDate", checkInDate);
+      formData.append("checkin", checkin);
       formData.append("slip", slip);
 
-      const res = await fetch("https://smartdorm-backend.onrender.com/booking/create", {
-        method: "POST",
-        body: formData,
-        credentials: "include", // ถ้ามี session/cookie
-      });
+      const res = await fetch(
+        "https://smartdorm-backend.onrender.com/booking/create",
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        }
+      );
 
-      if (!res.ok) {
-        throw new Error("การจองล้มเหลว");
-      }
+      if (!res.ok) throw new Error("การจองล้มเหลว");
 
       const data = await res.json();
       console.log("📤 ส่งข้อมูล:", data);
 
-      alert("✅ ยืนยันการจองสำเร็จ!");
-      nav("/"); // กลับไปหน้าแรก หรือ Dashboard
+      setBookingId(data.booking.id);
+
+      await Swal.fire({
+        icon: "success",
+        title: "✅ ยืนยันการจองสำเร็จ",
+        text: `ห้อง ${room.number} ถูกจองเรียบร้อยแล้ว`,
+        showConfirmButton: false, // ❌ ไม่ต้องให้กดปุ่ม OK
+        timer: 1000, // ⏱ ปิดอัตโนมัติใน 2 วินาที
+        timerProgressBar: true, // แสดง progress bar
+      });
+
+      nav("/"); // 👉 กลับหน้าแรก
     } catch (err) {
-      console.error("❌ Error:", err);
-      alert("เกิดข้อผิดพลาดในการจอง");
+      Swal.fire({
+        icon: "error",
+        title: "❌ ข้อผิดพลาด",
+        text: "เกิดข้อผิดพลาดในการจอง",
+        showConfirmButton: false, // ❌ ไม่แสดงปุ่ม OK
+        timer: 1000, // ⏱ ปิดอัตโนมัติใน 2 วินาที
+        timerProgressBar: true, // ✅ แสดง progress bar
+      });
     } finally {
       setLoading(false);
     }
@@ -66,7 +87,7 @@ export default function UploadSlip() {
 
   return (
     <div className="container py-4">
-      <h4 className="text-center mb-3">รายละเอียด</h4>
+      <h4 className="text-center mb-3">รายละเอียดการจองห้อง {room.number}</h4>
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
@@ -118,8 +139,8 @@ export default function UploadSlip() {
           <input
             type="date"
             className="form-control"
-            value={checkInDate}
-            onChange={(e) => setCheckInDate(e.target.value)}
+            value={checkin}
+            onChange={(e) => setCheckin(e.target.value)}
             required
           />
         </div>
@@ -128,7 +149,7 @@ export default function UploadSlip() {
           <button
             type="button"
             className="btn btn-danger"
-            onClick={() => nav(-1)}
+            onClick={() => nav("/")}
             disabled={loading}
           >
             ยกเลิก
@@ -138,6 +159,18 @@ export default function UploadSlip() {
           </button>
         </div>
       </form>
+
+      {bookingId && (
+        <div className="mt-4 text-center">
+          <h5>🧾 สลิปที่อัปโหลด</h5>
+          <img
+            src={`https://smartdorm-backend.onrender.com/booking/${bookingId}/slip`}
+            alt="slip preview"
+            className="img-fluid border rounded"
+            style={{ maxHeight: "400px" }}
+          />
+        </div>
+      )}
     </div>
   );
 }
