@@ -20,6 +20,7 @@ export default function UploadSlip() {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [phone, setPhone] = useState("");
+  const [mumId, setMumId] = useState(""); // ✅ เลขบัตรประชาชน
   const [slip, setSlip] = useState<File | null>(null);
   const [checkin, setCheckin] = useState("");
   const [loading, setLoading] = useState(false);
@@ -36,7 +37,7 @@ export default function UploadSlip() {
     try {
       setLoading(true);
 
-      const userId = localStorage.getItem("userId"); // ✅ ดึง userId จริง
+      const userId = localStorage.getItem("userId");
       if (!userId) {
         Swal.fire("❌ ข้อผิดพลาด", "กรุณาเข้าสู่ระบบก่อนจองห้อง", "error");
         return;
@@ -48,6 +49,7 @@ export default function UploadSlip() {
       formData.append("name", name);
       formData.append("surname", surname);
       formData.append("phone", phone);
+      formData.append("mumId", mumId);
       formData.append("checkin", checkin);
       formData.append("slip", slip);
 
@@ -85,7 +87,7 @@ export default function UploadSlip() {
 
   return (
     <div className="container py-4">
-      <h4 className="text-center mb-3">รายละเอียดการจองห้อง {room.number}</h4>
+      <h4 className="text-center mb-3">อัปโหลดสลิปชำระเงิน ห้อง {room.number}</h4>
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
@@ -117,6 +119,17 @@ export default function UploadSlip() {
             className="form-control"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label>เลขบัตรประชาชน</label>
+          <input
+            type="text"
+            className="form-control"
+            value={mumId}
+            onChange={(e) => setMumId(e.target.value)}
             required
           />
         </div>
