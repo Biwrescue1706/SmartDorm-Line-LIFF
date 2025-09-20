@@ -1,0 +1,19 @@
+/* src/css/Bookings.css */
+
+.bookings-container {
+  background-color: #65f487; /* ✅ พื้นหลังเขียว */
+  min-height: 100vh;         /* ✅ เต็มจอ */
+  padding: 1.5rem;           /* เทียบกับ py-4 ของ bootstrap */
+}
+
+.bookings-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.bookings-button {
+  height: 60px;
+}
