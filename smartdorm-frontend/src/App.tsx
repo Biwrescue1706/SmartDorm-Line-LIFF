@@ -9,7 +9,7 @@ export default function App() {
     <div>
       {/* ✅ Routing */}
       <Routes>
-        <Route path="/bookings" element={<Bookings />} />
+        <Route path="/" element={<Bookings />} />
         <Route path="/returns" element={<Returns />} />
         <Route path="/payments" element={<Payments />} />
         <Route path="*" element={<Navigate to="/bookings" replace />} />
