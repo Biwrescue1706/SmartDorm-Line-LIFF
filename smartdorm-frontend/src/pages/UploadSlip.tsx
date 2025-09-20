@@ -23,8 +23,7 @@ export default function UploadSlip() {
   const [slip, setSlip] = useState<File | null>(null);
   const [checkin, setCheckin] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const [bookingId, setBookingId] = useState<string | null>(null);
+  const [slipUrl, setSlipUrl] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,11 +35,16 @@ export default function UploadSlip() {
 
     try {
       setLoading(true);
-        const userId = localStorage.getItem("userId"); 
-        
+
+      const userId = localStorage.getItem("userId"); // ✅ ดึง userId จริง
+      if (!userId) {
+        Swal.fire("❌ ข้อผิดพลาด", "กรุณาเข้าสู่ระบบก่อนจองห้อง", "error");
+        return;
+      }
+
       const formData = new FormData();
-      formData.append("userId", userId || "");   // ✅ เพิ่มตรงนี้
       formData.append("roomId", room.id);
+      formData.append("userId", userId);
       formData.append("name", name);
       formData.append("surname", surname);
       formData.append("phone", phone);
@@ -61,27 +65,19 @@ export default function UploadSlip() {
       const data = await res.json();
       console.log("📤 ส่งข้อมูล:", data);
 
-      setBookingId(data.booking.id);
+      setSlipUrl(data.booking.slipUrl);
 
       await Swal.fire({
         icon: "success",
         title: "✅ ยืนยันการจองสำเร็จ",
         text: `ห้อง ${room.number} ถูกจองเรียบร้อยแล้ว`,
-        showConfirmButton: false, // ❌ ไม่ต้องให้กดปุ่ม OK
-        timer: 1000, // ⏱ ปิดอัตโนมัติใน 2 วินาที
-        timerProgressBar: true, // แสดง progress bar
+        confirmButtonText: "ตกลง",
       });
 
-      nav("/"); // 👉 กลับหน้าแรก
+      nav("/");
     } catch (err) {
-      Swal.fire({
-        icon: "error",
-        title: "❌ ข้อผิดพลาด",
-        text: "เกิดข้อผิดพลาดในการจอง",
-        showConfirmButton: false, // ❌ ไม่แสดงปุ่ม OK
-        timer: 1000, // ⏱ ปิดอัตโนมัติใน 2 วินาที
-        timerProgressBar: true, // ✅ แสดง progress bar
-      });
+      console.error("❌ Error:", err);
+      Swal.fire("❌ ข้อผิดพลาด", "เกิดข้อผิดพลาดในการจอง", "error");
     } finally {
       setLoading(false);
     }
@@ -162,11 +158,11 @@ export default function UploadSlip() {
         </div>
       </form>
 
-      {bookingId && (
+      {slipUrl && (
         <div className="mt-4 text-center">
           <h5>🧾 สลิปที่อัปโหลด</h5>
           <img
-            src={`https://smartdorm-backend.onrender.com/booking/${bookingId}/slip`}
+            src={`https://smartdorm-backend.onrender.com${slipUrl}`}
             alt="slip preview"
             className="img-fluid border rounded"
             style={{ maxHeight: "400px" }}
