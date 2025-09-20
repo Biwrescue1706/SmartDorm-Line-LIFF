@@ -1,5 +1,5 @@
 // src/App.tsx
-import { Routes, Route, Navigate, Link } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Bookings from "./pages/Bookings";
 import Returns from "./pages/Returns";
 import Payments from "./pages/Payments";
