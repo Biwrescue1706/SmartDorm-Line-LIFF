@@ -36,8 +36,10 @@ export default function UploadSlip() {
 
     try {
       setLoading(true);
-
+        const userId = localStorage.getItem("userId"); 
+        
       const formData = new FormData();
+      formData.append("userId", userId || "");   // ✅ เพิ่มตรงนี้
       formData.append("roomId", room.id);
       formData.append("name", name);
       formData.append("surname", surname);
