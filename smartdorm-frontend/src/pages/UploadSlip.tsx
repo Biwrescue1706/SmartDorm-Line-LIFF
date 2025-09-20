@@ -1,6 +1,8 @@
+// src/pages/UploadSlip.tsx
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { API_BASE } from "../config";   // ✅ import ค่า API_BASE
 import "sweetalert2/dist/sweetalert2.min.css";
 
 interface Room {
@@ -25,6 +27,16 @@ export default function UploadSlip() {
   const [checkin, setCheckin] = useState("");
   const [loading, setLoading] = useState(false);
   const [slipUrl, setSlipUrl] = useState<string | null>(null);
+
+  // ✅ เช็ค login ก่อนเข้า
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      Swal.fire("⚠️ กรุณาเข้าสู่ระบบผ่าน LINE", "", "warning").then(() => {
+        nav("/"); // redirect กลับไปหน้า bookings
+      });
+    }
+  }, [nav]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,14 +65,12 @@ export default function UploadSlip() {
       formData.append("checkin", checkin);
       formData.append("slip", slip);
 
-      const res = await fetch(
-        "https://smartdorm-backend.onrender.com/booking/create",
-        {
-          method: "POST",
-          body: formData,
-          credentials: "include",
-        }
-      );
+      // ✅ ใช้ API_BASE แบบถูกต้อง
+      const res = await fetch(`${API_BASE}/booking/create`, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
 
       if (!res.ok) throw new Error("การจองล้มเหลว");
 
@@ -87,7 +97,9 @@ export default function UploadSlip() {
 
   return (
     <div className="container py-4">
-      <h4 className="text-center mb-3">อัปโหลดสลิปชำระเงิน ห้อง {room.number}</h4>
+      <h4 className="text-center mb-3">
+        อัปโหลดสลิปชำระเงิน ห้อง {room.number}
+      </h4>
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
@@ -175,7 +187,7 @@ export default function UploadSlip() {
         <div className="mt-4 text-center">
           <h5>🧾 สลิปที่อัปโหลด</h5>
           <img
-            src={`https://smartdorm-backend.onrender.com${slipUrl}`}
+            src={`${API_BASE}${slipUrl}`}  // ✅ ใช้ API_BASE แปะกับ slipUrl
             alt="slip preview"
             className="img-fluid border rounded"
             style={{ maxHeight: "400px" }}

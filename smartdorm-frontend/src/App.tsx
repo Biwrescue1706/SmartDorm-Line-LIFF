@@ -11,8 +11,7 @@ import UploadSlip from "./pages/UploadSlip";
 
 export default function App() {
   useEffect(() => {
-    // ✅ เรียก initLIFF โดยส่ง LIFF ID ของ project นี้
-    initLIFF("2008099518-23vqwKZY");
+    initLIFF(); // ✅ จะเก็บ userId ทันทีที่ login สำเร็จ
   }, []);
 
   return (
