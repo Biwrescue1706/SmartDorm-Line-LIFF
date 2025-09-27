@@ -50,7 +50,7 @@ export default function Bookings() {
   }, []);
 
   const handleSelect = (room: Room) => {
-    nav(`/booking/${room.roomId}`, { state: room });
+    nav(`/bookings/${room.roomId}`, { state: room });
   };
 
   return (
