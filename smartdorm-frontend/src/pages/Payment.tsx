@@ -1,3 +1,4 @@
+// src/pages/Payment.tsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "../css/Payment.css";
@@ -16,33 +17,46 @@ export default function Payment() {
   const nav = useNavigate();
   const room = state as Room;
 
+  // 🔹 รวมค่าใช้จ่าย
   const total = room.rent + room.deposit + room.bookingFee;
 
-  // 🔹 ข้อมูลบัญชี
-  const account = "5052997156"; // เลขบัญชีจริง
+  // 🔹 ข้อมูลบัญชี (คุณแก้ตามจริงได้เลย)
+  const account = "5052997156";
   const bank = "ธนาคารไทยพาณิชย์";
   const owner = "นายภูวณัฐ พาหะละ";
 
-  // 🔹 ถ้าใช้ PromptPay (เบอร์มือถือ/บัตรประชาชน)
-  const promptpayId = "0611747731"; // เบอร์ที่ผูก PromptPay
+  // 🔹 PromptPay
+  const promptpayId = "0611747731"; // เบอร์ PromptPay
   const qrUrl = `https://promptpay.io/${promptpayId}/${total}.png`;
 
   const [copied, setCopied] = useState(false);
 
+  // 🔹 copy เลขบัญชี
   const handleCopy = () => {
     navigator.clipboard.writeText(account);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // 🔹 ฟังก์ชันบันทึกรูป
-  const handleDownload = (url: string, filename: string) => {
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  // 🔹 ดาวน์โหลดรูป QR รองรับ iOS/Android
+  const handleDownload = async (url: string, filename: string) => {
+    try {
+      const response = await fetch(url, { mode: "cors" });
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error("❌ Error downloading image:", err);
+      alert("ไม่สามารถบันทึกรูป QR ได้");
+    }
   };
 
   return (
@@ -50,7 +64,7 @@ export default function Payment() {
       <div className="payment-card text-center">
         <h4 className="mb-3">หน้าชำระเงิน</h4>
 
-        {/* 🔹 แสดงข้อมูลบัญชี */}
+        {/* 🔹 ข้อมูลบัญชี */}
         <div
           className="p-3 text-white mb-2"
           style={{ backgroundColor: "#6819c9ff" }}
@@ -60,29 +74,30 @@ export default function Payment() {
           <p>{owner}</p>
         </div>
 
-        {/* 🔹 แสดงยอดรวม */}
+        {/* 🔹 ยอดรวม */}
         <p>
           ยอดรวมที่ต้องชำระ: <b>{total.toLocaleString()} บาท</b>
         </p>
 
-        {/* 🔹 ปุ่มคัดลอกเลขบัญชี */}
+        {/* 🔹 ปุ่มคัดลอกบัญชี */}
         <button className="btn btn-outline-success mb-3" onClick={handleCopy}>
           {copied ? "คัดลอกแล้ว!" : "คัดลอกบัญชี"}
         </button>
 
-        {/* 🔹 QR Code แบบ PromptPay */}
+        {/* 🔹 QR Code */}
         <div className="mb-3">
           <div className="mb-3">
-            <h6>หรือสแกนจาก QR ธนาคาร</h6>
+            <h6>หรือสแกน QR พร้อมเพย์</h6>
           </div>
 
-          {/* วิธีที่ 1: กดที่รูปเพื่อบันทึก */}
-          <a href={qrUrl} download={`PromptPay-${total}.png`}>
-            <img src={qrUrl} alt="QR PromptPay" width="250" />
-          </a>
-          <p className="small text-muted">กดที่ QR เพื่อบันทึกรูป</p>
+          <img
+            src={qrUrl}
+            alt="QR PromptPay"
+            width="250"
+            crossOrigin="anonymous"
+          />
+          <p className="small text-muted">กดปุ่มด้านล่างเพื่อบันทึกรูป</p>
 
-          {/* วิธีที่ 2: ปุ่มบันทึกรูป */}
           <button
             className="btn btn-outline-primary mt-2"
             onClick={() => handleDownload(qrUrl, `PromptPay-${total}.png`)}
