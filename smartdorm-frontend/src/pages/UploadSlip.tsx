@@ -121,9 +121,9 @@ export default function UploadSlip() {
   return (
     <div className="uploadslip-container py-4">
       <form onSubmit={handleSubmit}>
-        <h4 className="text-center mb-3">อัปโหลดสลิปชำระเงิน</h4>
+        <h2 className="text-center mb-3">อัปโหลดสลิปชำระเงิน</h2>
         <div className="mb-3">
-          <label>ห้อง {room.number}</label>
+          <h3>ห้อง {room.number}</h3>
         </div>
         <div className="mb-3">
           <label>ชื่อ</label>
