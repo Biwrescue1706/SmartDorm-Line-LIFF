@@ -1,8 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import "../css/Payment.css"
 
 interface Room {
-  id: string;
+  roomId: string;
   number: string;
   size: string;
   rent: number;
@@ -29,31 +30,35 @@ export default function Payment() {
   };
 
   return (
-    <div className="container text-center py-4">
-      <h4 className="mb-3">หน้าชำระเงิน</h4>
+    <div className="payment-container py-4 text-center ">
+      <div className="payment-card text-center">
+        <h4 className="mb-3">หน้าชำระเงิน</h4>
 
-      <div
-        className="p-3 rounded text-white mb-3"
-        style={{ backgroundColor: "#4a148c" }}
-      >
-        <h5>{bank}</h5>
-        <p>{account}</p>
-        <p>{owner}</p>
-      </div>
-
-      <p>ยอดรวมที่ต้องชำระ: <b>{total.toLocaleString()} บาท</b></p>
-
-      <button className="btn btn-outline-success mb-3" onClick={handleCopy}>
-        {copied ? "คัดลอกแล้ว!" : "คัดลอกบัญชี"}
-      </button>
-
-      <div>
-        <button
-          className="btn btn-success"
-          onClick={() => nav("/upload-slip", { state: room })}
+        <div
+          className="p-3 text-white mb-2"
+          style={{ backgroundColor: "#6819c9ff" }}
         >
-          ดำเนินการต่อ
+          <h5>{bank}</h5>
+          <p>{account}</p>
+          <p>{owner}</p>
+        </div>
+
+        <p>
+          ยอดรวมที่ต้องชำระ: <b>{total.toLocaleString()} บาท</b>
+        </p>
+
+        <button className="btn btn-outline-success mb-3" onClick={handleCopy}>
+          {copied ? "คัดลอกแล้ว!" : "คัดลอกบัญชี"}
         </button>
+
+        <div>
+          <button
+            className="btn btn-success"
+            onClick={() => nav("/upload-slip", { state: room })}
+          >
+            ดำเนินการต่อ
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-// src/lib/liff.ts
+// // src/lib/liff.ts
 import liff from "@line/liff";
 
 export async function initLIFF() {

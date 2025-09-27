@@ -1,0 +1,43 @@
+/* RoomDetail.css */
+
+.roomdetail-container {
+  background-color: #65f487;
+  font-family: "Kanit", sans-serif;
+  min-height: 100vh;         /* ✅ เต็มจอ */
+  padding: 1.5rem;   
+}
+
+/* ✅ กล่องรายละเอียด */
+.room-card {
+  background: #ffffff;       /* กรอบขาว */
+  border-radius: 12px;       /* มุมโค้ง */
+  padding: 20px;
+  max-width: 650px;
+  margin: 40px auto;         /* จัดกึ่งกลาง */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ หัวข้อ */
+h4 {
+  font-weight: bold;
+  color: #333;
+}
+
+/* ✅ ตาราง */
+.table {
+  background: #f9f9f9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table td {
+  padding: 12px;
+  vertical-align: middle;
+}
+
+/* ✅ ปุ่ม */
+button {
+  min-width: 120px;
+  font-size: 16px;
+  font-weight: 600;
+}

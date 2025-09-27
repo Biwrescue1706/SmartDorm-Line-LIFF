@@ -1,11 +1,11 @@
 // src/pages/Bookings.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE } from "../config";   // ✅ ใช้ API_BASE โดยตรง
+import { API_BASE } from "../config"; // ✅ ใช้ API_BASE โดยตรง
 import "../css/Bookings.css";
 
 interface Room {
-  id: string;
+  roomId: string;
   number: string;
   size: string;
   rent: number;
@@ -48,27 +48,29 @@ export default function Bookings() {
 
   // 👉 ส่งไปหน้ารายละเอียดห้อง
   const handleSelect = (room: Room) => {
-    nav(`/bookings/${room.id}`, { state: room });
+    nav(`/bookings/${room.roomId}`, { state: room });
   };
 
   return (
     <div className="bookings-container">
-      <h3 className="text-center mb-3">เลือกห้อง</h3>
-      {loading ? (
-        <div>กำลังโหลด...</div>
-      ) : (
-        <div className="bookings-grid">
-          {rooms.map((room) => (
-            <button
-              key={room.id}
-              className="btn btn-secondary bookings-button"
-              onClick={() => handleSelect(room)}
-            >
-              {room.number}
-            </button>
-          ))}
-        </div>
-      )}
+      <div className="bookings-card">
+        <h3 className="text-center mb-3">เลือกห้อง</h3>
+        {loading ? (
+          <div>กำลังโหลด...</div>
+        ) : (
+          <div className="bookings-grid">
+            {rooms.map((room) => (
+              <button
+                key={room.roomId}
+                className="bookings-button"
+                onClick={() => handleSelect(room)}
+              >
+                {room.number}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -19,10 +19,10 @@ export default function UploadSlip() {
   const nav = useNavigate();
   const room = state as Room;
 
-  const [name, setName] = useState("");
-  const [surname, setSurname] = useState("");
-  const [phone, setPhone] = useState("");
-  const [mumId, setMumId] = useState(""); // ✅ เลขบัตรประชาชน
+  const [cname, setCname] = useState("");
+  const [csurname, setCsurname] = useState("");
+  const [cphone, setCphone] = useState("");
+  const [cmumId, setCmumId] = useState(""); // ✅ เลขบัตรประชาชน
   const [slip, setSlip] = useState<File | null>(null);
   const [checkin, setCheckin] = useState("");
   const [loading, setLoading] = useState(false);
@@ -58,10 +58,10 @@ export default function UploadSlip() {
       const formData = new FormData();
       formData.append("roomId", room.id);
       formData.append("userId", userId);
-      formData.append("name", name);
-      formData.append("surname", surname);
-      formData.append("phone", phone);
-      formData.append("mumId", mumId);
+      formData.append("cname", cname);
+      formData.append("csurname", csurname);
+      formData.append("cphone", cphone);
+      formData.append("cmumId", cmumId);
       formData.append("checkin", checkin);
       formData.append("slip", slip);
 
@@ -96,7 +96,7 @@ export default function UploadSlip() {
   };
 
   return (
-    <div className="container py-4">
+    <div className="uploadslip-container py-4">
       <h4 className="text-center mb-3">
         อัปโหลดสลิปชำระเงิน ห้อง {room.number}
       </h4>
@@ -107,8 +107,8 @@ export default function UploadSlip() {
           <input
             type="text"
             className="form-control"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={cname}
+            onChange={(e) => setCname(e.target.value)}
             required
           />
         </div>
@@ -118,8 +118,8 @@ export default function UploadSlip() {
           <input
             type="text"
             className="form-control"
-            value={surname}
-            onChange={(e) => setSurname(e.target.value)}
+            value={csurname}
+            onChange={(e) => setCsurname(e.target.value)}
             required
           />
         </div>
@@ -129,8 +129,8 @@ export default function UploadSlip() {
           <input
             type="tel"
             className="form-control"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            value={cphone}
+            onChange={(e) => setCphone(e.target.value)}
             required
           />
         </div>
@@ -140,8 +140,8 @@ export default function UploadSlip() {
           <input
             type="text"
             className="form-control"
-            value={mumId}
-            onChange={(e) => setMumId(e.target.value)}
+            value={cmumId}
+            onChange={(e) => setCmumId(e.target.value)}
             required
           />
         </div>
