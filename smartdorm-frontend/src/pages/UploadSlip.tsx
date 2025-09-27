@@ -2,8 +2,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { API_BASE } from "../config";   // ✅ import ค่า API_BASE
+import { API_BASE } from "../config"; // ✅ import ค่า API_BASE
 import "sweetalert2/dist/sweetalert2.min.css";
+import "../css/UploadSlip.css";
 
 interface Room {
   id: string;
@@ -97,11 +98,11 @@ export default function UploadSlip() {
 
   return (
     <div className="uploadslip-container py-4">
-      <h4 className="text-center mb-3">
-        อัปโหลดสลิปชำระเงิน ห้อง {room.number}
-      </h4>
-
       <form onSubmit={handleSubmit}>
+        <h4 className="text-center mb-3">อัปโหลดสลิปชำระเงิน</h4>
+        <div className="mb-3">
+          <label>ห้อง {room.number}</label>
+        </div>
         <div className="mb-3">
           <label>ชื่อ</label>
           <input
@@ -187,7 +188,7 @@ export default function UploadSlip() {
         <div className="mt-4 text-center">
           <h5>🧾 สลิปที่อัปโหลด</h5>
           <img
-            src={`${API_BASE}${slipUrl}`}  // ✅ ใช้ API_BASE แปะกับ slipUrl
+            src={`${API_BASE}${slipUrl}`} // ✅ ใช้ API_BASE แปะกับ slipUrl
             alt="slip preview"
             className="img-fluid border rounded"
             style={{ maxHeight: "400px" }}

@@ -1,12 +1,12 @@
 /* src/css/Bookings.css */
 
 .bookings-container {
-  background-color: #ffffff; /* ✅ พื้นหลังเขียว */
-  min-height: 100vh; /* ✅ เต็มจอ */
-  padding: 1.5rem; /* เทียบกับ py-4 ของ bootstrap */
+  background-color: #ffffff;
+  min-height: 100vh;
+  padding: 1.5rem;
 }
 
-/* ✅ กล่องครอบเลือกห้อง */
+/* กล่องครอบเลือกห้อง */
 .bookings-card {
   background: #65f487;
   border-radius: 12px;
@@ -17,30 +17,31 @@
   text-align: center;
 }
 
-/* ✅ Grid จัดปุ่มให้พอดีกับกรอบ */
+/* Grid จัดปุ่ม */
 .bookings-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 คอลัมน์ fix */
-  gap: 12px; /* ระยะห่าง */
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
   margin-top: 15px;
-  width: 40%;
+  width: 100%;
   box-sizing: border-box;
 }
 
-/* ✅ ปุ่มห้องโทนเขียว */
+/* ปุ่มห้อง */
 .bookings-button {
-  width: 100%; /* บังคับเต็ม cell */
+  width: 100%;
   padding: 12px;
   font-size: 16px;
   font-weight: 600;
   border-radius: 8px;
   border: none;
-  background-color: #ec5050;
+  background: linear-gradient(45deg, #ff0000, #ff00bf);
   color: #fff;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .bookings-button:hover {
-  background-color: #ff0000;
+  background: linear-gradient(45deg, #ff00bf, #ff0000);
   transform: translateY(-2px);
 }

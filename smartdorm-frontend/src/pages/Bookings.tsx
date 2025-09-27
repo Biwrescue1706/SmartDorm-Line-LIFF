@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE } from "../config"; // ✅ ใช้ API_BASE โดยตรง
-import "../css/Bookings.css";
+import "../css/Bookings.css"; // ✅ ใช้ CSS โดยตรง
 
 interface Room {
   roomId: string;
@@ -30,6 +30,7 @@ export default function Bookings() {
       if (!res.ok) throw new Error("โหลดข้อมูลล้มเหลว");
       const data: Room[] = await res.json();
 
+      // ✅ ถ้าต้องการโชว์เฉพาะห้องว่าง
       const available = data
         .filter((r) => r.status === 0)
         .sort((a, b) => Number(a.number) - Number(b.number));

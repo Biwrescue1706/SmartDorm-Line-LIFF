@@ -28,9 +28,9 @@ export default function RoomDetail() {
   };
 
   return (
-    <div className="roomdetail-container py-4 text-center">
-      <div className="room-card text-center">
-        <h4 className=" mb-3">รายละเอียดห้อง</h4>
+    <div className="roomdetail-container">
+      <div className="room-card">
+        <h4 className="mb-3">รายละเอียดห้อง</h4>
         <table className="table text-start">
           <tbody>
             <tr>
@@ -60,11 +60,11 @@ export default function RoomDetail() {
           </tbody>
         </table>
 
-        <div className="d-flex justify-content-around mt-4">
-          <button className="btn btn-danger" onClick={() => nav(-1)}>
+        <div className="button-group mt-4">
+          <button className="btn-danger" onClick={() => nav(-1)}>
             ยกเลิก
           </button>
-          <button className="btn btn-success" onClick={handleConfirm}>
+          <button className="btn-success" onClick={handleConfirm}>
             ยืนยัน
           </button>
         </div>

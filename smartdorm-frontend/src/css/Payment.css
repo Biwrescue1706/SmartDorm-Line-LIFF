@@ -2,7 +2,7 @@
 
 /* ✅ พื้นหลังทั้งหน้า */
 .payment-container {
-  background-color: #65f487;
+  background-color: #ffffff;
   font-family: "Kanit", sans-serif;
   min-height: 100vh;         /* ✅ เต็มจอ */
   padding: 1.5rem;   
@@ -10,10 +10,10 @@
 
 /* ✅ กรอบการ์ด */
 .payment-card {
-  background: #ffffff;
+  background: #77f7959c;
   border-radius: 12px;
   padding: 20px;
-  max-width: 600px;
+  max-width: 700px;
   margin: 40px auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -21,7 +21,7 @@
 /* ✅ หัวข้อ */
 .payment-card h4 {
   font-weight: bold;
-  color: #333;
+  color: #000000;
 }
 
 /* ✅ กล่องบัญชีธนาคาร */
@@ -41,4 +41,6 @@
   min-width: 140px;
   font-size: 16px;
   font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(45deg, #ff0000, #ff00bf);
 }
