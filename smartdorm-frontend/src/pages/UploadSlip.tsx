@@ -23,7 +23,7 @@ export default function UploadSlip() {
   const [cname, setCname] = useState("");
   const [csurname, setCsurname] = useState("");
   const [cphone, setCphone] = useState("");
-  const [cmumId, setCmumId] = useState(""); 
+  const [cmumId, setCmumId] = useState("");
   const [slip, setSlip] = useState<File | null>(null);
   const [checkin, setCheckin] = useState("");
   const [loading, setLoading] = useState(false);
@@ -126,37 +126,78 @@ export default function UploadSlip() {
           <h3>ห้อง {room.number}</h3>
         </div>
         <div className="mb-3">
-          <label>ชื่อ</label>
-          <input type="text" className="form-control" value={cname} onChange={(e) => setCname(e.target.value)} required />
+          <h4>ชื่อ</h4>
+          <input
+            type="text"
+            className="form-control"
+            value={cname}
+            onChange={(e) => setCname(e.target.value)}
+            required
+          />
         </div>
 
         <div className="mb-3">
-          <label>นามสกุล</label>
-          <input type="text" className="form-control" value={csurname} onChange={(e) => setCsurname(e.target.value)} required />
+          <h4>นามสกุล</h4>
+          <input
+            type="text"
+            className="form-control"
+            value={csurname}
+            onChange={(e) => setCsurname(e.target.value)}
+            required
+          />
         </div>
 
         <div className="mb-3">
-          <label>เบอร์โทร</label>
-          <input type="tel" className="form-control" value={cphone} onChange={(e) => setCphone(e.target.value)} required />
+          <h4>เบอร์โทร</h4>
+          <input
+            type="tel"
+            className="form-control"
+            value={cphone}
+            onChange={(e) => setCphone(e.target.value)}
+            required
+          />
         </div>
 
         <div className="mb-3">
-          <label>เลขบัตรประชาชน</label>
-          <input type="text" className="form-control" value={cmumId} onChange={(e) => setCmumId(e.target.value)} required />
+          <h4>เลขบัตรประชาชน</h4>
+          <input
+            type="text"
+            className="form-control"
+            value={cmumId}
+            onChange={(e) => setCmumId(e.target.value)}
+            required
+          />
         </div>
 
         <div className="mb-3">
-          <label>แนบสลิป</label>
-          <input type="file" className="form-control" accept="image/*" onChange={(e) => setSlip(e.target.files?.[0] || null)} required />
+          <h4>แนบสลิป</h4>
+          <input
+            type="file"
+            className="form-control"
+            accept="image/*"
+            onChange={(e) => setSlip(e.target.files?.[0] || null)}
+            required
+          />
         </div>
 
         <div className="mb-3">
-          <label>วันที่เข้าพัก</label>
-          <input type="date" className="form-control" value={checkin} onChange={(e) => setCheckin(e.target.value)} required />
+          <h4>วันที่เข้าพัก</h4>
+          <input
+            type="date"
+            className="form-control"
+            value={checkin}
+            onChange={(e) => setCheckin(e.target.value)}
+            required
+          />
         </div>
 
         <div className="d-flex justify-content-between mt-4">
-          <button type="button" className="btn btn-danger" onClick={() => nav("/")} disabled={loading}>
+          <button
+            type="button"
+            className="btn btn-danger"
+            onClick={() => nav("/")}
+            disabled={loading}
+          >
             ยกเลิก
           </button>
           <button type="submit" className="btn btn-success" disabled={loading}>
@@ -168,7 +209,12 @@ export default function UploadSlip() {
       {slipUrl && (
         <div className="mt-4 text-center">
           <h5>🧾 สลิปที่อัปโหลด</h5>
-          <img src={`${API_BASE}${slipUrl}`} alt="slip preview" className="img-fluid border rounded" style={{ maxHeight: "400px" }} />
+          <img
+            src={`${API_BASE}${slipUrl}`}
+            alt="slip preview"
+            className="img-fluid border rounded"
+            style={{ maxHeight: "400px" }}
+          />
         </div>
       )}
     </div>
