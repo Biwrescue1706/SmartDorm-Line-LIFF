@@ -27,7 +27,7 @@ export default function UploadSlip() {
   const [slip, setSlip] = useState<File | null>(null);
   const [checkin, setCheckin] = useState("");
   const [loading, setLoading] = useState(false);
-  const [slipUrl, setSlipUrl] = useState<string | null>(null);
+  const [slipPreview, setSlipPreview] = useState<string | null>(null);
 
   // ✅ เช็ค login ก่อนเข้า
   useEffect(() => {
@@ -39,22 +39,7 @@ export default function UploadSlip() {
     }
   }, [nav]);
 
-  // ✅ upload slip แยก แล้วได้ URL
-  const uploadSlip = async (): Promise<string | null> => {
-    if (!slip) return null;
-    const formData = new FormData();
-    formData.append("file", slip);
-
-    const res = await fetch(`${API_BASE}/upload`, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!res.ok) throw new Error("อัปโหลดสลิปล้มเหลว");
-    const data = await res.json();
-    return data.url; // backend ต้องส่ง { url: "/uploads/xxxx.png" }
-  };
-
+  // ✅ submit form → ส่งไฟล์ slip ไป booking/create โดยตรง
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -74,24 +59,20 @@ export default function UploadSlip() {
         return;
       }
 
-      // 🔹 upload slip ก่อน → ได้ URL
-      const slipUrlUploaded = await uploadSlip();
+      const formData = new FormData();
+      formData.append("roomId", room.roomId);
+      formData.append("userId", userId);
+      formData.append("userName", userName || "");
+      formData.append("cname", cname);
+      formData.append("csurname", csurname);
+      formData.append("cphone", cphone);
+      formData.append("cmumId", cmumId);
+      formData.append("checkin", checkin);
+      formData.append("slip", slip); // 👈 ส่งไฟล์ตรงนี้
 
-      // 🔹 ส่งไปสร้าง booking
       const res = await fetch(`${API_BASE}/booking/create`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          roomId: room.roomId,
-          userId,
-          userName,
-          cname,
-          csurname,
-          cphone,
-          cmumId,
-          checkin,
-          slipUrl: slipUrlUploaded,
-        }),
+        body: formData,
         credentials: "include",
       });
 
@@ -99,8 +80,6 @@ export default function UploadSlip() {
 
       const data = await res.json();
       console.log("📤 ส่งข้อมูล:", data);
-
-      setSlipUrl(slipUrlUploaded);
 
       await Swal.fire({
         icon: "success",
@@ -125,6 +104,7 @@ export default function UploadSlip() {
         <div className="mb-3">
           <h3>ห้อง {room.number}</h3>
         </div>
+
         <div className="mb-3">
           <h4>ชื่อ</h4>
           <input
@@ -175,7 +155,11 @@ export default function UploadSlip() {
             type="file"
             className="form-control"
             accept="image/*"
-            onChange={(e) => setSlip(e.target.files?.[0] || null)}
+            onChange={(e) => {
+              const file = e.target.files?.[0] || null;
+              setSlip(file);
+              if (file) setSlipPreview(URL.createObjectURL(file));
+            }}
             required
           />
         </div>
@@ -206,11 +190,11 @@ export default function UploadSlip() {
         </div>
       </form>
 
-      {slipUrl && (
+      {slipPreview && (
         <div className="mt-4 text-center">
-          <h5>🧾 สลิปที่อัปโหลด</h5>
+          <h5>🧾 สลิปที่เลือก</h5>
           <img
-            src={`${API_BASE}${slipUrl}`}
+            src={slipPreview}
             alt="slip preview"
             className="img-fluid border rounded"
             style={{ maxHeight: "400px" }}
