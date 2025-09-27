@@ -1,6 +1,7 @@
 // src/pages/Payment.tsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { API_BASE } from "../config"; // ✅ backend proxy
 import "../css/Payment.css";
 
 interface Room {
@@ -20,14 +21,13 @@ export default function Payment() {
   // 🔹 รวมค่าใช้จ่าย
   const total = room.rent + room.deposit + room.bookingFee;
 
-  // 🔹 ข้อมูลบัญชี (คุณแก้ตามจริงได้เลย)
+  // 🔹 ข้อมูลบัญชี
   const account = "5052997156";
   const bank = "ธนาคารไทยพาณิชย์";
   const owner = "นายภูวณัฐ พาหะละ";
 
-  // 🔹 PromptPay
-  const promptpayId = "0611747731"; // เบอร์ PromptPay
-  const qrUrl = `https://promptpay.io/${promptpayId}/${total}.png`;
+  // 🔹 ใช้ backend proxy แทน promptpay.io ตรง ๆ
+  const qrUrl = `${API_BASE}/qr/${total}`;
 
   const [copied, setCopied] = useState(false);
 
@@ -38,11 +38,13 @@ export default function Payment() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // 🔹 ดาวน์โหลดรูป QR รองรับ iOS/Android
+  // 🔹 ดาวน์โหลด QR จาก backend (ใช้ Blob ปลอดภัยทุก Browser)
   const handleDownload = async (url: string, filename: string) => {
     try {
-      const response = await fetch(url, { mode: "cors" });
-      const blob = await response.blob();
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("โหลด QR ล้มเหลว");
+
+      const blob = await res.blob();
       const blobUrl = window.URL.createObjectURL(blob);
 
       const link = document.createElement("a");
@@ -52,10 +54,10 @@ export default function Payment() {
       link.click();
       document.body.removeChild(link);
 
+      // cleanup
       window.URL.revokeObjectURL(blobUrl);
     } catch (err) {
-      console.error("❌ Error downloading image:", err);
-      alert("ไม่สามารถบันทึกรูป QR ได้");
+      console.error("❌ Error downloading QR:", err);
     }
   };
 
@@ -90,12 +92,7 @@ export default function Payment() {
             <h6>หรือสแกน QR พร้อมเพย์</h6>
           </div>
 
-          <img
-            src={qrUrl}
-            alt="QR PromptPay"
-            width="250"
-            crossOrigin="anonymous"
-          />
+          <img src={qrUrl} alt="QR PromptPay" width="250" />
           <p className="small text-muted">กดปุ่มด้านล่างเพื่อบันทึกรูป</p>
 
           <button

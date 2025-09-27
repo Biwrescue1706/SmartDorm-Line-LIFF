@@ -1,8 +1,8 @@
 // src/pages/Bookings.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE } from "../config"; // ✅ ใช้ API_BASE โดยตรง
-import "../css/Bookings.css"; // ✅ ใช้ CSS โดยตรง
+import { API_BASE } from "../config";
+import "../css/Bookings.css";
 
 interface Room {
   roomId: string;
@@ -19,9 +19,7 @@ export default function Bookings() {
   const [loading, setLoading] = useState(true);
   const nav = useNavigate();
 
-  // โหลดข้อมูลห้อง
   const load = async () => {
-    setLoading(true);
     try {
       const res = await fetch(`${API_BASE}/room/getall`, {
         method: "GET",
@@ -30,10 +28,12 @@ export default function Bookings() {
       if (!res.ok) throw new Error("โหลดข้อมูลล้มเหลว");
       const data: Room[] = await res.json();
 
-      // ✅ ถ้าต้องการโชว์เฉพาะห้องว่าง
       const available = data
         .filter((r) => r.status === 0)
-        .sort((a, b) => Number(a.number) - Number(b.number));
+        .sort(
+          (a, b) =>
+            (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0)
+        );
 
       setRooms(available);
     } catch (error) {
@@ -45,9 +45,10 @@ export default function Bookings() {
 
   useEffect(() => {
     load();
+    const interval = setInterval(load, 12 * 60 * 1000); // ทุก 12 นาที
+    return () => clearInterval(interval);
   }, []);
 
-  // 👉 ส่งไปหน้ารายละเอียดห้อง
   const handleSelect = (room: Room) => {
     nav(`/bookings/${room.roomId}`, { state: room });
   };
@@ -57,7 +58,9 @@ export default function Bookings() {
       <div className="bookings-card">
         <h3 className="text-center mb-3">เลือกห้อง</h3>
         {loading ? (
-          <div>กำลังโหลด...</div>
+          <div>⏳ กำลังโหลด...</div>
+        ) : rooms.length === 0 ? (
+          <div className="text-center text-muted">❌ ไม่มีห้องว่างในขณะนี้</div>
         ) : (
           <div className="bookings-grid">
             {rooms.map((room) => (
