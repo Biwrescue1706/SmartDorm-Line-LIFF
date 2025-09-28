@@ -20,6 +20,7 @@ export default function UploadSlip() {
   const nav = useNavigate();
   const room = state as Room;
 
+  const [ctitle, setCtitle] = useState("");
   const [cname, setCname] = useState("");
   const [csurname, setCsurname] = useState("");
   const [cphone, setCphone] = useState("");
@@ -101,8 +102,24 @@ export default function UploadSlip() {
     <div className="uploadslip-container py-4">
       <form onSubmit={handleSubmit}>
         <h2 className="text-center mb-3">อัปโหลดสลิปชำระเงิน</h2>
+        
         <div className="mb-3">
           <h3>ห้อง {room.number}</h3>
+        </div>
+
+        <div className="mb-3">
+          <h4>คำนำหน้า</h4>
+          <select
+            className="form-control"
+            value={ctitle}
+            onChange={(e) => setCtitle(e.target.value)}
+            required
+          >
+            <option value="">-- เลือกคำนำหน้า --</option>
+            <option value="นาย">นาย</option>
+            <option value="นาง">นาง</option>
+            <option value="นางสาว">นางสาว</option>
+          </select>
         </div>
 
         <div className="mb-3">
