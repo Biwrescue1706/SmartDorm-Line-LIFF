@@ -20,7 +20,6 @@ export default function UploadSlip() {
   const nav = useNavigate();
   const room = state as Room;
 
-  // 📌 state สำหรับเก็บค่าจาก form
   const [ctitle, setCtitle] = useState("");
   const [cname, setCname] = useState("");
   const [csurname, setCsurname] = useState("");
@@ -41,9 +40,30 @@ export default function UploadSlip() {
     }
   }, [nav]);
 
-  // ✅ submit form → ส่ง FormData ไป backend
+  // ✅ submit form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // --- validate เบอร์โทร ---
+    if (!/^\d{10}$/.test(cphone)) {
+      Swal.fire("❌ ข้อผิดพลาด", "เบอร์โทรต้องเป็นตัวเลข 10 หลัก", "error");
+      return;
+    }
+
+    // --- validate บัตรประชาชน ---
+    if (!/^\d{13}$/.test(cmumId)) {
+      Swal.fire(
+        "❌ ข้อผิดพลาด",
+        "เลขบัตรประชาชนต้องเป็นตัวเลข 13 หลัก",
+        "error"
+      );
+      return;
+    }
+
+    if (!checkin) {
+      Swal.fire("❌ ข้อผิดพลาด", "กรุณาเลือกวันที่เข้าพัก", "error");
+      return;
+    }
 
     if (!slip) {
       Swal.fire("❌ ข้อผิดพลาด", "กรุณาแนบสลิปการโอนเงิน", "error");
@@ -72,7 +92,11 @@ export default function UploadSlip() {
       formData.append("cphone", cphone);
       formData.append("cmumId", cmumId);
       formData.append("checkin", checkin);
-      formData.append("slip", slip); // 👈 ส่งไฟล์ไปด้วย
+      formData.append("slip", slip);
+
+      // 🐞 debug ดูว่าค่าอะไรส่งออกไปบ้าง
+      console.log("📦 FormData preview:");
+      formData.forEach((v, k) => console.log(k, v));
 
       // 👇 ส่งไป API backend
       const res = await fetch(`${API_BASE}/booking/create`, {
