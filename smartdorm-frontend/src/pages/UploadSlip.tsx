@@ -60,11 +60,6 @@ export default function UploadSlip() {
       return;
     }
 
-    if (!checkin) {
-      Swal.fire("❌ ข้อผิดพลาด", "กรุณาเลือกวันที่เข้าพัก", "error");
-      return;
-    }
-
     if (!slip) {
       Swal.fire("❌ ข้อผิดพลาด", "กรุณาแนบสลิปการโอนเงิน", "error");
       return;
@@ -92,11 +87,7 @@ export default function UploadSlip() {
       formData.append("cphone", cphone);
       formData.append("cmumId", cmumId);
       formData.append("checkin", checkin);
-      formData.append("slip", slip);
-
-      // 🐞 debug ดูว่าค่าอะไรส่งออกไปบ้าง
-      console.log("📦 FormData preview:");
-      formData.forEach((v, k) => console.log(k, v));
+      formData.append("slip", slip); // 👈 ส่งเฉพาะไฟล์ slip
 
       // 👇 ส่งไป API backend
       const res = await fetch(`${API_BASE}/booking/create`, {
