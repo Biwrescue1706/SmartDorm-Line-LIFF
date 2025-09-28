@@ -20,6 +20,7 @@ export default function UploadSlip() {
   const nav = useNavigate();
   const room = state as Room;
 
+  // 📌 state สำหรับเก็บค่าจาก form
   const [ctitle, setCtitle] = useState("");
   const [cname, setCname] = useState("");
   const [csurname, setCsurname] = useState("");
@@ -40,7 +41,7 @@ export default function UploadSlip() {
     }
   }, [nav]);
 
-  // ✅ submit form → ส่งไฟล์ slip ไป booking/create โดยตรง
+  // ✅ submit form → ส่ง FormData ไป backend
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -60,17 +61,20 @@ export default function UploadSlip() {
         return;
       }
 
+      // 👇 เตรียม FormData
       const formData = new FormData();
       formData.append("roomId", room.roomId);
       formData.append("userId", userId);
       formData.append("userName", userName || "");
+      formData.append("ctitle", ctitle);
       formData.append("cname", cname);
       formData.append("csurname", csurname);
       formData.append("cphone", cphone);
       formData.append("cmumId", cmumId);
       formData.append("checkin", checkin);
-      formData.append("slip", slip); // 👈 ส่งไฟล์ตรงนี้
+      formData.append("slip", slip); // 👈 ส่งไฟล์ไปด้วย
 
+      // 👇 ส่งไป API backend
       const res = await fetch(`${API_BASE}/booking/create`, {
         method: "POST",
         body: formData,
@@ -102,11 +106,12 @@ export default function UploadSlip() {
     <div className="uploadslip-container py-4">
       <form onSubmit={handleSubmit}>
         <h2 className="text-center mb-3">อัปโหลดสลิปชำระเงิน</h2>
-        
+
         <div className="mb-3">
           <h3>ห้อง {room.number}</h3>
         </div>
 
+        {/* ---------------- คำนำหน้า ---------------- */}
         <div className="mb-3">
           <h4>คำนำหน้า</h4>
           <select
@@ -122,6 +127,7 @@ export default function UploadSlip() {
           </select>
         </div>
 
+        {/* ---------------- ชื่อ ---------------- */}
         <div className="mb-3">
           <h4>ชื่อ</h4>
           <input
@@ -133,6 +139,7 @@ export default function UploadSlip() {
           />
         </div>
 
+        {/* ---------------- นามสกุล ---------------- */}
         <div className="mb-3">
           <h4>นามสกุล</h4>
           <input
@@ -144,6 +151,7 @@ export default function UploadSlip() {
           />
         </div>
 
+        {/* ---------------- เบอร์โทร ---------------- */}
         <div className="mb-3">
           <h4>เบอร์โทร</h4>
           <input
@@ -155,8 +163,9 @@ export default function UploadSlip() {
           />
         </div>
 
+        {/* ---------------- เลขบัตร/รหัสนักศึกษา ---------------- */}
         <div className="mb-3">
-          <h4>เลขบัตรประชาชน</h4>
+          <h4>เลขบัตรประชาชน / รหัสนักศึกษา</h4>
           <input
             type="text"
             className="form-control"
@@ -166,6 +175,7 @@ export default function UploadSlip() {
           />
         </div>
 
+        {/* ---------------- แนบสลิป ---------------- */}
         <div className="mb-3">
           <h4>แนบสลิป</h4>
           <input
@@ -181,6 +191,7 @@ export default function UploadSlip() {
           />
         </div>
 
+        {/* ---------------- วันที่เข้าพัก ---------------- */}
         <div className="mb-3">
           <h4>วันที่เข้าพัก</h4>
           <input
@@ -192,6 +203,7 @@ export default function UploadSlip() {
           />
         </div>
 
+        {/* ---------------- ปุ่ม ---------------- */}
         <div className="d-flex justify-content-between mt-4">
           <button
             type="button"
@@ -207,6 +219,7 @@ export default function UploadSlip() {
         </div>
       </form>
 
+      {/* ---------------- Preview Slip ---------------- */}
       {slipPreview && (
         <div className="mt-4 text-center">
           <h5>🧾 สลิปที่เลือก</h5>
