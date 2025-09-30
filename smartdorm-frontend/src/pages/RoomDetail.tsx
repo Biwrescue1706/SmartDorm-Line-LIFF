@@ -1,50 +1,73 @@
-// src/pages/RoomDetail.tsx
-import { useNavigate } from "react-router-dom";
-import { useRoomDetail } from "../hooks/useRoomDetail";
-import RoomDetailTable from "../components/RoomDetail/RoomDetailTable";
-import { useUploadSlip } from "../hooks/useUploadSlip";
-import UploadSlipForm from "../components/UploadSlip/UploadSlipForm";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import "../css/RoomDetail.css"; // ✅ import CSS
+
+interface Room {
+  roomId: string;
+  number: string;
+  size: string;
+  rent: number;
+  deposit: number;
+  bookingFee: number;
+}
 
 export default function RoomDetail() {
   const nav = useNavigate();
-  const { room, loading, error } = useRoomDetail();
+  const { state } = useLocation();
+  const { roomId } = useParams();
 
-  // ✅ state การโหลด / error
-  if (loading) return <p className="text-center py-6">⏳ กำลังโหลดข้อมูล...</p>;
-  if (error) return <p className="text-center text-red-500 py-6">{error}</p>;
-  if (!room) return <p className="text-center text-gray-500 py-6">❌ ไม่พบข้อมูลห้อง</p>;
+  const room = state as Room; // ✅ รับจาก Bookings.tsx
 
-  // ✅ hook สำหรับอัปโหลด slip
-  const { uploadSlip, loading: bookingLoading } = useUploadSlip(
-    room.roomId,
-    room.number
-  );
+  if (!room) {
+    return <div className="p-3">ไม่พบข้อมูลห้อง {roomId}</div>;
+  }
 
-  const handleSubmit = async (formData: FormData) => {
-    const success = await uploadSlip(formData);
-    if (success) nav("/"); // กลับหน้าแรกถ้าสำเร็จ
+  const total = room.rent + room.deposit + room.bookingFee;
+
+  const handleConfirm = () => {
+    nav("/payment", { state: room }); // ไปหน้าชำระเงิน
   };
 
   return (
-    <div className="max-w-lg mx-auto py-6 px-4">
-      <h2 className="text-xl font-semibold text-center mb-4">
-        รายละเอียดห้องพัก
-      </h2>
+    <div className="roomdetail-container">
+      <div className="room-card">
+        <h4 className="mb-3">รายละเอียดห้อง</h4>
+        <table className="table text-start">
+          <tbody>
+            <tr>
+              <td>ห้อง</td>
+              <td>{room.number}</td>
+            </tr>
+            <tr>
+              <td>ขนาด</td>
+              <td>{room.size}</td>
+            </tr>
+            <tr>
+              <td>ราคา</td>
+              <td>{room.rent.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>ประกันห้อง</td>
+              <td>{room.deposit.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>ค่าจองห้อง</td>
+              <td>{room.bookingFee.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>รวม</td>
+              <td>{total.toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>
 
-      {/* ✅ ตารางรายละเอียดห้อง */}
-      <div className="border rounded-lg shadow p-4 mb-6 bg-white">
-        <RoomDetailTable room={room} />
-      </div>
-
-      {/* ✅ ฟอร์มอัปโหลด slip เพื่อจอง */}
-      <div className="border rounded-lg shadow p-4 bg-white">
-        <h3 className="text-lg font-medium mb-3 text-center">จองห้องพัก</h3>
-        <UploadSlipForm
-          onSubmit={handleSubmit}
-          loading={bookingLoading}
-          nav={nav}
-          roomId={room.roomId}
-        />
+        <div className="button-group mt-4">
+          <button className="btn-danger" onClick={() => nav(-1)}>
+            ยกเลิก
+          </button>
+          <button className="btn-success" onClick={handleConfirm}>
+            ยืนยัน
+          </button>
+        </div>
       </div>
     </div>
   );
