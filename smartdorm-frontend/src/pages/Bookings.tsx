@@ -1,18 +1,9 @@
-// src/pages/Bookings.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE } from "../config";
+import type { Room } from "../types/Room";
+import RoomGrid from "../components/Bookings/RoomGrid";
 import "../css/Bookings.css";
-
-interface Room {
-  roomId: string;
-  number: string;
-  size: string;
-  rent: number;
-  deposit: number;
-  bookingFee: number;
-  status: number; // 0=ว่าง, 1=จองแล้ว, 2=ไม่ว่าง
-}
 
 export default function Bookings() {
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -28,6 +19,7 @@ export default function Bookings() {
       if (!res.ok) throw new Error("โหลดข้อมูลล้มเหลว");
       const data: Room[] = await res.json();
 
+      // ✅ ห้องว่างเท่านั้น
       const available = data
         .filter((r) => r.status === 0)
         .sort(
@@ -45,7 +37,7 @@ export default function Bookings() {
 
   useEffect(() => {
     load();
-    const interval = setInterval(load, 12 * 60 * 1000); // ทุก 12 นาที
+    const interval = setInterval(load, 12 * 60 * 1000); // reload ทุก 12 นาที
     return () => clearInterval(interval);
   }, []);
 
@@ -62,17 +54,7 @@ export default function Bookings() {
         ) : rooms.length === 0 ? (
           <div className="text-center text-muted">❌ ไม่มีห้องว่างในขณะนี้</div>
         ) : (
-          <div className="bookings-grid">
-            {rooms.map((room) => (
-              <button
-                key={room.roomId}
-                className="bookings-button"
-                onClick={() => handleSelect(room)}
-              >
-                {room.number}
-              </button>
-            ))}
-          </div>
+          <RoomGrid rooms={rooms} onSelect={handleSelect} />
         )}
       </div>
     </div>

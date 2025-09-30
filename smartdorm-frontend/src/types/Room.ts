@@ -1,3 +1,4 @@
+// src/types/Room.ts
 export interface Room {
   roomId: string;
   number: string;

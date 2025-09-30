@@ -1,8 +1,11 @@
-// src/pages/Payment.tsx
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { API_BASE } from "../config"; // ✅ backend proxy
+import { API_BASE } from "../config";
 import "../css/Payment.css";
+
+// ✅ components
+import AccountCard from "../components/Payment/AccountCard";
+import PaymentSummary from "../components/Payment/PaymentSummary";
+import QRSection from "../components/Payment/QRSection";
 
 interface Room {
   roomId: string;
@@ -21,87 +24,27 @@ export default function Payment() {
   // 🔹 รวมค่าใช้จ่าย
   const total = room.rent + room.deposit + room.bookingFee;
 
-  // 🔹 ข้อมูลบัญชี
+  // 🔹 ข้อมูลบัญชี (config ได้)
   const account = "5052997156";
   const bank = "ธนาคารไทยพาณิชย์";
   const owner = "นายภูวณัฐ พาหะละ";
 
-  // 🔹 ใช้ backend proxy แทน promptpay.io ตรง ๆ
+  // 🔹 backend proxy สำหรับ QR
   const qrUrl = `${API_BASE}/qr/${total}`;
-
-  const [copied, setCopied] = useState(false);
-
-  // 🔹 copy เลขบัญชี
-  const handleCopy = () => {
-    navigator.clipboard.writeText(account);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  // 🔹 ดาวน์โหลด QR จาก backend (ใช้ Blob ปลอดภัยทุก Browser)
-  const handleDownload = async (url: string, filename: string) => {
-    try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("โหลด QR ล้มเหลว");
-
-      const blob = await res.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      // cleanup
-      window.URL.revokeObjectURL(blobUrl);
-    } catch (err) {
-      console.error("❌ Error downloading QR:", err);
-    }
-  };
 
   return (
     <div className="payment-container py-4 text-center">
       <div className="payment-card text-center">
         <h4 className="mb-3">หน้าชำระเงิน</h4>
 
-        {/* 🔹 ข้อมูลบัญชี */}
-        <div
-          className="p-3 text-white mb-2"
-          style={{ backgroundColor: "#6819c9ff" }}
-        >
-          <h5>{bank}</h5>
-          <p>{account}</p>
-          <p>{owner}</p>
-        </div>
+        {/* ✅ ข้อมูลบัญชี + ปุ่ม copy */}
+        <AccountCard account={account} bank={bank} owner={owner} />
 
-        {/* 🔹 ยอดรวม */}
-        <p>
-          ยอดรวมที่ต้องชำระ: <b>{total.toLocaleString()} บาท</b>
-        </p>
+        {/* ✅ ยอดรวม */}
+        <PaymentSummary total={total} />
 
-        {/* 🔹 ปุ่มคัดลอกบัญชี */}
-        <button className="btn btn-outline-success mb-3" onClick={handleCopy}>
-          {copied ? "คัดลอกแล้ว!" : "คัดลอกบัญชี"}
-        </button>
-
-        {/* 🔹 QR Code */}
-        <div className="mb-3">
-          <div className="mb-3">
-            <h6>หรือสแกน QR พร้อมเพย์</h6>
-          </div>
-
-          <img src={qrUrl} alt="QR PromptPay" width="250" />
-          <p className="small text-muted">กดปุ่มด้านล่างเพื่อบันทึกรูป</p>
-
-          <button
-            className="btn btn-outline-primary mt-2"
-            onClick={() => handleDownload(qrUrl, `PromptPay-${total}.png`)}
-          >
-            บันทึกรูป QR
-          </button>
-        </div>
+        {/* ✅ QR PromptPay */}
+        <QRSection qrUrl={qrUrl} total={total} />
 
         {/* 🔹 ปุ่มดำเนินการต่อ */}
         <div>

@@ -1,38 +1,13 @@
-// src/hooks/useUploadSlip.ts
 import { useState } from "react";
 import Swal from "sweetalert2";
 import { API_BASE } from "../config";
 
-export function useUploadSlip(room: { roomId: string; number: string }, nav: any) {
+export function useUploadSlip(_roomId: string, roomNumber: string) {
   const [loading, setLoading] = useState(false);
 
-  const uploadSlip = async (
-    cname: string,
-    csurname: string,
-    cphone: string,
-    cmumId: string,
-    checkin: string,
-    slip: File | null
-  ) => {
-    if (!slip) {
-      Swal.fire("❌ ข้อผิดพลาด", "กรุณาแนบสลิป", "error");
-      return false;
-    }
-
+  const uploadSlip = async (formData: FormData) => {
     try {
       setLoading(true);
-      const userId = localStorage.getItem("userId");
-      if (!userId) throw new Error("❌ ไม่พบ userId");
-
-      const formData = new FormData();
-      formData.append("userId", userId);
-      formData.append("roomId", room.roomId);
-      formData.append("cname", cname);
-      formData.append("csurname", csurname);
-      formData.append("cphone", cphone);
-      formData.append("mumId", cmumId);
-      formData.append("checkin", checkin);
-      formData.append("slip", slip);
 
       const res = await fetch(`${API_BASE}/booking/create`, {
         method: "POST",
@@ -40,10 +15,9 @@ export function useUploadSlip(room: { roomId: string; number: string }, nav: any
         body: formData,
       });
 
-      if (!res.ok) throw new Error();
+      if (!res.ok) throw new Error("❌ การจองล้มเหลว");
 
-      await Swal.fire("✅ สำเร็จ", `ห้อง ${room.number} ถูกจองแล้ว`, "success");
-      nav("/");
+      await Swal.fire("✅ สำเร็จ", `ห้อง ${roomNumber} ถูกจองแล้ว`, "success");
       return true;
     } catch (err) {
       Swal.fire("❌ เกิดข้อผิดพลาด", "ไม่สามารถบันทึกข้อมูลได้", "error");
