@@ -10,31 +10,30 @@ import { API_BASE } from "../config";
 export function useUploadSlip(_roomId: string, roomNumber: string) {
   const [loading, setLoading] = useState(false);
 
-  // ฟังก์ชันส่งข้อมูลจองห้อง
   const submitSlip = async (formData: FormData) => {
     try {
       setLoading(true);
 
-      // 🔄 แสดงสถานะกำลังโหลด
       Swal.fire({
         title: "⏳ กำลังส่งข้อมูล...",
         allowOutsideClick: false,
         didOpen: () => Swal.showLoading(),
       });
 
-      // 📤 ส่งไป backend
       const res = await fetch(`${API_BASE}/booking/create`, {
         method: "POST",
-        body: formData,
         credentials: "include",
+        body: formData,
       });
 
-      if (!res.ok) throw new Error("❌ การจองล้มเหลว");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.detail || errData.error || "❌ การจองล้มเหลว");
+      }
 
       const data = await res.json();
       console.log("📤 ส่งข้อมูล:", data);
 
-      // ✅ แจ้งผลลัพธ์สำเร็จ
       await Swal.fire({
         icon: "success",
         title: "✅ ยืนยันการจองสำเร็จ",
@@ -43,9 +42,15 @@ export function useUploadSlip(_roomId: string, roomNumber: string) {
       });
 
       return true;
-    } catch (err) {
+    } catch (err: any) {
       console.error("❌ Error:", err);
-      Swal.fire("❌ ข้อผิดพลาด", "เกิดข้อผิดพลาดในการจอง", "error");
+
+      Swal.fire(
+        "❌ ข้อผิดพลาด",
+        err.message || "เกิดข้อผิดพลาดในการจอง",
+        "error"
+      );
+
       return false;
     } finally {
       setLoading(false);
