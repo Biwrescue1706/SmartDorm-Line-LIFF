@@ -1,4 +1,3 @@
-// src/components/UploadSlip/UploadSlipPreview.tsx
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -13,9 +12,15 @@ export default function UploadSlipPreview({ slip }: Props) {
       setPreviewUrl(null);
       return;
     }
+
+    // ✅ สร้าง object URL สำหรับ preview
     const url = URL.createObjectURL(slip);
     setPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
+
+    // cleanup memory เมื่อ component unmount หรือ slip เปลี่ยน
+    return () => {
+      URL.revokeObjectURL(url);
+    };
   }, [slip]);
 
   if (!slip) {

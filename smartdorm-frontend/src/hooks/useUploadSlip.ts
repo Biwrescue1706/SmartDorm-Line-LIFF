@@ -2,30 +2,55 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 import { API_BASE } from "../config";
 
-export function useUploadSlip(_roomId: string, roomNumber: string) {
+/**
+ * Hook สำหรับอัปโหลดสลิปการจองห้อง
+ * @param roomId ID ของห้อง
+ * @param roomNumber หมายเลขห้อง (ไว้แสดงในข้อความแจ้งเตือน)
+ */
+export function useUploadSlip(roomId: string, roomNumber: string) {
   const [loading, setLoading] = useState(false);
 
-  const uploadSlip = async (formData: FormData) => {
+  // ฟังก์ชันส่งข้อมูลจองห้อง
+  const submitSlip = async (formData: FormData) => {
     try {
       setLoading(true);
 
+      // 🔄 แสดงสถานะกำลังโหลด
+      Swal.fire({
+        title: "⏳ กำลังส่งข้อมูล...",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      // 📤 ส่งไป backend
       const res = await fetch(`${API_BASE}/booking/create`, {
         method: "POST",
-        credentials: "include",
         body: formData,
+        credentials: "include",
       });
 
       if (!res.ok) throw new Error("❌ การจองล้มเหลว");
 
-      await Swal.fire("✅ สำเร็จ", `ห้อง ${roomNumber} ถูกจองแล้ว`, "success");
+      const data = await res.json();
+      console.log("📤 ส่งข้อมูล:", data);
+
+      // ✅ แจ้งผลลัพธ์สำเร็จ
+      await Swal.fire({
+        icon: "success",
+        title: "✅ ยืนยันการจองสำเร็จ",
+        text: `ห้อง ${roomNumber} ถูกจองเรียบร้อยแล้ว`,
+        confirmButtonText: "ตกลง",
+      });
+
       return true;
     } catch (err) {
-      Swal.fire("❌ เกิดข้อผิดพลาด", "ไม่สามารถบันทึกข้อมูลได้", "error");
+      console.error("❌ Error:", err);
+      Swal.fire("❌ ข้อผิดพลาด", "เกิดข้อผิดพลาดในการจอง", "error");
       return false;
     } finally {
       setLoading(false);
     }
   };
 
-  return { uploadSlip, loading };
+  return { loading, submitSlip };
 }
