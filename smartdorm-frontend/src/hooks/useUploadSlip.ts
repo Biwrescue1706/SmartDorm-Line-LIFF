@@ -4,10 +4,10 @@ import { API_BASE } from "../config";
 
 /**
  * Hook สำหรับอัปโหลดสลิปการจองห้อง
- * @param roomId ID ของห้อง
+ * @param _roomId ID ของห้อง
  * @param roomNumber หมายเลขห้อง (ไว้แสดงในข้อความแจ้งเตือน)
  */
-export function useUploadSlip(roomId: string, roomNumber: string) {
+export function useUploadSlip(_roomId: string, roomNumber: string) {
   const [loading, setLoading] = useState(false);
 
   // ฟังก์ชันส่งข้อมูลจองห้อง
