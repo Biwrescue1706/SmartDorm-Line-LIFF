@@ -19,7 +19,7 @@ export default function RoomDetailTable({ room }: Props) {
           <th>ขนาด</th>
           <td colSpan={2}>{room.size}</td>
         </tr>
-                <tr>
+        <tr>
           <th>ค่าส่วนกลาง</th>
           <td>20</td>
           <td>บาท</td>
@@ -56,9 +56,9 @@ export default function RoomDetailTable({ room }: Props) {
         </tr>
         <tr>
           <td colSpan={3} className="fst-italic text-muted small text-start">
-            ( ค่าเช่ารายเดือนจะตัดรอบบิลทุกวันที่ 25 ของทุกเดือน <br />
-            ราคานี้ในหน้านี้ยังไม่รวม ค่าส่วนกลาง และค่าไฟฟ้า–น้ำประปา <br />
-            หากชำระเงินเกินวันที่ 5 ของทุกเดือน จะมีค่าปรับ 50 บาท/วัน )
+            ( ค่าเช่ารายเดือนตัดรอบบิลทุกวันที่ 25 ของเดือน <br />
+            ราคานี้ยังไม่รวม ค่าส่วนกลาง และค่าน้ำ-ไฟ <br />
+            หากชำระเกินวันที่ 5 ของเดือน จะมีค่าปรับ 50 บาท/วัน )
           </td>
         </tr>
       </tbody>

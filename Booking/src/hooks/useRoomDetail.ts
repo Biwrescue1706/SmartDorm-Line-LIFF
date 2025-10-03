@@ -13,7 +13,7 @@ export function useRoomDetail() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (state) return; // ถ้ามี state แล้วไม่ต้อง fetch
+    if (state) return; // ถ้ามี state จาก nav แล้ว ไม่ต้อง fetch
 
     if (roomId) {
       setLoading(true);

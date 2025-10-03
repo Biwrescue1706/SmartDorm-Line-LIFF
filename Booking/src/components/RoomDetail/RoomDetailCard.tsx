@@ -9,33 +9,66 @@ interface Props {
 
 export default function RoomDetailCard({ room }: Props) {
   const nav = useNavigate();
-  const total = room.rent + room.deposit + room.bookingFee;
 
   const handleConfirm = () => {
     nav("/payment", { state: room });
   };
 
   return (
-    <div className="card bg-light shadow-sm p-3">
-      <h4 className="mb-3 text-center fw-bold">รายละเอียดห้องพัก</h4>
+    <div
+      className="card shadow-sm"
+      style={{
+        background: "linear-gradient(135deg, #f8f9fa, #e9ecef)", // พื้นหลังเทาไล่สี
+      }}
+    >
+      <div className="card-body">
+        <h3 className="text-center mb-4 fw-bold">รายละเอียดห้องพัก</h3>
 
-      {/* ตารางรายละเอียดห้อง */}
-      <RoomDetailTable room={room} />
+        {/* ตารางรายละเอียด */}
+        <RoomDetailTable room={room} />
 
-      {/* ปุ่ม */}
-      <div className="d-flex justify-content-between mt-4">
-        <button
-          className="btn btn-outline-danger px-4 fw-semibold"
-          onClick={() => nav(-1)}
-        >
-          ❌ ยกเลิก
-        </button>
-        <button
-          className="btn btn-outline-success px-4 fw-semibold"
-          onClick={handleConfirm}
-        >
-          ✅ ยืนยัน
-        </button>
+        {/* ปุ่ม */}
+        <div className="d-flex justify-content-between mt-4 gap-3">
+          <button
+            className="btn fw-semibold flex-fill"
+            style={{
+              background: "linear-gradient(90deg, #ff6b6b, #d6336c)",
+              color: "white",
+              transition: "0.3s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.background =
+                "linear-gradient(90deg, #d6336c, #a61e4d)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background =
+                "linear-gradient(90deg, #ff6b6b, #d6336c)")
+            }
+            onClick={() => nav(-1)}
+          >
+            ❌ ยกเลิก
+          </button>
+
+          <button
+            className="btn fw-semibold flex-fill"
+            style={{
+              background: "linear-gradient(90deg, #20c997, #0d6efd)",
+              color: "white",
+              transition: "0.5s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.background =
+                "linear-gradient(90deg, #198754, #0a58ca)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background =
+                "linear-gradient(90deg, #20c997, #0d6efd)")
+            }
+            onClick={handleConfirm}
+          >
+            ✅ ยืนยัน
+          </button>
+        </div>
       </div>
     </div>
   );
