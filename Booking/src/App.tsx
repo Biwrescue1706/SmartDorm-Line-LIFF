@@ -1,7 +1,7 @@
 // src/App.tsx
 import { Routes, Route, Navigate } from "react-router-dom";
-// import { initLIFF } from "./lib/liff";
-// import { useEffect } from "react";
+import { initLIFF } from "./lib/liff";
+import { useEffect } from "react";
 
 // 📌 Pages
 import Bookings from "./pages/Bookings";
@@ -10,9 +10,9 @@ import UploadSlip from "./pages/UploadSlip";
 import PaymentChoice from "./pages/PaymentChoice";
 
 export default function App() {
-  // useEffect(() => {
-  //   initLIFF(); // ✅ จะเก็บ userId ทันทีที่ login สำเร็จ
-  // }, []);
+  useEffect(() => {
+    initLIFF(); // ✅ จะเก็บ userId ทันทีที่ login สำเร็จ
+  }, []);
 
   return (
     <div>
