@@ -1,20 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { API_BASE } from "../config";
-import "../css/Payment.css";
 
-// ✅ components
+// Components
 import AccountCard from "../components/Payment/AccountCard";
 import PaymentSummary from "../components/Payment/PaymentSummary";
 import QRSection from "../components/Payment/QRSection";
 
-interface Room {
-  roomId: string;
-  number: string;
-  size: string;
-  rent: number;
-  deposit: number;
-  bookingFee: number;
-}
+import type { Room } from "../types/Room";
 
 export default function Payment() {
   const { state } = useLocation();
@@ -24,35 +16,35 @@ export default function Payment() {
   // 🔹 รวมค่าใช้จ่าย
   const total = room.rent + room.deposit + room.bookingFee;
 
-  // 🔹 ข้อมูลบัญชี (config ได้)
-  const account = "5052997156";
-  const bank = "ธนาคารไทยพาณิชย์";
-  const owner = "นายภูวณัฐ พาหะละ";
-
   // 🔹 backend proxy สำหรับ QR
   const qrUrl = `${API_BASE}/qr/${total}`;
 
   return (
-    <div className="payment-container py-4 text-center">
-      <div className="payment-card text-center">
-        <h4 className="mb-3">หน้าชำระเงิน</h4>
+    <div className="container my-4">
+      <div className="card shadow-sm"
+           style={{ background: "linear-gradient(135deg, #f8f9fa, #e9ecef)" }}>
+        <div className="card-body text-center">
+          <h3 className="fw-bold mb-4">💳 หน้าชำระเงิน</h3>
 
-        {/* ✅ ข้อมูลบัญชี + ปุ่ม copy */}
-        <AccountCard account={account} bank={bank} owner={owner} />
+          {/* ✅ ข้อมูลบัญชี */}
+          <AccountCard />
 
-        {/* ✅ ยอดรวม */}
-        <PaymentSummary total={total} />
+          {/* ✅ ยอดรวม */}
+          <PaymentSummary total={total} />
 
-        {/* ✅ QR PromptPay */}
-        <QRSection qrUrl={qrUrl} total={total} />
+          {/* ✅ QR พร้อมเพย์ */}
+          <QRSection qrUrl={qrUrl} total={total} />
 
-        {/* 🔹 ปุ่มดำเนินการต่อ */}
-        <div>
+          {/* ✅ ปุ่มไปอัปโหลดสลิป */}
           <button
-            className="btn btn-outline-success"
+            className="btn w-100 fw-semibold mt-3"
+            style={{
+              background: "linear-gradient(90deg, #ff9a9e, #fad0c4)",
+              color: "black",
+            }}
             onClick={() => nav("/upload-slip", { state: room })}
           >
-            ดำเนินการต่อ
+            ➡️ ดำเนินการต่อ
           </button>
         </div>
       </div>
