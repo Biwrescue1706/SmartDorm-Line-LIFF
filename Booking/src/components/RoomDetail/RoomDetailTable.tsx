@@ -1,3 +1,4 @@
+// src/components/RoomDetail/RoomDetailTable.tsx
 import type { Room } from "../../types/Room";
 
 interface Props {
@@ -8,32 +9,56 @@ export default function RoomDetailTable({ room }: Props) {
   const total = room.rent + room.deposit + room.bookingFee;
 
   return (
-    <table className="w-full text-left border-collapse">
+    <table className="table table-bordered table-striped align-middle text-center shadow-sm">
       <tbody>
-        <tr className="border-b">
-          <td className="py-2 px-3 font-medium">ห้อง</td>
-          <td className="py-2 px-3">{room.number}</td>
-        </tr>
-        <tr className="border-b">
-          <td className="py-2 px-3 font-medium">ขนาด</td>
-          <td className="py-2 px-3">{room.size}</td>
-        </tr>
-        <tr className="border-b">
-          <td className="py-2 px-3 font-medium">ราคา</td>
-          <td className="py-2 px-3">{room.rent.toLocaleString()}</td>
-        </tr>
-        <tr className="border-b">
-          <td className="py-2 px-3 font-medium">ประกันห้อง</td>
-          <td className="py-2 px-3">{room.deposit.toLocaleString()}</td>
-        </tr>
-        <tr className="border-b">
-          <td className="py-2 px-3 font-medium">ค่าจองห้อง</td>
-          <td className="py-2 px-3">{room.bookingFee.toLocaleString()}</td>
+        <tr>
+          <th style={{ width: "40%" }}>ห้อง</th>
+          <td colSpan={2}>{room.number}</td>
         </tr>
         <tr>
-          <td className="py-2 px-3 font-bold">รวม</td>
-          <td className="py-2 px-3 font-bold text-emerald-600">
-            {total.toLocaleString()}
+          <th>ขนาด</th>
+          <td colSpan={2}>{room.size}</td>
+        </tr>
+                <tr>
+          <th>ค่าส่วนกลาง</th>
+          <td>20</td>
+          <td>บาท</td>
+        </tr>
+        <tr>
+          <th>ค่าไฟฟ้า</th>
+          <td>7</td>
+          <td>บาท / หน่วย</td>
+        </tr>
+        <tr>
+          <th>ค่าประปา</th>
+          <td>19</td>
+          <td>บาท / หน่วย</td>
+        </tr>
+        <tr>
+          <th>ราคา</th>
+          <td>{room.rent.toLocaleString()}</td>
+          <td>บาท</td>
+        </tr>
+        <tr>
+          <th>ประกันห้อง</th>
+          <td>{room.deposit.toLocaleString()}</td>
+          <td>บาท</td>
+        </tr>
+        <tr>
+          <th>ค่าจองห้อง</th>
+          <td>{room.bookingFee.toLocaleString()}</td>
+          <td>บาท</td>
+        </tr>
+        <tr className="table-success fw-bold">
+          <th>รวม</th>
+          <td className="text-success">{total.toLocaleString()}</td>
+          <td>บาท</td>
+        </tr>
+        <tr>
+          <td colSpan={3} className="fst-italic text-muted small text-start">
+            ( ค่าเช่ารายเดือนจะตัดรอบบิลทุกวันที่ 25 ของทุกเดือน <br />
+            ราคานี้ในหน้านี้ยังไม่รวม ค่าส่วนกลาง และค่าไฟฟ้า–น้ำประปา <br />
+            หากชำระเงินเกินวันที่ 5 ของทุกเดือน จะมีค่าปรับ 50 บาท/วัน )
           </td>
         </tr>
       </tbody>
