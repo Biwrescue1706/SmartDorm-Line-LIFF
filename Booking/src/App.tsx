@@ -19,7 +19,6 @@ export default function App() {
       {/* ✅ Routing */}
       <Routes>
         <Route path="/" element={<Bookings />} />
-        
         <Route path="/bookings/:id" element={<RoomDetail />} />
         <Route path="/payment" element={<PaymentChoice />} />
         <Route path="/upload-slip" element={<UploadSlip />} />
