@@ -9,11 +9,11 @@ interface Props {
 
 export default function RoomGrid({ rooms, onSelect }: Props) {
   if (!rooms.length) {
-    return <div className="text-center text-muted">❌ ไม่มีห้องว่าง</div>;
+    return <div className="text-center text-muted">❌ ไม่มีห้องให้แสดง</div>;
   }
 
   return (
-    <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+    <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
       {rooms.map((room) => (
         <RoomCard key={room.roomId} room={room} onSelect={onSelect} />
       ))}

@@ -20,9 +20,9 @@ export default function Bookings() {
 
       const data: Room[] = await res.json();
 
-      // ✅ โชว์ทั้งห้องว่าง (0) และ จองแล้ว (1)
+      // ✅ เอาห้อง status = 0 (ว่าง) และ status = 1 (ห้องเต็ม)
       const allRooms = data
-        .filter((r) => r.status === 0 || r.status === 1) // ✅ เก็บทั้งว่างและจองแล้ว
+        .filter((r) => r.status === 0 || r.status === 1)
         .sort(
           (a, b) =>
             (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0)
@@ -38,7 +38,7 @@ export default function Bookings() {
 
   useEffect(() => {
     load();
-    const interval = setInterval(load, 12 * 60 * 1000); // ทุก 12 นาที
+    const interval = setInterval(load, 12 * 60 * 1000); // โหลดใหม่ทุก 12 นาที
     return () => clearInterval(interval);
   }, []);
 
@@ -50,7 +50,7 @@ export default function Bookings() {
     <div className="container my-4">
       <div className="card shadow-sm">
         <div className="card-body">
-          <h3 className="text-center mb-3">เลือกห้อง</h3>
+          <h2 className="text-center mb-3"><strong>เลือกห้อง</strong></h2>
 
           {loading ? (
             <div className="text-center text-muted">⏳ กำลังโหลด...</div>
