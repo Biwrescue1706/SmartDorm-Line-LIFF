@@ -68,7 +68,7 @@ export default function QRSection({ qrUrl, total }: Props) {
               background: "linear-gradient(90deg, #42e695, #3bb2b8)",
               color: "white",
             }}
-            onClick={() => handleDownload(qrUrl, `PromptPay-${total}.png`)}
+            onClick={() => handleDownload(qrUrl, `RQ Code-${total}.png`)}
           >
             📥 บันทึก QR PromptPay
           </button>
