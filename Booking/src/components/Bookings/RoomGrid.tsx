@@ -13,7 +13,7 @@ export default function RoomGrid({ rooms, onSelect }: Props) {
   }
 
   return (
-    <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+    <div className="row row-cols-2 row-cols-sm-2 row-cols-md-4 row-cols-lg-6 g-3">
       {rooms.map((room) => (
         <RoomCard key={room.roomId} room={room} onSelect={onSelect} />
       ))}

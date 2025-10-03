@@ -1,65 +1,61 @@
 // src/pages/Bookings.tsx
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE } from "../config";
 import RoomGrid from "../components/Bookings/RoomGrid";
+import { useRooms } from "../hooks/useRooms";
 import type { Room } from "../types/Room";
+import { useState } from "react";
 
 export default function Bookings() {
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { rooms, loading } = useRooms(true);
   const nav = useNavigate();
 
-  const load = async () => {
-    try {
-      const res = await fetch(`${API_BASE}/room/getall`, {
-        method: "GET",
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error("โหลดข้อมูลล้มเหลว");
-
-      const data: Room[] = await res.json();
-
-      // ✅ เอาห้อง status = 0 (ว่าง) และ status = 1 (ห้องเต็ม)
-      const allRooms = data
-        .filter((r) => r.status === 0 || r.status === 1)
-        .sort(
-          (a, b) =>
-            (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0)
-        );
-
-      setRooms(allRooms);
-    } catch (error) {
-      console.error("Error loading rooms:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    load();
-    const interval = setInterval(load, 12 * 60 * 1000); // โหลดใหม่ทุก 12 นาที
-    return () => clearInterval(interval);
-  }, []);
+  const [floor, setFloor] = useState(1); // ชั้นที่เลือก เริ่มต้นชั้น 1
 
   const handleSelect = (room: Room) => {
     nav(`/bookings/${room.roomId}`, { state: room });
+  };
+
+  // ✅ ฟังก์ชันกรองห้องตามชั้น
+  const getRoomsByFloor = (floor: number) => {
+    const start = floor * 100 + 1;  // เช่น ชั้น 1 → 101
+    const end = floor * 100 + 16;   // เช่น ชั้น 1 → 116
+    return rooms.filter((r) => {
+      const num = parseInt(r.number, 10);
+      return num >= start && num <= end;
+    });
   };
 
   return (
     <div className="container my-4">
       <div className="card shadow-sm">
         <div className="card-body">
-          <h2 className="text-center mb-3"><strong>เลือกห้อง</strong></h2>
+          <h2 className="text-center mb-3">
+            <strong>เลือกห้อง</strong>
+          </h2>
+
+          {/* ✅ ปุ่มเลือกชั้น */}
+          <div className="d-flex justify-content-center mb-3 flex-wrap">
+            <div className="btn-group">
+              {[1, 2, 3, 4, 5, 6].map((f) => (
+                <button
+                  key={f}
+                  className={`btn btn-outline-primary ${floor === f ? "active" : ""}`}
+                  onClick={() => setFloor(f)}
+                >
+                  ชั้น {f}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {loading ? (
             <div className="text-center text-muted">⏳ กำลังโหลด...</div>
-          ) : rooms.length === 0 ? (
+          ) : getRoomsByFloor(floor).length === 0 ? (
             <div className="text-center text-muted">
-              ❌ ไม่มีห้องให้แสดงในขณะนี้
+              ❌ ไม่มีห้องในชั้น {floor} ให้แสดง
             </div>
           ) : (
-            <RoomGrid rooms={rooms} onSelect={handleSelect} />
+            <RoomGrid rooms={getRoomsByFloor(floor)} onSelect={handleSelect} />
           )}
         </div>
       </div>
