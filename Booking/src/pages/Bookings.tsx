@@ -2,17 +2,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE } from "../config";
-import "../css/Bookings.css";
-
-interface Room {
-  roomId: string;
-  number: string;
-  size: string;
-  rent: number;
-  deposit: number;
-  bookingFee: number;
-  status: number; // 0=ว่าง, 1=จองแล้ว, 2=ไม่ว่าง
-}
+import RoomGrid from "../components/Bookings/RoomGrid";
+import type { Room } from "../types/Room";
 
 export default function Bookings() {
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -26,16 +17,18 @@ export default function Bookings() {
         credentials: "include",
       });
       if (!res.ok) throw new Error("โหลดข้อมูลล้มเหลว");
+
       const data: Room[] = await res.json();
 
-      const available = data
-        .filter((r) => r.status === 0)
+      // ✅ โชว์ทั้งห้องว่าง (0) และ จองแล้ว (1)
+      const allRooms = data
+        .filter((r) => r.status === 0 || r.status === 1) // ✅ เก็บทั้งว่างและจองแล้ว
         .sort(
           (a, b) =>
             (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0)
         );
 
-      setRooms(available);
+      setRooms(allRooms);
     } catch (error) {
       console.error("Error loading rooms:", error);
     } finally {
@@ -54,26 +47,21 @@ export default function Bookings() {
   };
 
   return (
-    <div className="bookings-container">
-      <div className="bookings-card">
-        <h3 className="text-center mb-3">เลือกห้อง</h3>
-        {loading ? (
-          <div>⏳ กำลังโหลด...</div>
-        ) : rooms.length === 0 ? (
-          <div className="text-center text-muted">❌ ไม่มีห้องว่างในขณะนี้</div>
-        ) : (
-          <div className="bookings-grid">
-            {rooms.map((room) => (
-              <button
-                key={room.roomId}
-                className="bookings-button"
-                onClick={() => handleSelect(room)}
-              >
-                {room.number}
-              </button>
-            ))}
-          </div>
-        )}
+    <div className="container my-4">
+      <div className="card shadow-sm">
+        <div className="card-body">
+          <h3 className="text-center mb-3">เลือกห้อง</h3>
+
+          {loading ? (
+            <div className="text-center text-muted">⏳ กำลังโหลด...</div>
+          ) : rooms.length === 0 ? (
+            <div className="text-center text-muted">
+              ❌ ไม่มีห้องให้แสดงในขณะนี้
+            </div>
+          ) : (
+            <RoomGrid rooms={rooms} onSelect={handleSelect} />
+          )}
+        </div>
       </div>
     </div>
   );
