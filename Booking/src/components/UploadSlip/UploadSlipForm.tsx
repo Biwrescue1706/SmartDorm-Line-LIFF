@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Swal from "sweetalert2";
 import { useUploadSlip } from "../../hooks/useUploadSlip";
 import type { Room } from "../../types/Room";
 import UploadSlipPreview from "./UploadSlipPreview";
