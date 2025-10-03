@@ -1,3 +1,5 @@
+import Swal from "sweetalert2";
+
 export default function AccountCard() {
   const account = "5052997156";
   const bank = "ธนาคารไทยพาณิชย์";
@@ -5,7 +7,12 @@ export default function AccountCard() {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(account);
-    alert("📋 คัดลอกเลขบัญชีเรียบร้อยแล้ว!");
+    Swal.fire({
+      icon: "success",
+      title: "📋 คัดลอกสำเร็จ!",
+      timer: 2000,
+      showConfirmButton: false,
+    });
   };
 
   return (
