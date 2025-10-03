@@ -1,4 +1,3 @@
-import liff from "@line/liff";
 
 interface Props {
   qrUrl: string;
@@ -13,22 +12,7 @@ export default function QRSection({ qrUrl, total }: Props) {
       const blob = await res.blob();
       const blobUrl = window.URL.createObjectURL(blob);
 
-      // ✅ ถ้าเปิดใน LIFF → แชร์แทนดาวน์โหลด
-      if (liff.isInClient()) {
-        const base64 = await blob
-          .arrayBuffer()
-          .then((buf) => btoa(String.fromCharCode(...new Uint8Array(buf))));
-        await liff.shareTargetPicker([
-          {
-            type: "image",
-            originalContentUrl: `data:image/png;base64,${base64}`,
-            previewImageUrl: `data:image/png;base64,${base64}`,
-          },
-        ]);
-        return;
-      }
-
-      // ✅ ถ้าไม่ใช่ LIFF → ดาวน์โหลดปกติ
+      // ✅ ดาวน์โหลดไฟล์เสมอ ไม่ต้องแชร์
       const link = document.createElement("a");
       link.href = blobUrl;
       link.download = filename;
@@ -40,8 +24,10 @@ export default function QRSection({ qrUrl, total }: Props) {
   };
 
   return (
-    <div className="p-3 mb-3 rounded shadow-sm text-center"
-         style={{ background: "linear-gradient(135deg, #f8f9fa, #e9ecef)" }}>
+    <div
+      className="p-3 mb-3 rounded shadow-sm text-center"
+      style={{ background: "linear-gradient(135deg, #f8f9fa, #e9ecef)" }}
+    >
       <h6 className="fw-semibold mb-2">📲 สแกนเพื่อชำระผ่าน PromptPay</h6>
       <img
         src={qrUrl}
@@ -54,7 +40,7 @@ export default function QRSection({ qrUrl, total }: Props) {
         className="btn w-100 fw-semibold"
         style={{
           background: "linear-gradient(90deg, #42e695, #3bb2b8)",
-          color: "black",
+          color: "white",
         }}
         onClick={() => handleDownload(qrUrl, `PromptPay-${total}.png`)}
       >

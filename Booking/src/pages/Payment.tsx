@@ -21,8 +21,10 @@ export default function Payment() {
 
   return (
     <div className="container my-4">
-      <div className="card shadow-sm"
-           style={{ background: "linear-gradient(135deg, #f8f9fa, #e9ecef)" }}>
+      <div
+        className="card shadow-sm"
+        style={{ background: "linear-gradient(135deg, #f8f9fa, #e9ecef)" }}
+      >
         <div className="card-body text-center">
           <h3 className="fw-bold mb-4">💳 หน้าชำระเงิน</h3>
 
@@ -41,7 +43,19 @@ export default function Payment() {
             style={{
               background: "linear-gradient(90deg, #ff9a9e, #fad0c4)",
               color: "black",
+              border: "none",
+              transition: "0.3s", // ✅ ให้ hover ลื่นขึ้น
             }}
+            onMouseEnter={
+              (e) =>
+                (e.currentTarget.style.background =
+                  "linear-gradient(90deg, #ff6f91, #ffb6c1)") // hover สีเข้มขึ้น
+            }
+            onMouseLeave={
+              (e) =>
+                (e.currentTarget.style.background =
+                  "linear-gradient(90deg, #ff9a9e, #fad0c4)") // กลับสีเดิม
+            }
             onClick={() => nav("/upload-slip", { state: room })}
           >
             ➡️ ดำเนินการต่อ

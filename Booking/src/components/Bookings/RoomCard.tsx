@@ -18,7 +18,7 @@ export default function RoomCard({ room, onSelect }: Props) {
     }
   };
 
-  // ✅ ถ้าเต็ม -> ให้ใช้สีเทาอ่อน, ถ้าว่าง -> พื้นหลังขาวปกติ
+  // ✅ ถ้าเต็ม -> ใช้สีเทาอ่อน, ถ้าว่าง -> พื้นหลังขาว
   const cardClass =
     room.status === 1
       ? "card bg-secondary-subtle shadow-sm text-center h-100"
@@ -28,18 +28,21 @@ export default function RoomCard({ room, onSelect }: Props) {
     <div className="col mb-3">
       <div className={cardClass}>
         <div className="card-body">
-          <h2 className="card-title ">
+          <h2 className="card-title">
             <strong>ห้อง</strong> {room.number}
           </h2>
-          <p className="card-text mb-2">
+
+          {/* 🔥 เปลี่ยนจาก <p> → <div> ป้องกัน hydration error */}
+          <div className="card-text mb-2">
             <h6>
-              <strong>ขนาด : </strong> {room.size}{" "}
+              <strong>ขนาด : </strong> {room.size}
             </h6>
             <h6>
-              <strong>ค่าเช่า : </strong> {room.rent.toLocaleString("th-TH")}{" "}
-              บาท{" "}
+              <strong>ค่าเช่า : </strong>{" "}
+              {room.rent.toLocaleString("th-TH")} บาท
             </h6>
-          </p>
+          </div>
+
           <div className="mb-3">
             <h5>
               <strong>{renderStatus(room.status)}</strong>
@@ -55,15 +58,13 @@ export default function RoomCard({ room, onSelect }: Props) {
                 border: "none",
                 transition: "0.3s",
               }}
-              onMouseEnter={
-                (e) =>
-                  (e.currentTarget.style.background =
-                    "linear-gradient(90deg, #FFC107, #28A745)") // hover สีเข้มขึ้น
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.background =
+                  "linear-gradient(90deg, #FFC107, #00FF66)") // hover
               }
-              onMouseLeave={
-                (e) =>
-                  (e.currentTarget.style.background =
-                    "linear-gradient(90deg, #FFD43B, #00FF66)") // กลับสีเดิม
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background =
+                  "linear-gradient(90deg, #FFD43B, #00FF66)") // กลับสีเดิม
               }
               onClick={() => onSelect(room)}
             >

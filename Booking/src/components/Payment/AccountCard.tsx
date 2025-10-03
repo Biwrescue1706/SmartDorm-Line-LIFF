@@ -11,7 +11,10 @@ export default function AccountCard() {
   return (
     <div
       className="p-3 mb-3 rounded shadow-sm text-center"
-      style={{ background: "linear-gradient(135deg, #f8f9fa, #e9ecef)", color: "black" }}
+      style={{
+        background: "linear-gradient(135deg, #5d00ff, rgba(155, 197, 238, 1))",
+        color: "white",
+      }}
     >
       <h5 className="fw-bold">{bank}</h5>
       <p className="mb-1 fw-semibold">เลขที่บัญชี: {account}</p>
