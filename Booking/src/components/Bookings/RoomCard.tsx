@@ -28,19 +28,43 @@ export default function RoomCard({ room, onSelect }: Props) {
     <div className="col mb-3">
       <div className={cardClass}>
         <div className="card-body">
-          <h2 className="card-title "><strong>ห้อง</strong> {room.number}</h2>
+          <h2 className="card-title ">
+            <strong>ห้อง</strong> {room.number}
+          </h2>
           <p className="card-text mb-2">
-            <h6><strong>ขนาด : </strong> {room.size} </h6>
-            <h6><strong>ค่าเช่า : </strong> {room.rent.toLocaleString("th-TH")} บาท </h6>
+            <h6>
+              <strong>ขนาด : </strong> {room.size}{" "}
+            </h6>
+            <h6>
+              <strong>ค่าเช่า : </strong> {room.rent.toLocaleString("th-TH")}{" "}
+              บาท{" "}
+            </h6>
           </p>
-          <div className="mb-3"><h5><strong>{renderStatus(room.status)}</strong></h5></div>
+          <div className="mb-3">
+            <h5>
+              <strong>{renderStatus(room.status)}</strong>
+            </h5>
+          </div>
 
           {room.status === 0 && (
             <button
-              className="btn btn-success w-90 fw-semibold"
-              style={{ color: "black" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "black")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "black")}
+              className="btn fw-semibold w-90"
+              style={{
+                background: "linear-gradient(90deg, #FFD43B, #00FF66)", // ไล่สีเหลือง→เขียว
+                color: "black",
+                border: "none",
+                transition: "0.3s",
+              }}
+              onMouseEnter={
+                (e) =>
+                  (e.currentTarget.style.background =
+                    "linear-gradient(90deg, #FFC107, #28A745)") // hover สีเข้มขึ้น
+              }
+              onMouseLeave={
+                (e) =>
+                  (e.currentTarget.style.background =
+                    "linear-gradient(90deg, #FFD43B, #00FF66)") // กลับสีเดิม
+              }
               onClick={() => onSelect(room)}
             >
               เลือกห้องนี้

@@ -44,7 +44,7 @@ export default function RoomDetailCard({ room }: Props) {
               (e.currentTarget.style.background =
                 "linear-gradient(90deg, #ff6b6b, #d6336c)")
             }
-            onClick={() => nav(-1)}
+            onClick={() => nav("/")}
           >
             ❌ ยกเลิก
           </button>
