@@ -4,7 +4,7 @@ import liff from "@line/liff";
 //🔹 เริ่มต้น LIFF
 export async function initLIFF() {
   try {
-    await liff.init({ liffId: "2008099518-23vqwKZY" });
+    await liff.init({ liffId: "2008099518-VNxlErdq" });
 
     if (!liff.isLoggedIn()) {
       // 👉 redirect ไปหน้า login ของ LINE
