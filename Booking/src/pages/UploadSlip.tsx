@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import UploadSlipForm from "../components/UploadSlip/UploadSlipForm";
 import type { Room } from "../types/Room";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import Swal from "sweetalert2";
 
 export default function UploadSlip() {
@@ -10,14 +10,14 @@ export default function UploadSlip() {
   const room = state as Room;
 
   // ✅ ตรวจสอบ login ก่อนเข้า UploadSlip
-  useEffect(() => {
-    const userId = localStorage.getItem("liff_userId");
-    if (!userId) {
-      Swal.fire("⚠️ กรุณาเข้าสู่ระบบผ่าน LINE", "", "warning").then(() => {
-        nav("/"); // redirect กลับหน้าแรก
-      });
-    }
-  }, [nav]);
+  // useEffect(() => {
+  //   const userId = localStorage.getItem("liff_userId");
+  //   if (!userId) {
+  //     Swal.fire("⚠️ กรุณาเข้าสู่ระบบผ่าน LINE", "", "warning").then(() => {
+  //       nav("/"); // redirect กลับหน้าแรก
+  //     });
+  //   }
+  // }, [nav]);
 
   // ✅ ป้องกันไม่ให้ render form ถ้าไม่มีข้อมูลห้อง
   if (!room) {

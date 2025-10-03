@@ -31,7 +31,19 @@ export default function AccountCard() {
         style={{
           background: "linear-gradient(90deg, #ffcc70, #ff8177)",
           color: "black",
+          border: "none",
+          transition: "0.3s",
         }}
+        onMouseEnter={
+          (e) =>
+            (e.currentTarget.style.background =
+              "linear-gradient(90deg, #ffcc70, #ff8177)") // hover สีเข้มขึ้น
+        }
+        onMouseLeave={
+          (e) =>
+            (e.currentTarget.style.background =
+              "linear-gradient(90deg, #ffa751, #ff5f6d)")
+        }
         onClick={handleCopy}
       >
         📋 คัดลอกเลขบัญชี

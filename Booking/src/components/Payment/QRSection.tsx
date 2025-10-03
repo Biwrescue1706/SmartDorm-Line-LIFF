@@ -66,9 +66,21 @@ export default function QRSection({ qrUrl, total }: Props) {
             className="btn w-100 fw-semibold"
             style={{
               background: "linear-gradient(90deg, #42e695, #3bb2b8)",
-              color: "white",
+              color: "black",
+              border: "none",
+              transition: "0.3s",
             }}
-            onClick={() => handleDownload(qrUrl, `RQ Code-${total}.png`)}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background =
+                "linear-gradient(90deg, #a8edea, #fed6e3)"; // สีอ่อนลง
+              e.currentTarget.style.color = "black"; // ตัวหนังสือดำ
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background =
+                "linear-gradient(90deg, #42e695, #3bb2b8)"; // กลับสีเดิม
+              e.currentTarget.style.color = "black"; // กลับเป็นตัวหนังสือขาว
+            }}
+            onClick={() => handleDownload(qrUrl, `QR Code-${total}.png`)}
           >
             📥 บันทึก QR PromptPay
           </button>
