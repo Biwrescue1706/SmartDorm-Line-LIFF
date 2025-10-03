@@ -81,8 +81,8 @@ export default function UploadSlipForm({ room, onSuccess }: Props) {
       style={{ minHeight: "100vh", background: "#f0f0f0" }}
     >
       <div
-        className="card shadow-lg"
-        style={{ maxWidth: "350px", width: "100%" }}
+        className="card shadow-lg border-0"
+        style={{ maxWidth: "400px", width: "100%", borderRadius: "16px" }}
       >
         <div className="card-body">
           <form onSubmit={handleSubmit}>
@@ -228,7 +228,6 @@ export default function UploadSlipForm({ room, onSuccess }: Props) {
                   "✅ ยืนยัน"
                 )}
               </button>
-              
             </div>
             <br />
             {/* ---------------- preview ---------------- */}
