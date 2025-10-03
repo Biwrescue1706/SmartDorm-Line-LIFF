@@ -38,16 +38,18 @@ export default function UploadSlip() {
 
   return (
     <div className="uploadslip-container py-4 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold text-center mb-6">
-        อัปโหลดสลิปชำระเงิน
-      </h1>
 
       <UploadSlipForm
         room={room}
         onSuccess={() => {
-          Swal.fire("✅ สำเร็จ", "ทำการจองเรียบร้อยแล้ว", "success").then(
-            () => nav("/")
-          );
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "success",
+            title: "✅ ทำการส่งคำขอจองเรียบร้อยแล้วครับ",
+            showConfirmButton: false,
+            timer: 2500,
+          }).then(() => nav("/"));
         }}
       />
     </div>

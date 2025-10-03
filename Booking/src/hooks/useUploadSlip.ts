@@ -1,4 +1,3 @@
-// src/hooks/useUploadSlip.ts
 import { useState, useEffect, useRef } from "react";
 import Swal from "sweetalert2";
 import { API_BASE } from "../config";
@@ -25,7 +24,7 @@ export function useUploadSlip(_roomId: string, roomNumber: string) {
     try {
       setLoading(true);
 
-      // 🔄 แสดงสถานะกำลังโหลด (เช็คว่า mount อยู่ก่อน)
+      // 🔄 แสดงสถานะกำลังโหลด
       if (isMounted.current) {
         Swal.fire({
           title: "⏳ กำลังส่งข้อมูล...",
@@ -49,13 +48,15 @@ export function useUploadSlip(_roomId: string, roomNumber: string) {
       const data = await res.json();
       console.log("📤 ส่งข้อมูล:", data);
 
-      // ✅ แจ้งผลลัพธ์สำเร็จ
+      // ✅ แจ้งผลลัพธ์สำเร็จ (Toast)
       if (isMounted.current) {
-        await Swal.fire({
+        Swal.fire({
+          toast: true,
+          position: "top-end",
           icon: "success",
-          title: "✅ ยืนยันการจองสำเร็จ",
-          text: `ห้อง ${roomNumber} ถูกจองเรียบร้อยแล้ว`,
-          confirmButtonText: "ตกลง",
+          title: `✅ ห้อง ${roomNumber} ถูกจองเรียบร้อยแล้ว`,
+          showConfirmButton: false,
+          timer: 2500,
         });
       }
 
@@ -63,11 +64,11 @@ export function useUploadSlip(_roomId: string, roomNumber: string) {
     } catch (err: any) {
       console.error("❌ Error:", err);
       if (isMounted.current) {
-        Swal.fire(
-          "❌ ข้อผิดพลาด",
-          err.message || "เกิดข้อผิดพลาดในการจอง",
-          "error"
-        );
+        Swal.fire({
+          icon: "error",
+          title: "❌ ข้อผิดพลาด",
+          text: err.message || "เกิดข้อผิดพลาดในการจอง",
+        });
       }
       return false;
     } finally {
