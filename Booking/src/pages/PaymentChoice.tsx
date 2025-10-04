@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AccountCard from "../components/Payment/AccountCard";
 import QRSection from "../components/Payment/QRSection";
 import PaymentSummary from "../components/Payment/PaymentSummary";
@@ -11,6 +11,16 @@ export default function PaymentChoice() {
   const { state } = useLocation();
   const nav = useNavigate();
   const room = state as Room;
+
+  // ✅ ตรวจสอบ login ก่อนเข้า UploadSlip
+  useEffect(() => {
+    const userId = localStorage.getItem("liff_userId");
+    if (!userId) {
+      Swal.fire("⚠️ กรุณาเข้าสู่ระบบผ่าน LINE", "", "warning").then(() => {
+        nav("/"); // redirect กลับหน้าแรก
+      });
+    }
+  }, [nav]);
 
   // ถ้าเข้ามาหน้าโดยไม่มี room -> redirect กลับ
   if (!room) {
@@ -63,28 +73,28 @@ export default function PaymentChoice() {
         )}
 
         {/* ปุ่มไปอัปโหลดสลิป */}
-          <button
-            className="btn w-100 fw-semibold mt-3"
-            style={{
-              background: "linear-gradient(90deg, #ff9a9e, #fad0c4)",
-              color: "black",
-              border: "none",
-              transition: "0.3s", // ✅ ให้ hover ลื่นขึ้น
-            }}
-            onMouseEnter={
-              (e) =>
-                (e.currentTarget.style.background =
-                  "linear-gradient(90deg, #ff6f91, #ffb6c1)") // hover สีเข้มขึ้น
-            }
-            onMouseLeave={
-              (e) =>
-                (e.currentTarget.style.background =
-                  "linear-gradient(90deg, #ff9a9e, #fad0c4)") // กลับสีเดิม
-            }
-            onClick={() => nav("/upload-slip", { state: room })}
-          >
-            ➡️ ดำเนินการต่อ
-          </button>
+        <button
+          className="btn w-100 fw-semibold mt-3"
+          style={{
+            background: "linear-gradient(90deg, #ff9a9e, #fad0c4)",
+            color: "black",
+            border: "none",
+            transition: "0.3s", // ✅ ให้ hover ลื่นขึ้น
+          }}
+          onMouseEnter={
+            (e) =>
+              (e.currentTarget.style.background =
+                "linear-gradient(90deg, #ff6f91, #ffb6c1)") // hover สีเข้มขึ้น
+          }
+          onMouseLeave={
+            (e) =>
+              (e.currentTarget.style.background =
+                "linear-gradient(90deg, #ff9a9e, #fad0c4)") // กลับสีเดิม
+          }
+          onClick={() => nav("/upload-slip", { state: room })}
+        >
+          ➡️ ดำเนินการต่อ
+        </button>
       </div>
     </div>
   );

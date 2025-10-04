@@ -7,11 +7,23 @@ import PaymentSummary from "../components/Payment/PaymentSummary";
 import QRSection from "../components/Payment/QRSection";
 
 import type { Room } from "../types/Room";
+import { useEffect } from "react";
+import Swal from "sweetalert2";
 
 export default function Payment() {
   const { state } = useLocation();
   const nav = useNavigate();
   const room = state as Room;
+
+  // ✅ ตรวจสอบ login ก่อนเข้า UploadSlip
+  useEffect(() => {
+    const userId = localStorage.getItem("liff_userId");
+    if (!userId) {
+      Swal.fire("⚠️ กรุณาเข้าสู่ระบบผ่าน LINE", "", "warning").then(() => {
+        nav("/"); // redirect กลับหน้าแรก
+      });
+    }
+  }, [nav]);
 
   // 🔹 รวมค่าใช้จ่าย
   const total = room.rent + room.deposit + room.bookingFee;
