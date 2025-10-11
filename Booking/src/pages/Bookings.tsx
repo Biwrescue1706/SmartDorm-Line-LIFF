@@ -29,7 +29,7 @@ export default function Bookings() {
   // ✅ ฟังก์ชันกรองห้องตามชั้น
   const getRoomsByFloor = (floor: number) => {
     const start = floor * 100 + 1; // เช่น ชั้น 1 → 101
-    const end = floor * 100 + 16; // เช่น ชั้น 1 → 116
+    const end = floor * 100 + 100; // เช่น ชั้น 1 → 120
     return rooms.filter((r) => {
       const num = parseInt(r.number, 10);
       return num >= start && num <= end;

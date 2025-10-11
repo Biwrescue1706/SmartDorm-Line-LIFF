@@ -46,7 +46,7 @@ export default function RoomDetailCard({ room }: Props) {
             }
             onClick={() => nav("/")}
           >
-            ❌ ยกเลิก
+           ยกเลิก
           </button>
 
           <button
@@ -66,7 +66,7 @@ export default function RoomDetailCard({ room }: Props) {
             }
             onClick={handleConfirm}
           >
-            ✅ ยืนยัน
+           ยืนยัน
           </button>
         </div>
       </div>

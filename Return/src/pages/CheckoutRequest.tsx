@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { API_BASE } from "../config";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 
 interface Room {
   number: string;
@@ -20,8 +20,6 @@ export default function CheckoutRequest() {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [liffReady, setLiffReady] = useState(false);
-
-  const nav = useNavigate();
 
   // ✅ โหลด Booking ของผู้ใช้
   const loadBookings = async () => {
@@ -151,12 +149,6 @@ export default function CheckoutRequest() {
           </table>
         </div>
       )}
-
-      <div className="text-center mt-4">
-        <button className="btn btn-secondary" onClick={() => nav(-1)}>
-          ⬅ กลับ
-        </button>
-      </div>
     </div>
   );
 }

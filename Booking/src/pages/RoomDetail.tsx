@@ -11,7 +11,7 @@ export default function RoomDetail() {
   useEffect(() => {
     const userId = localStorage.getItem("liff_userId");
     if (!userId) {
-      Swal.fire("⚠️ กรุณาเข้าสู่ระบบผ่าน LINE", "", "warning").then(() => {
+      Swal.fire("กรุณาเข้าสู่ระบบผ่าน LINE", "", "warning").then(() => {
         nav("/"); // redirect กลับหน้าแรก
       });
     }
