@@ -17,9 +17,7 @@ export const useUploadSlip = () => {
 
       const res = await fetch(`${API_BASE}${CreateBooking}`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`, // แนบ token
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 
