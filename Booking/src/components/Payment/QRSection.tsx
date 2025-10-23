@@ -25,16 +25,19 @@ export default function QRSection({ qrUrl, total }: Props) {
         toast: true,
         position: "top-end",
         icon: "success",
-        title: "✅ บันทึก QR สำเร็จ",
+        title: "บันทึก QR สำเร็จ",
         showConfirmButton: false,
         timer: 2000,
       });
     } catch (err) {
-      console.error("❌ Error downloading QR:", err);
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: "error",
-        title: "❌ เกิดข้อผิดพลาด",
+        title: "เกิดข้อผิดพลาด",
         text: "ไม่สามารถบันทึก QR ได้",
+        showConfirmButton: false,
+        timer: 2000,
       });
     }
   };

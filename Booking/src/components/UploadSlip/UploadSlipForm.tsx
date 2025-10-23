@@ -28,6 +28,8 @@ export default function UploadSlipForm({ room, onSuccess }: Props) {
     const nameRegex = /^[ก-๙a-zA-Z]+$/;
     if (!nameRegex.test(cname)) {
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: "error",
         title: "ข้อมูลไม่ถูกต้อง",
         text: "ชื่อห้ามมีอักษรพิเศษหรือเว้นวรรค",
@@ -39,6 +41,8 @@ export default function UploadSlipForm({ room, onSuccess }: Props) {
 
     if (!nameRegex.test(csurname)) {
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: "error",
         title: "ข้อมูลไม่ถูกต้อง",
         text: "นามสกุลห้ามมีอักษรพิเศษหรือเว้นวรรค",
@@ -51,6 +55,8 @@ export default function UploadSlipForm({ room, onSuccess }: Props) {
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(cphone)) {
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: "error",
         title: "ข้อมูลไม่ถูกต้อง",
         text: "เบอร์โทรต้องเป็นตัวเลข 10 หลัก และห้ามมีอักษรพิเศษหรือเว้นวรรค",
@@ -63,6 +69,8 @@ export default function UploadSlipForm({ room, onSuccess }: Props) {
     const idRegex = /^[0-9]{13}$/;
     if (!idRegex.test(cmumId)) {
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: "error",
         title: "ข้อมูลไม่ถูกต้อง",
         text: "เลขบัตรประชาชนต้องเป็นตัวเลข 13 หลัก และห้ามมีอักษรพิเศษหรือเว้นวรรค",
@@ -77,6 +85,8 @@ export default function UploadSlipForm({ room, onSuccess }: Props) {
     const selectedDate = new Date(checkin);
     if (selectedDate.getTime() < today.getTime()) {
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: "warning",
         title: "แจ้งเตือน",
         text: "ไม่สามารถเลือกวันย้อนหลังได้",
@@ -94,6 +104,8 @@ export default function UploadSlipForm({ room, onSuccess }: Props) {
 
     if (!slip) {
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: "warning",
         title: "แจ้งเตือน",
         text: "กรุณาแนบสลิปก่อนกดยืนยัน",
@@ -118,17 +130,19 @@ export default function UploadSlipForm({ room, onSuccess }: Props) {
     const success = await submitSlip(formData);
     if (success) {
       Swal.fire({
+        toast: true,
+        position: "top-end",
         icon: "success",
-        title: "✅ สำเร็จ",
+        title: "สำเร็จ",
         text: "ส่งคำขอจองเรียบร้อยแล้ว",
         showConfirmButton: false,
         timer: 2000,
       });
 
-      // ✅ แจ้ง parent ว่าสำเร็จ
+      //  แจ้ง parent ว่าสำเร็จ
       onSuccess();
 
-      // ✅ ไปหน้า thankyou แล้วปิด LIFF
+      //  ไปหน้า thankyou แล้วปิด LIFF
       setTimeout(() => {
         nav("/thankyou");
         setTimeout(() => {
@@ -260,7 +274,7 @@ export default function UploadSlipForm({ room, onSuccess }: Props) {
                       }}
                       disabled={loading}
                     >
-                      {loading ? "กำลังอัปโหลด..." : "✅ ยืนยัน"}
+                      {loading ? "กำลังอัปโหลด..." : " ยืนยัน"}
                     </button>
                   </div>
                 </form>

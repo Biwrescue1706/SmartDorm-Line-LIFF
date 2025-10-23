@@ -18,7 +18,7 @@ export default function RoomCard({ room, onSelect }: Props) {
     }
   };
 
-  // ✅ ถ้าเต็ม -> ใช้สีเทาอ่อน, ถ้าว่าง -> พื้นหลังขาว
+  //  ถ้าเต็ม -> ใช้สีเทาอ่อน, ถ้าว่าง -> พื้นหลังขาว
   const cardClass =
     room.status === 1
       ? "card bg-secondary-subtle shadow-sm text-center h-100"

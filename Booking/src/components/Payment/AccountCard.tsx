@@ -8,8 +8,10 @@ export default function AccountCard() {
   const handleCopy = () => {
     navigator.clipboard.writeText(account);
     Swal.fire({
+      toast: true,
+      position: "top-end",
       icon: "success",
-      title: "📋 คัดลอกสำเร็จ!",
+      title: "คัดลอกสำเร็จ!",
       timer: 2000,
       showConfirmButton: false,
     });
@@ -39,14 +41,13 @@ export default function AccountCard() {
             (e.currentTarget.style.background =
               "linear-gradient(90deg, #ffcc70, #ff8177)") // hover สีเข้มขึ้น
         }
-        onMouseLeave={
-          (e) =>
-            (e.currentTarget.style.background =
-              "linear-gradient(90deg, #ffa751, #ff5f6d)")
+        onMouseLeave={(e) =>
+          (e.currentTarget.style.background =
+            "linear-gradient(90deg, #ffa751, #ff5f6d)")
         }
         onClick={handleCopy}
       >
-        📋 คัดลอกเลขบัญชี
+         คัดลอกเลขบัญชี
       </button>
     </div>
   );

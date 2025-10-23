@@ -9,7 +9,7 @@ interface Props {
 
 export default function RoomGrid({ rooms, onSelect }: Props) {
   if (!rooms.length) {
-    return <div className="text-center text-muted">❌ ไม่มีห้องให้แสดง</div>;
+    return <div className="text-center text-muted">ไม่มีห้องให้แสดง</div>;
   }
 
   return (

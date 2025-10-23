@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { API_BASE } from "../config";
 import { getLineAccessToken } from "../lib/liff";
+import Swal from "sweetalert2";
+import { CreateBooking } from "../apis/endpoint.api";
 
 export const useUploadSlip = () => {
   const [loading, setLoading] = useState(false);
@@ -13,12 +15,10 @@ export const useUploadSlip = () => {
       const token = getLineAccessToken();
       if (!token) throw new Error("ยังไม่ได้ล็อกอินผ่าน LINE");
 
-      console.log("📦 Uploading booking form:", [...formData.entries()]);
-
-      const res = await fetch(`${API_BASE}/bookings/create`, {
+      const res = await fetch(`${API_BASE}${CreateBooking}`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`, // ✅ แนบ token
+          Authorization: `Bearer ${token}`, // แนบ token
         },
         body: formData,
       });
@@ -26,11 +26,17 @@ export const useUploadSlip = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "อัปโหลดไม่สำเร็จ");
 
-      console.log("✅ Upload success:", data);
       return true;
     } catch (err: any) {
-      console.error("❌ SubmitSlip error:", err.message);
-      alert("อัปโหลดสลิปไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "อัปโหลดสลิปไม่สำเร็จ",
+        text: "กรุณาลองใหม่อีกครั้ง",
+        showConfirmButton: false,
+        timer: 2000,
+      });
       return false;
     } finally {
       setLoading(false);

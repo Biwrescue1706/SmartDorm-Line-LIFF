@@ -15,12 +15,12 @@ export async function initLIFF() {
     const accessToken = liff.getAccessToken();
     if (!accessToken) throw new Error("ไม่พบ accessToken จาก LINE");
 
-    // ✅ เก็บ token ชั่วคราว (จะหายเมื่อปิดแท็บ)
+    //  เก็บ token ชั่วคราว (จะหายเมื่อปิดแท็บ)
     sessionStorage.setItem("line_access_token", accessToken);
 
-    console.log("✅ LIFF initialized and token stored");
+    console.log(" LIFF initialized and token stored");
   } catch (err) {
-    console.error("❌ LIFF init error:", err);
+    console.error("LIFF init error:", err);
   }
 }
 
