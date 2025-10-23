@@ -1,27 +1,39 @@
 // src/lib/liff.ts
 import liff from "@line/liff";
 
-//🔹 เริ่มต้น LIFF
+/** 🔐 เริ่มต้นระบบ LIFF */
 export async function initLIFF() {
   try {
-    await liff.init({ liffId: "2008099518-VNxlErdq" });
+    const liffId = import.meta.env.VITE_LIFF_ID || "2008099518-VNxlErdq";
+    await liff.init({ liffId });
 
     if (!liff.isLoggedIn()) {
-      // 👉 redirect ไปหน้า login ของ LINE
       liff.login();
       return;
     }
 
-    // 👉 ถ้า login แล้ว ดึง profile
-    const profile = await liff.getProfile();
+    const accessToken = liff.getAccessToken();
+    if (!accessToken) throw new Error("ไม่พบ accessToken จาก LINE");
 
-    // ✅ เก็บ userId/displayName ใน localStorage
-    localStorage.setItem("liff_userId", profile.userId);
-    localStorage.setItem("liff_displayName", profile.displayName);
+    // ✅ เก็บ token ชั่วคราว (จะหายเมื่อปิดแท็บ)
+    sessionStorage.setItem("line_access_token", accessToken);
 
-    console.log("✅ Logged in as:", profile.displayName);
-    console.log("✅ Logged in userId:", profile.userId);
+    console.log("✅ LIFF initialized and token stored");
   } catch (err) {
     console.error("❌ LIFF init error:", err);
+  }
+}
+
+/** 📦 ดึง token เพื่อใช้แนบใน API */
+export function getLineAccessToken(): string | null {
+  return sessionStorage.getItem("line_access_token");
+}
+
+/** 🚪 ออกจากระบบ */
+export function logoutLIFF() {
+  sessionStorage.removeItem("line_access_token");
+  if (liff.isLoggedIn()) {
+    liff.logout();
+    window.location.reload();
   }
 }

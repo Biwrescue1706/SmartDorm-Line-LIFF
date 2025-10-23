@@ -1,82 +1,41 @@
-import { useState, useEffect, useRef } from "react";
-import Swal from "sweetalert2";
+// src/hooks/useUploadSlip.ts
+import { useState } from "react";
 import { API_BASE } from "../config";
+import { getLineAccessToken } from "../lib/liff";
 
-/**
- * Hook สำหรับอัปโหลดสลิปการจองห้อง
- * @param _roomId ID ของห้อง
- * @param roomNumber หมายเลขห้อง (ไว้แสดงในข้อความแจ้งเตือน)
- */
-export function useUploadSlip(_roomId: string, roomNumber: string) {
+export const useUploadSlip = () => {
   const [loading, setLoading] = useState(false);
 
-  // ✅ ตรวจสอบว่า component mount อยู่จริง ๆ ก่อน update UI
-  const isMounted = useRef(true);
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
-  // ฟังก์ชันส่งข้อมูลจองห้อง
-  const submitSlip = async (formData: FormData) => {
+  async function submitSlip(formData: FormData) {
     try {
       setLoading(true);
 
-      // 🔄 แสดงสถานะกำลังโหลด
-      if (isMounted.current) {
-        Swal.fire({
-          title: "⏳ กำลังส่งข้อมูล...",
-          allowOutsideClick: false,
-          didOpen: () => Swal.showLoading(),
-        });
-      }
+      const token = getLineAccessToken();
+      if (!token) throw new Error("ยังไม่ได้ล็อกอินผ่าน LINE");
 
-      // 📤 ส่งไป backend
-      const res = await fetch(`${API_BASE}/booking/create`, {
+      console.log("📦 Uploading booking form:", [...formData.entries()]);
+
+      const res = await fetch(`${API_BASE}/bookings/create`, {
         method: "POST",
-        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ แนบ token
+        },
         body: formData,
       });
 
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.detail || errData.error || "❌ การจองล้มเหลว");
-      }
-
       const data = await res.json();
-      console.log("📤 ส่งข้อมูล:", data);
+      if (!res.ok) throw new Error(data.error || "อัปโหลดไม่สำเร็จ");
 
-      // ✅ แจ้งผลลัพธ์สำเร็จ (Toast)
-      if (isMounted.current) {
-        Swal.fire({
-          toast: true,
-          position: "top-end",
-          icon: "success",
-          title: `✅ ห้อง ${roomNumber} ถูกจองเรียบร้อยแล้ว`,
-          showConfirmButton: false,
-          timer: 2500,
-        });
-      }
-
+      console.log("✅ Upload success:", data);
       return true;
     } catch (err: any) {
-      console.error("❌ Error:", err);
-      if (isMounted.current) {
-        Swal.fire({
-          icon: "error",
-          title: "❌ ข้อผิดพลาด",
-          text: err.message || "เกิดข้อผิดพลาดในการจอง",
-        });
-      }
+      console.error("❌ SubmitSlip error:", err.message);
+      alert("อัปโหลดสลิปไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
       return false;
     } finally {
-      if (isMounted.current) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
-  };
+  }
 
-  return { loading, submitSlip };
-}
+  return { submitSlip, loading };
+};

@@ -8,10 +8,11 @@ import Bookings from "./pages/Bookings";
 import RoomDetail from "./pages/RoomDetail";
 import UploadSlip from "./pages/UploadSlip";
 import PaymentChoice from "./pages/PaymentChoice";
+import ThankYou from "./pages/ThankYou";
 
 export default function App() {
   useEffect(() => {
-    initLIFF(); // ✅ จะเก็บ userId ทันทีที่ login สำเร็จ
+    initLIFF();
   }, []);
 
   return (
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/payment" element={<PaymentChoice />} />
         <Route path="/upload-slip" element={<UploadSlip />} />
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/thankyou" element={<ThankYou />} />
       </Routes>
     </div>
   );

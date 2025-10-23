@@ -1,61 +1,25 @@
-import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
-
-interface Props {
+interface UploadSlipPreviewProps {
   slip: File | null;
 }
 
-export default function UploadSlipPreview({ slip }: Props) {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+export function UploadSlipPreview({ slip }: UploadSlipPreviewProps) {
+  if (!slip) return null;
 
-  useEffect(() => {
-    if (!slip) {
-      setPreviewUrl(null);
-      return;
-    }
-
-    // ✅ สร้าง object URL สำหรับ preview
-    const url = URL.createObjectURL(slip);
-    setPreviewUrl(url);
-
-    // ✅ Toast แจ้งเตือนเมื่อเลือกไฟล์ใหม่
-    Swal.fire({
-      toast: true,
-      position: "top-end",
-      icon: "success",
-      title: "📎 แนบสลิปสำเร็จ",
-      showConfirmButton: false,
-      timer: 2000,
-    });
-
-    // cleanup memory เมื่อ component unmount หรือ slip เปลี่ยน
-    return () => {
-      URL.revokeObjectURL(url);
-    };
-  }, [slip]);
-
-  if (!slip) {
-    return (
-      <div className="text-sm text-gray-500 italic text-center">
-        (ยังไม่ได้เลือกไฟล์)
-      </div>
-    );
-  }
+  const imageUrl = URL.createObjectURL(slip);
 
   return (
-    <div className="mt-4 text-center">
-      <p className="text-sm text-gray-600 mb-2">📎 ตัวอย่างสลิป:</p>
+    <div className="mt-3 text-center">
+      <p className="fw-semibold mb-2">📷 ตัวอย่างสลิป</p>
       <img
-        src={previewUrl || ""}
+        src={imageUrl}
         alt="Slip Preview"
-        className="mx-auto rounded border shadow"
         style={{
-          maxHeight: "180px",   // ✅ จำกัดความสูงไม่ให้ใหญ่เกิน
-          maxWidth: "120px",    // ✅ จำกัดความกว้าง
-          objectFit: "contain", // ✅ ย่อให้พอดีไม่บิดรูป
+          width: "100%",
+          maxWidth: "300px",
+          borderRadius: "10px",
+          boxShadow: "0 0 10px rgba(0,0,0,0.15)",
         }}
       />
-      <p className="text-xs text-gray-500 mt-1">{slip.name}</p>
     </div>
   );
 }
