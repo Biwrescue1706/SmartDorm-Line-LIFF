@@ -1,33 +1,34 @@
 import liff from "@line/liff";
 import { VITE_LIFF_ID } from "../config";
 
-// ตัวแปรสถานะภายใน module (ป้องกัน init ซ้ำ)
 let liffInitialized = false;
 
 /**
- * ✅ เริ่มต้น LIFF
- * - เรียก init ครั้งเดียวก่อนใช้งาน
- * - ถ้ายังไม่ login ให้ redirect ไป LINE Login
+ * ✅ ตรวจสอบและเริ่ม LIFF ให้พร้อมใช้งาน
+ * - เรียกครั้งเดียวตอนเปิดเว็บ
+ * - ถ้ายังไม่ login จะ redirect ไปหน้า LINE Login
  */
-export async function initLiff() {
+export async function ensureLiffReady() {
   try {
     if (!liffInitialized) {
       await liff.init({ liffId: VITE_LIFF_ID });
-      liffInitialized = true; // ✅ mark ว่า init แล้ว
+      liffInitialized = true;
     }
 
     if (!liff.isLoggedIn()) {
       liff.login();
-      return;
+      return false;
     }
+
+    return true;
   } catch (err) {
-    console.error("❌ ไม่สามารถเริ่ม LIFF ได้:", err);
-    throw err;
+    console.error("❌ เกิดข้อผิดพลาดขณะเริ่ม LIFF:", err);
+    return false;
   }
 }
 
 /**
- * ✅ ดึง accessToken จาก LINE (ใช้สำหรับ backend verify)
+ * ✅ ดึง Access Token สำหรับส่งไปตรวจสอบกับ Backend
  */
 export function getAccessToken(): string | null {
   try {
@@ -38,13 +39,13 @@ export function getAccessToken(): string | null {
 }
 
 /**
- * ✅ ดึงข้อมูลโปรไฟล์ผู้ใช้ (เช่น userId, displayName)
+ * ✅ ดึงข้อมูลโปรไฟล์ผู้ใช้ (ชื่อ, userId)
  */
 export async function getUserProfile() {
   try {
     return await liff.getProfile();
   } catch (err) {
-    console.error("ไม่สามารถดึงโปรไฟล์ได้:", err);
+    console.error("❌ ไม่สามารถดึงโปรไฟล์ได้:", err);
     return null;
   }
 }

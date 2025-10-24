@@ -9,8 +9,24 @@ interface Props {
 export default function RoomDetailCard({ room }: Props) {
   const nav = useNavigate();
 
+  /**
+   * ✅ เมื่อกด “ยืนยันจอง”
+   * - เก็บข้อมูลห้องไว้ใน localStorage (กันหายตอน reload / redirect)
+   * - ส่ง room ไปหน้า PaymentChoice ผ่าน state ด้วย
+   */
   const handleConfirm = () => {
-    nav("/payment", { state: room }); // ✅ ไปหน้า PaymentChoice
+    localStorage.setItem("selectedRoom", JSON.stringify(room));
+    nav("/payment", { state: room });
+  };
+
+  /**
+   * ❌ เมื่อกด “ยกเลิก”
+   * - ลบข้อมูลห้องที่เก็บไว้
+   * - กลับหน้าแรก
+   */
+  const handleCancel = () => {
+    localStorage.removeItem("selectedRoom");
+    nav("/");
   };
 
   return (
@@ -22,9 +38,13 @@ export default function RoomDetailCard({ room }: Props) {
     >
       <div className="card-body">
         <h3 className="text-center mb-4 fw-bold">รายละเอียดห้องพัก</h3>
+
+        {/* ตารางรายละเอียดห้อง */}
         <RoomDetailTable room={room} />
 
+        {/* ปุ่มควบคุม */}
         <div className="d-flex justify-content-between mt-4 gap-3">
+          {/* ปุ่มยกเลิก */}
           <button
             className="btn fw-semibold flex-fill"
             style={{
@@ -40,11 +60,12 @@ export default function RoomDetailCard({ room }: Props) {
               (e.currentTarget.style.background =
                 "linear-gradient(90deg, #ff6b6b, #d6336c)")
             }
-            onClick={() => nav("/")}
+            onClick={handleCancel}
           >
-            ยกเลิก
+             ยกเลิก
           </button>
 
+          {/* ปุ่มยืนยันจอง */}
           <button
             className="btn fw-semibold flex-fill"
             style={{
@@ -62,7 +83,7 @@ export default function RoomDetailCard({ room }: Props) {
             }
             onClick={handleConfirm}
           >
-            ยืนยันจอง
+             ยืนยันจอง
           </button>
         </div>
       </div>

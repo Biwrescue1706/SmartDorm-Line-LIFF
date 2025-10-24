@@ -1,8 +1,7 @@
-// src/pages/UploadSlip.tsx
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { initLiff, getAccessToken, getUserProfile } from "../lib/liff";
+import { getAccessToken, getUserProfile } from "../lib/liff";
 import axios from "axios";
 import { API_BASE } from "../config";
 import UploadSlipForm from "../components/UploadSlip/UploadSlipForm";
@@ -11,7 +10,9 @@ import type { Room } from "../types/Room";
 export default function UploadSlip() {
   const { state } = useLocation();
   const nav = useNavigate();
-  const room = state as Room | null;
+  const room =
+    (state as Room | null) ||
+    JSON.parse(localStorage.getItem("selectedRoom") || "null");
 
   const [ready, setReady] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -19,8 +20,6 @@ export default function UploadSlip() {
   useEffect(() => {
     (async () => {
       try {
-        // ✅ เริ่มต้น LIFF และดึง token
-        await initLiff();
         const token = getAccessToken();
         const profile = await getUserProfile();
 
@@ -31,9 +30,10 @@ export default function UploadSlip() {
           return;
         }
 
-        // ✅ ตรวจสอบ token กับ backend เพื่อยืนยันว่า valid จริง
-        const res = await axios.post(`${API_BASE}/user/me`, { accessToken: token });
-
+        // ✅ ตรวจสอบ token กับ backend
+        const res = await axios.post(`${API_BASE}/user/me`, {
+          accessToken: token,
+        });
         if (!res.data || !res.data.userId) {
           throw new Error("ไม่พบข้อมูลผู้ใช้ในระบบ");
         }
@@ -63,7 +63,7 @@ export default function UploadSlip() {
     );
   }
 
-  // ⏳ Loading ตอนตรวจสอบ token
+  // ⏳ Loading
   if (!ready) {
     return (
       <div className="text-center py-5">
