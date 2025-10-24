@@ -15,7 +15,11 @@ interface Props {
   onSuccess: () => void;
 }
 
-export default function UploadSlipForm({ room, accessToken, onSuccess }: Props) {
+export default function UploadSlipForm({
+  room,
+  accessToken,
+  onSuccess,
+}: Props) {
   const [ctitle, setCtitle] = useState("");
   const [cname, setCname] = useState("");
   const [csurname, setCsurname] = useState("");
@@ -23,9 +27,11 @@ export default function UploadSlipForm({ room, accessToken, onSuccess }: Props) 
   const [cmumId, setCmumId] = useState("");
   const [slip, setSlip] = useState<File | null>(null);
   const [checkin, setCheckin] = useState("");
+
   const { loading, submitSlip } = useUploadSlip();
   const nav = useNavigate();
 
+  // 🧩 ตรวจสอบข้อมูลก่อนส่ง
   const validateForm = (): boolean => {
     const nameRegex = /^[ก-๙a-zA-Z]+$/;
     const phoneRegex = /^[0-9]{10}$/;
@@ -52,6 +58,7 @@ export default function UploadSlipForm({ room, accessToken, onSuccess }: Props) 
     return true;
   };
 
+  // 📤 ฟังก์ชันส่งข้อมูลจอง
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -71,23 +78,32 @@ export default function UploadSlipForm({ room, accessToken, onSuccess }: Props) 
         cmumId,
       });
 
-      // ✅ ส่งคำขอจอง
+      // ✅ เตรียมข้อมูลการจอง
       const formData = new FormData();
-const formData = new FormData();
+      formData.append("accessToken", accessToken); // ใช้ token เดิมที่ส่งมา
+      formData.append("roomId", room.roomId);
+      formData.append("ctitle", ctitle);
+      formData.append("cname", cname);
+      formData.append("csurname", csurname);
+      formData.append("cphone", cphone);
+      formData.append("cmumId", cmumId);
+      formData.append("checkin", checkin);
+      formData.append("slip", slip);
 
-      const result = await submitSlip(formData);
-      if (result) {
+      // ✅ ส่งคำขอจองไป backend
+      const success = await submitSlip(formData);
+      if (success) {
         Swal.fire({
           toast: true,
           position: "top-end",
           icon: "success",
-          title: "จองห้องสำเร็จ",
+          title: "✅ จองห้องสำเร็จ",
           showConfirmButton: false,
           timer: 2000,
         });
         onSuccess();
 
-        // ✅ ปิด LIFF หลัง redirect
+        // 🔁 Redirect + ปิด LIFF
         setTimeout(() => {
           nav("/thankyou");
           setTimeout(() => {
@@ -113,8 +129,7 @@ const formData = new FormData();
                     ห้อง {room.number}
                   </h5>
 
-                  {/* --- Input Fields --- */}
-                  {/* ฟิลด์ทั้งหมดเหมือนเดิม */}
+                  {/* ===== ข้อมูลลูกค้า ===== */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold">คำนำหน้า</label>
                     <select
@@ -165,7 +180,9 @@ const formData = new FormData();
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label fw-semibold">เลขบัตรประชาชน</label>
+                    <label className="form-label fw-semibold">
+                      เลขบัตรประชาชน
+                    </label>
                     <input
                       type="text"
                       className="form-control"
@@ -177,7 +194,9 @@ const formData = new FormData();
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label fw-semibold">วันที่เข้าพัก</label>
+                    <label className="form-label fw-semibold">
+                      วันที่เข้าพัก
+                    </label>
                     <input
                       type="date"
                       className="form-control"
@@ -200,6 +219,7 @@ const formData = new FormData();
 
                   <UploadSlipPreview slip={slip} />
 
+                  {/* ===== ปุ่ม ===== */}
                   <div className="d-flex justify-content-between mt-4">
                     <button
                       type="button"
@@ -232,4 +252,3 @@ const formData = new FormData();
     </div>
   );
 }
-

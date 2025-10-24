@@ -1,6 +1,6 @@
 // src/App.tsx
 import { Routes, Route, Navigate } from "react-router-dom";
-import { initLIFF } from "./lib/liff";
+import { initLiff } from "./lib/liff";
 import { useEffect } from "react";
 
 // 📌 Pages
@@ -12,7 +12,7 @@ import ThankYou from "./pages/ThankYou";
 
 export default function App() {
   useEffect(() => {
-    initLIFF();
+    initLiff();
   }, []);
 
   return (

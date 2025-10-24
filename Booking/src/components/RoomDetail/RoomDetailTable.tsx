@@ -1,4 +1,3 @@
-// src/components/RoomDetail/RoomDetailTable.tsx
 import type { Room } from "../../types/Room";
 
 interface Props {
@@ -9,14 +8,14 @@ export default function RoomDetailTable({ room }: Props) {
   const total = room.rent + room.deposit + room.bookingFee;
 
   return (
-    <table className="table table-bordered table-striped align-middle text-center shadow-sm">
+    <table className="table table-bordered align-middle text-center shadow-sm">
       <tbody>
         <tr>
-          <th className="text-start w-30">ห้อง</th>
+          <th className="text-start w-30">หมายเลขห้อง</th>
           <td colSpan={2}>{room.number}</td>
         </tr>
         <tr>
-          <th className="text-start w-30">ขนาด</th>
+          <th className="text-start w-30">ขนาดห้อง</th>
           <td colSpan={2}>{room.size}</td>
         </tr>
         <tr>
@@ -30,34 +29,34 @@ export default function RoomDetailTable({ room }: Props) {
           <td>บาท / หน่วย</td>
         </tr>
         <tr>
-          <th className="text-start w-30">ค่าประปา</th>
+          <th className="text-start w-30">ค่าน้ำ</th>
           <td>19</td>
           <td>บาท / หน่วย</td>
         </tr>
         <tr>
-          <th className="text-start w-30">ราคา</th>
-          <td>{room.rent.toLocaleString()}</td>
+          <th className="text-start w-30">ค่าเช่า</th>
+          <td>{room.rent.toLocaleString("th-TH")}</td>
           <td>บาท</td>
         </tr>
         <tr>
-          <th className="text-start w-30">ประกันห้อง</th>
-          <td>{room.deposit.toLocaleString()}</td>
+          <th className="text-start w-30">เงินประกัน</th>
+          <td>{room.deposit.toLocaleString("th-TH")}</td>
           <td>บาท</td>
         </tr>
         <tr>
-          <th className="text-start w-30">ค่าจองห้อง</th>
-          <td>{room.bookingFee.toLocaleString()}</td>
+          <th className="text-start w-30">ค่าจอง</th>
+          <td>{room.bookingFee.toLocaleString("th-TH")}</td>
           <td>บาท</td>
         </tr>
         <tr className="table-success fw-bold">
-          <th className="text-start w-30">รวม</th>
-          <td className="text-success">{total.toLocaleString()}</td>
+          <th className="text-start w-30">รวมทั้งหมด</th>
+          <td className="text-success">{total.toLocaleString("th-TH")}</td>
           <td>บาท</td>
         </tr>
         <tr>
           <td colSpan={3} className="fst-italic text-muted small text-start">
-            ( ค่าเช่ารายเดือนตัดรอบบิลทุกวันที่ 25 ของเดือน <br />
-            ราคาในหน้านี้ยังไม่รวม ค่าส่วนกลาง และค่าประปา - ค่าไฟฟ้า <br />
+            ( ตัดรอบบิลทุกวันที่ 25 ของเดือน <br />
+            ราคานี้ยังไม่รวมค่าส่วนกลาง, ค่าน้ำ, ค่าไฟ <br />
             หากชำระเกินวันที่ 5 ของเดือน จะมีค่าปรับ 50 บาท/วัน )
           </td>
         </tr>

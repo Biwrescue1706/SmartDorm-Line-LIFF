@@ -1,22 +1,16 @@
-// src/hooks/usePayment.ts
 import { useState } from "react";
 import { API_BASE } from "../config";
-import { GeneratePaymentQR } from "../apis/endpoint.api"
 
-export function usePayment(total: number, account: string) {
+export function usePayment(total: number) {
   const [copied, setCopied] = useState(false);
+  const qrUrl = `${API_BASE}/qr/${total}`;
 
-  //  proxy ไป backend
-  const qrUrl = `${API_BASE}${GeneratePaymentQR(total)}`;
-
-  //  คัดลอกเลขบัญชี
-  const handleCopy = () => {
+  const handleCopy = (account: string) => {
     navigator.clipboard.writeText(account);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  //  ดาวน์โหลด QR
   const handleDownload = async (filename: string) => {
     try {
       const res = await fetch(qrUrl);
@@ -32,7 +26,7 @@ export function usePayment(total: number, account: string) {
 
       window.URL.revokeObjectURL(blobUrl);
     } catch (err) {
-      console.error(" Error downloading QR:", err);
+      console.error("❌ Error downloading QR:", err);
     }
   };
 

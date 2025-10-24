@@ -11,7 +11,7 @@ export default function AccountCard() {
       toast: true,
       position: "top-end",
       icon: "success",
-      title: "คัดลอกสำเร็จ!",
+      title: "คัดลอกเลขบัญชีแล้ว ✅",
       timer: 2000,
       showConfirmButton: false,
     });
@@ -19,35 +19,25 @@ export default function AccountCard() {
 
   return (
     <div
-      className="p-3 mb-3 rounded shadow-sm text-center"
+      className="p-3 mb-3 rounded shadow-sm text-center text-white"
       style={{
-        background: "linear-gradient(135deg, #5d00ff, rgba(155, 197, 238, 1))",
-        color: "white",
+        background: "linear-gradient(135deg, #5d00ff, #9bc5ee)",
       }}
     >
-      <h5 className="fw-bold">{bank}</h5>
-      <p className="mb-1 fw-semibold">เลขที่บัญชี: {account}</p>
+      <h5 className="fw-bold mb-1">{bank}</h5>
+      <p className="mb-1 fw-semibold">เลขบัญชี: {account}</p>
       <p className="mb-2">ชื่อบัญชี: {owner}</p>
+
       <button
-        className="btn w-100 fw-semibold"
+        className="btn fw-semibold w-100"
         style={{
           background: "linear-gradient(90deg, #ffcc70, #ff8177)",
-          color: "black",
           border: "none",
-          transition: "0.3s",
+          color: "black",
         }}
-        onMouseEnter={
-          (e) =>
-            (e.currentTarget.style.background =
-              "linear-gradient(90deg, #ffcc70, #ff8177)") // hover สีเข้มขึ้น
-        }
-        onMouseLeave={(e) =>
-          (e.currentTarget.style.background =
-            "linear-gradient(90deg, #ffa751, #ff5f6d)")
-        }
         onClick={handleCopy}
       >
-         คัดลอกเลขบัญชี
+        📋 คัดลอกเลขบัญชี
       </button>
     </div>
   );

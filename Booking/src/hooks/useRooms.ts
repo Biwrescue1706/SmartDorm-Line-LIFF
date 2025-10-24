@@ -1,4 +1,3 @@
-// src/hooks/useRooms.ts
 import { useEffect, useState } from "react";
 import { API_BASE } from "../config";
 import type { Room } from "../types/Room";
@@ -12,17 +11,15 @@ export function useRooms(includeBooked = false) {
   const load = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}${GetAllRoom}`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const res = await fetch(`${API_BASE}${GetAllRoom}`);
       if (!res.ok) throw new Error("โหลดข้อมูลล้มเหลว");
 
       const data: Room[] = await res.json();
 
+      // ✅ กรองเฉพาะสถานะตามที่ต้องการ
       const filtered = data
         .filter((r) =>
-          includeBooked ? r.status === 0 || r.status === 1 : r.status === 0
+          includeBooked ? [0, 1].includes(r.status) : r.status === 0
         )
         .sort(
           (a, b) =>
@@ -35,8 +32,7 @@ export function useRooms(includeBooked = false) {
         toast: true,
         position: "top-end",
         icon: "error",
-        title: "เกิดข้อผิดพลาด",
-        text: "โหลดข้อมูลห้องไม่สำเร็จ",
+        title: "โหลดข้อมูลห้องไม่สำเร็จ",
         showConfirmButton: false,
         timer: 2000,
       });
@@ -47,7 +43,7 @@ export function useRooms(includeBooked = false) {
 
   useEffect(() => {
     load();
-    const interval = setInterval(load, 12 * 60 * 1000);
+    const interval = setInterval(load, 12 * 60 * 1000); // โหลดใหม่ทุก 12 นาที
     return () => clearInterval(interval);
   }, []);
 

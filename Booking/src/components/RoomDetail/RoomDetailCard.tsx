@@ -1,4 +1,3 @@
-// src/components/RoomDetail/RoomDetailCard.tsx
 import type { Room } from "../../types/Room";
 import RoomDetailTable from "./RoomDetailTable";
 import { useNavigate } from "react-router-dom";
@@ -11,23 +10,20 @@ export default function RoomDetailCard({ room }: Props) {
   const nav = useNavigate();
 
   const handleConfirm = () => {
-    nav("/payment", { state: room });
+    nav("/upload-slip", { state: room });
   };
 
   return (
     <div
-      className="card shadow-sm"
+      className="card shadow-sm border-0"
       style={{
-        background: "linear-gradient(135deg, #f8f9fa, #e9ecef)", // พื้นหลังเทาไล่สี
+        background: "linear-gradient(135deg, #f8f9fa, #e9ecef)",
       }}
     >
       <div className="card-body">
         <h3 className="text-center mb-4 fw-bold">รายละเอียดห้องพัก</h3>
-
-        {/* ตารางรายละเอียด */}
         <RoomDetailTable room={room} />
 
-        {/* ปุ่ม */}
         <div className="d-flex justify-content-between mt-4 gap-3">
           <button
             className="btn fw-semibold flex-fill"
@@ -46,7 +42,7 @@ export default function RoomDetailCard({ room }: Props) {
             }
             onClick={() => nav("/")}
           >
-           ยกเลิก
+            ❌ ยกเลิก
           </button>
 
           <button
@@ -66,7 +62,7 @@ export default function RoomDetailCard({ room }: Props) {
             }
             onClick={handleConfirm}
           >
-           ยืนยัน
+            ✅ ยืนยันจอง
           </button>
         </div>
       </div>
