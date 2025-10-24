@@ -1,3 +1,4 @@
+// src/pages/Bookings.tsx
 import { useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import RoomGrid from "../components/Bookings/RoomGrid";
@@ -28,24 +29,26 @@ export default function Bookings() {
     <div className="container my-4">
       <div className="card shadow-sm border-0">
         <div className="card-body">
-          <h2 className="text-center mb-3 fw-bold">เลือกห้อง</h2>
+          <h2 className="text-center mb-4 fw-bold">เลือกห้องพัก</h2>
 
-          {/* 🔹 ปุ่มเลือกชั้น */}
-          <div className="d-flex justify-content-center mb-3 flex-wrap gap-2">
-            {[...Array(10)].map((_, i) => {
-              const f = i + 1;
-              return (
-                <button
-                  key={f}
-                  className={`btn btn-outline-primary ${
-                    floor === f ? "active" : ""
-                  }`}
-                  onClick={() => setFloor(f)}
-                >
-                  ชั้น {f}
-                </button>
-              );
-            })}
+          {/* 🔽 ตัวเลือกชั้นแบบ Dropdown */}
+          <div className="d-flex justify-content-center mb-4">
+            <div className="input-group" style={{ maxWidth: "300px" }}>
+              <label className="input-group-text bg-primary text-white fw-semibold">
+                ชั้น
+              </label>
+              <select
+                className="form-select fw-semibold"
+                value={floor}
+                onChange={(e) => setFloor(Number(e.target.value))}
+              >
+                {[...Array(10)].map((_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    ชั้น {i + 1}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {/* 🔹 แสดงผลตามสถานะ */}
