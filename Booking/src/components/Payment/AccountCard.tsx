@@ -11,7 +11,7 @@ export default function AccountCard() {
       toast: true,
       position: "top-end",
       icon: "success",
-      title: "คัดลอกเลขบัญชีแล้ว ✅",
+      title: "คัดลอกเลขบัญชีแล้ว",
       timer: 2000,
       showConfirmButton: false,
     });

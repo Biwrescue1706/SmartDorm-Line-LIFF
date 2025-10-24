@@ -24,7 +24,7 @@ export default function QRSection({ qrUrl, total }: Props) {
         toast: true,
         position: "top-end",
         icon: "success",
-        title: "บันทึก QR สำเร็จ ✅",
+        title: "บันทึก QR สำเร็จ",
         showConfirmButton: false,
         timer: 2000,
       });
@@ -61,7 +61,7 @@ export default function QRSection({ qrUrl, total }: Props) {
 
       {isInLine ? (
         <p className="small text-danger fw-semibold mt-2">
-          📌 กดค้างที่ QR แล้วเลือก "บันทึกภาพ" เพื่อบันทึกลงเครื่อง
+          กดค้างที่ QR แล้วเลือก "บันทึกภาพ" เพื่อบันทึกลงเครื่อง
         </p>
       ) : (
         <>
@@ -74,7 +74,7 @@ export default function QRSection({ qrUrl, total }: Props) {
             }}
             onClick={() => handleDownload(qrUrl, `QR-${total}.png`)}
           >
-            📥 บันทึก QR PromptPay
+           บันทึก QR PromptPay
           </button>
         </>
       )}

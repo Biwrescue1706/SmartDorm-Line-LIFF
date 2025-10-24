@@ -22,7 +22,7 @@ export const useUploadSlip = () => {
         },
       });
 
-      // ✅ ถ้าสำเร็จ
+      //  ถ้าสำเร็จ
       Swal.fire({
         toast: true,
         position: "top-end",
@@ -34,7 +34,7 @@ export const useUploadSlip = () => {
 
       return res.data;
     } catch (err: any) {
-      // ❌ ถ้าผิดพลาด
+      // ถ้าผิดพลาด
       Swal.fire({
         toast: true,
         position: "top-end",

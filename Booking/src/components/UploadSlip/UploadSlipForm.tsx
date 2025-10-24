@@ -68,7 +68,7 @@ export default function UploadSlipForm({
     }
 
     try {
-      // ✅ สมัคร / อัปเดตข้อมูลลูกค้า
+      //  สมัคร / อัปเดตข้อมูลลูกค้า
       await axios.post(`${API_BASE}/user/register`, {
         accessToken,
         ctitle,
@@ -78,7 +78,7 @@ export default function UploadSlipForm({
         cmumId,
       });
 
-      // ✅ เตรียมข้อมูลการจอง
+      //  เตรียมข้อมูลการจอง
       const formData = new FormData();
       formData.append("accessToken", accessToken); // ใช้ token เดิมที่ส่งมา
       formData.append("roomId", room.roomId);
@@ -90,14 +90,14 @@ export default function UploadSlipForm({
       formData.append("checkin", checkin);
       formData.append("slip", slip);
 
-      // ✅ ส่งคำขอจองไป backend
+      //  ส่งคำขอจองไป backend
       const success = await submitSlip(formData);
       if (success) {
         Swal.fire({
           toast: true,
           position: "top-end",
           icon: "success",
-          title: "✅ จองห้องสำเร็จ",
+          title: "จองห้องสำเร็จ",
           showConfirmButton: false,
           timer: 2000,
         });
@@ -120,7 +120,7 @@ export default function UploadSlipForm({
     <div className="min-vh-100 d-flex align-items-center bg-light">
       <div className="container">
         <div className="row justify-content-center">
-          <div className="col-12 col-sm-10 col-md-8 col-lg-5">
+          <div className="col-10 col-sm-10 col-md-8 col-lg-5">
             <div className="card shadow-lg border-0 rounded-4">
               <div className="card-body p-4">
                 <form onSubmit={handleSubmit}>
@@ -229,7 +229,7 @@ export default function UploadSlipForm({
                       }}
                       onClick={() => nav("/")}
                     >
-                      ❌ ยกเลิก
+                       ยกเลิก
                     </button>
 
                     <button
@@ -240,7 +240,7 @@ export default function UploadSlipForm({
                       }}
                       disabled={loading}
                     >
-                      {loading ? "กำลังอัปโหลด..." : "✅ ยืนยัน"}
+                      {loading ? "กำลังอัปโหลด..." : " ยืนยัน"}
                     </button>
                   </div>
                 </form>

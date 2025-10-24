@@ -10,7 +10,7 @@ export default function RoomDetailCard({ room }: Props) {
   const nav = useNavigate();
 
   const handleConfirm = () => {
-    nav("/upload-slip", { state: room });
+    nav("/payment", { state: room }); // ✅ ไปหน้า PaymentChoice
   };
 
   return (
@@ -42,7 +42,7 @@ export default function RoomDetailCard({ room }: Props) {
             }
             onClick={() => nav("/")}
           >
-            ❌ ยกเลิก
+            ยกเลิก
           </button>
 
           <button
@@ -62,7 +62,7 @@ export default function RoomDetailCard({ room }: Props) {
             }
             onClick={handleConfirm}
           >
-            ✅ ยืนยันจอง
+            ยืนยันจอง
           </button>
         </div>
       </div>
