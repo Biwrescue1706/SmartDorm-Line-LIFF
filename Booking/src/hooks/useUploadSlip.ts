@@ -1,41 +1,52 @@
-// src/hooks/useUploadSlip.ts
 import { useState } from "react";
-import { API_BASE } from "../config";
-import { getLineAccessToken } from "../lib/liff";
 import Swal from "sweetalert2";
+import axios from "axios";
+import { API_BASE } from "../config";
 import { CreateBooking } from "../apis/endpoint.api";
 
 export const useUploadSlip = () => {
   const [loading, setLoading] = useState(false);
 
+  /**
+   * 📤 ส่งข้อมูลสลิปและรายละเอียดการจองไปยัง backend
+   * - ต้องแนบ accessToken ของ LINE (มาจาก LIFF)
+   * - ต้องมี roomId, checkin, slip
+   */
   async function submitSlip(formData: FormData) {
     try {
       setLoading(true);
 
-      const token = getLineAccessToken();
-      if (!token) throw new Error("ยังไม่ได้ล็อกอินผ่าน LINE");
-
-      const res = await fetch(`${API_BASE}${CreateBooking}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
+      const res = await axios.post(`${API_BASE}${CreateBooking}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "อัปโหลดไม่สำเร็จ");
+      // ✅ ถ้าสำเร็จ
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: "อัปโหลดสลิปสำเร็จ",
+        showConfirmButton: false,
+        timer: 2000,
+      });
 
-      return true;
+      return res.data;
     } catch (err: any) {
+      // ❌ ถ้าผิดพลาด
       Swal.fire({
         toast: true,
         position: "top-end",
         icon: "error",
         title: "อัปโหลดสลิปไม่สำเร็จ",
-        text: "กรุณาลองใหม่อีกครั้ง",
+        text:
+          err.response?.data?.error ||
+          "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง",
         showConfirmButton: false,
-        timer: 2000,
+        timer: 2500,
       });
-      return false;
+      return null;
     } finally {
       setLoading(false);
     }

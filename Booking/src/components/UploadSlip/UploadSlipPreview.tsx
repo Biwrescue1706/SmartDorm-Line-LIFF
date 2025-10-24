@@ -1,3 +1,4 @@
+// src/components/UploadSlipPreview.tsx
 interface UploadSlipPreviewProps {
   slip: File | null;
 }

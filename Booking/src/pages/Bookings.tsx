@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import RoomGrid from "../components/Bookings/RoomGrid";
 import { useRooms } from "../hooks/useRooms";
 import type { Room } from "../types/Room";
-import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
+import { useState } from "react";
 
 export default function Bookings() {
   const { rooms, loading } = useRooms(true);
@@ -12,21 +11,11 @@ export default function Bookings() {
 
   const [floor, setFloor] = useState(1); // ชั้นที่เลือก เริ่มต้นชั้น 1
 
-  // ✅ ตรวจสอบ login ก่อนเข้า UploadSlip
-  useEffect(() => {
-    const userId = localStorage.getItem("liff_userId");
-    if (!userId) {
-      Swal.fire("⚠️ กรุณาเข้าสู่ระบบผ่าน LINE", "", "warning").then(() => {
-        nav("/"); // redirect กลับหน้าแรก
-      });
-    }
-  }, [nav]);
-
   const handleSelect = (room: Room) => {
     nav(`/bookings/${room.roomId}`, { state: room });
   };
 
-  // ✅ ฟังก์ชันกรองห้องตามชั้น
+  //  ฟังก์ชันกรองห้องตามชั้น
   const getRoomsByFloor = (floor: number) => {
     const start = floor * 100 + 1; // เช่น ชั้น 1 → 101
     const end = floor * 100 + 100; // เช่น ชั้น 1 → 120
@@ -44,10 +33,10 @@ export default function Bookings() {
             <strong>เลือกห้อง</strong>
           </h2>
 
-          {/* ✅ ปุ่มเลือกชั้น */}
+          {/*  ปุ่มเลือกชั้น */}
           <div className="d-flex justify-content-center mb-3 flex-wrap">
             <div className="btn-group">
-              {[1, 2, 3, 4, 5, 6].map((f) => (
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((f) => (
                 <button
                   key={f}
                   className={`btn btn-outline-primary ${

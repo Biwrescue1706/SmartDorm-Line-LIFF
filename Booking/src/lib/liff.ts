@@ -1,39 +1,50 @@
-// src/lib/liff.ts
 import liff from "@line/liff";
+import { VITE_LIFF_ID } from "../config";
 
-/** 🔐 เริ่มต้นระบบ LIFF */
-export async function initLIFF() {
+// ตัวแปรสถานะภายใน module (ป้องกัน init ซ้ำ)
+let liffInitialized = false;
+
+/**
+ * ✅ เริ่มต้น LIFF
+ * - เรียก init ครั้งเดียวก่อนใช้งาน
+ * - ถ้ายังไม่ login ให้ redirect ไป LINE Login
+ */
+export async function initLiff() {
   try {
-    const liffId = import.meta.env.VITE_LIFF_ID || "2008099518-VNxlErdq";
-    await liff.init({ liffId });
+    if (!liffInitialized) {
+      await liff.init({ liffId: VITE_LIFF_ID });
+      liffInitialized = true; // ✅ mark ว่า init แล้ว
+    }
 
     if (!liff.isLoggedIn()) {
       liff.login();
       return;
     }
-
-    const accessToken = liff.getAccessToken();
-    if (!accessToken) throw new Error("ไม่พบ accessToken จาก LINE");
-
-    //  เก็บ token ชั่วคราว (จะหายเมื่อปิดแท็บ)
-    sessionStorage.setItem("line_access_token", accessToken);
-
-    console.log(" LIFF initialized and token stored");
   } catch (err) {
-    console.error("LIFF init error:", err);
+    console.error("❌ ไม่สามารถเริ่ม LIFF ได้:", err);
+    throw err;
   }
 }
 
-/** 📦 ดึง token เพื่อใช้แนบใน API */
-export function getLineAccessToken(): string | null {
-  return sessionStorage.getItem("line_access_token");
+/**
+ * ✅ ดึง accessToken จาก LINE (ใช้สำหรับ backend verify)
+ */
+export function getAccessToken(): string | null {
+  try {
+    return liff.getAccessToken() || null;
+  } catch {
+    return null;
+  }
 }
 
-/** 🚪 ออกจากระบบ */
-export function logoutLIFF() {
-  sessionStorage.removeItem("line_access_token");
-  if (liff.isLoggedIn()) {
-    liff.logout();
-    window.location.reload();
+/**
+ * ✅ ดึงข้อมูลโปรไฟล์ผู้ใช้ (เช่น userId, displayName)
+ */
+export async function getUserProfile() {
+  try {
+    return await liff.getProfile();
+  } catch (err) {
+    console.error("ไม่สามารถดึงโปรไฟล์ได้:", err);
+    return null;
   }
 }
