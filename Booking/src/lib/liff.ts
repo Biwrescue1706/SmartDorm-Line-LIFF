@@ -1,8 +1,9 @@
 // src/lib/liff.ts
 import liff from "@line/liff";
 import Swal from "sweetalert2";
+import { VITE_LIFF_ID } from "../config";
 
-const LIFF_ID = import.meta.env.VITE_LIFF_ID as string;
+const LIFF_ID = VITE_LIFF_ID;
 let initialized = false;
 
 /* ============================================================
