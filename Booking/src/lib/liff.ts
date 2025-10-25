@@ -1,18 +1,21 @@
 // src/lib/liff.ts
 import liff from "@line/liff";
-import { VITE_LIFF_ID } from "../config";
 import Swal from "sweetalert2";
 
-let liffInitialized = false;
+const LIFF_ID = import.meta.env.VITE_LIFF_ID as string;
+let initialized = false;
 
 /* ============================================================
    ✅ เริ่มต้น LIFF และตรวจสอบสถานะล็อกอิน
-   ============================================================ */
-export async function ensureLiffReady() {
+============================================================ */
+export async function ensureLiffReady(): Promise<boolean> {
   try {
-    if (!liffInitialized) {
-      await liff.init({ liffId: VITE_LIFF_ID });
-      liffInitialized = true;
+    if (!initialized) {
+      await liff.init({
+        liffId: LIFF_ID,
+        withLoginOnExternalBrowser: true,
+      });
+      initialized = true;
     }
 
     if (!liff.isLoggedIn()) {
@@ -22,51 +25,40 @@ export async function ensureLiffReady() {
 
     return true;
   } catch (err) {
-    console.error("❌ เกิดข้อผิดพลาดขณะเริ่ม LIFF:", err);
+    console.error("❌ LIFF init error:", err);
     return false;
   }
 }
 
 /* ============================================================
    ✅ ดึง Access Token สำหรับส่งไป Backend
-   ============================================================ */
+============================================================ */
 export function getAccessToken(): string | null {
   try {
     return liff.getAccessToken() || null;
-  } catch {
+  } catch (err) {
+    console.error("❌ getAccessToken error:", err);
     return null;
   }
 }
 
 /* ============================================================
-   ✅ รีเฟรช Access Token อัตโนมัติ (ถ้า token หมดอายุ/หาย)
-   ============================================================ */
+   ✅ รีเฟรช Access Token อัตโนมัติ (กรณี token หาย)
+============================================================ */
 export async function refreshLiffToken(): Promise<string | null> {
   try {
-    if (!liffInitialized) {
-      await liff.init({ liffId: VITE_LIFF_ID });
-      liffInitialized = true;
-    }
-
-    // ถ้ายังไม่ได้ล็อกอิน → ให้ login ก่อน
-    if (!liff.isLoggedIn()) {
-      liff.login();
-      return null;
-    }
-
+    await ensureLiffReady();
     let token = liff.getAccessToken();
 
-    // ⚠️ ถ้า token หาย (บางครั้ง LIFF คืนค่า null)
     if (!token) {
-      console.log("⚠️ AccessToken หาย พยายาม re-init LIFF...");
-      await liff.init({ liffId: VITE_LIFF_ID });
+      console.warn("⚠️ AccessToken หาย → re-init LIFF...");
+      await liff.init({ liffId: LIFF_ID, withLoginOnExternalBrowser: true });
       token = liff.getAccessToken();
     }
 
-    // ❌ ถ้ายังไม่มีจริง ๆ → รีเซ็ต LIFF และ login ใหม่
     if (!token) {
-      console.log("❌ Token หมดอายุหรือไม่ถูกต้อง → รีเซ็ต LIFF");
-      await logoutLiff();
+      console.error("❌ Token หมดอายุ → ล็อกอินใหม่");
+      await logoutLiff(false);
       liff.login();
       return null;
     }
@@ -79,44 +71,42 @@ export async function refreshLiffToken(): Promise<string | null> {
 }
 
 /* ============================================================
-   ✅ ดึงข้อมูลโปรไฟล์ผู้ใช้ (ชื่อ + userId)
-   ============================================================ */
+   ✅ ดึงข้อมูลโปรไฟล์ผู้ใช้ (ชื่อ, userId)
+============================================================ */
 export async function getUserProfile() {
   try {
     return await liff.getProfile();
   } catch (err) {
-    console.error("❌ ไม่สามารถดึงโปรไฟล์ได้:", err);
+    console.error("❌ getUserProfile error:", err);
     return null;
   }
 }
 
 /* ============================================================
-   🚪 ออกจากระบบ LIFF (เคลียร์ session ทั้งหมด)
-   ============================================================ */
-export async function logoutLiff() {
+   🚪 ออกจากระบบ (รองรับทั้งใน LINE และ Browser)
+============================================================ */
+export async function logoutLiff(showAlert = true) {
   try {
-    if (liff.isLoggedIn()) {
-      liff.logout();
-    }
-
+    if (liff.isLoggedIn()) liff.logout();
     localStorage.clear();
     sessionStorage.clear();
 
     if (liff.isInClient()) {
-      // ✅ ปิดหน้าต่างอัตโนมัติถ้าอยู่ใน LINE
       liff.closeWindow();
     } else {
-      Swal.fire({
-        title: "ออกจากระบบสำเร็จ",
-        text: "ขอบคุณที่ใช้บริการ SmartDorm!",
-        icon: "success",
-        confirmButtonText: "กลับหน้าหลัก",
-      }).then(() => {
-        window.location.href = "/";
-      });
+      if (showAlert) {
+        await Swal.fire({
+          toast: true,
+          position: "top-end",
+          title: "ออกจากระบบสำเร็จ",
+          text: "ขอบคุณที่ใช้บริการ SmartDorm!",
+          icon: "success",
+        });
+      }
+      window.location.href = "/";
     }
 
-    console.log("✅ ออกจากระบบ LIFF สำเร็จ");
+    console.log("✅ ออกจากระบบสำเร็จ");
   } catch (err) {
     console.error("❌ logoutLiff error:", err);
   }

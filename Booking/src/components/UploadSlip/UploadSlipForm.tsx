@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { API_BASE } from "../../config";
-import liff from "@line/liff";
 
 interface Props {
   room: Room;
@@ -38,21 +37,53 @@ export default function UploadSlipForm({
     const idRegex = /^[0-9]{13}$/;
 
     if (!nameRegex.test(cname) || !nameRegex.test(csurname)) {
-      Swal.fire("ข้อมูลไม่ถูกต้อง", "ชื่อ-นามสกุลห้ามมีอักษรพิเศษ", "error");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "ข้อมูลไม่ถูกต้อง",
+        text: "ชื่อ-นามสกุลห้ามมีอักษรพิเศษ",
+        showConfirmButton: false,
+        timer: 2500,
+      });
       return false;
     }
     if (!phoneRegex.test(cphone)) {
-      Swal.fire("ข้อมูลไม่ถูกต้อง", "เบอร์โทรต้องเป็น 10 หลัก", "error");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "ข้อมูลไม่ถูกต้อง",
+        text: "เบอร์โทรต้องเป็น 10 หลัก",
+        showConfirmButton: false,
+        timer: 2500,
+      });
       return false;
     }
     if (!idRegex.test(cmumId)) {
-      Swal.fire("ข้อมูลไม่ถูกต้อง", "เลขบัตรประชาชนต้อง 13 หลัก", "error");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "ข้อมูลไม่ถูกต้อง",
+        text: "เลขบัตรประชาชนต้อง 13 หลัก",
+        showConfirmButton: false,
+        timer: 2500,
+      });
       return false;
     }
     const today = new Date();
     const selected = new Date(checkin);
     if (selected < today) {
-      Swal.fire("แจ้งเตือน", "ไม่สามารถเลือกวันย้อนหลังได้", "warning");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "warning",
+        title: "แจ้งเตือน",
+        text: "ไม่สามารถเลือกวันย้อนหลังได้",
+        showConfirmButton: false,
+        timer: 2500,
+      });
       return false;
     }
     return true;
@@ -63,7 +94,15 @@ export default function UploadSlipForm({
     e.preventDefault();
     if (!validateForm()) return;
     if (!slip) {
-      Swal.fire("แจ้งเตือน", "กรุณาแนบสลิปก่อนกดยืนยัน", "warning");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "warning",
+        title: "แจ้งเตือน",
+        text: "กรุณาแนบสลิปก่อนกดยืนยัน",
+        showConfirmButton: false,
+        timer: 2500,
+      });
       return;
     }
 
@@ -103,12 +142,9 @@ export default function UploadSlipForm({
         });
         onSuccess();
 
-        // 🔁 Redirect + ปิด LIFF
+        // 🔁 Redirect
         setTimeout(() => {
           nav("/thankyou");
-          setTimeout(() => {
-            if (liff.isInClient()) liff.closeWindow();
-          }, 1000);
         }, 1500);
       }
     } catch (err) {
@@ -229,7 +265,7 @@ export default function UploadSlipForm({
                       }}
                       onClick={() => nav("/")}
                     >
-                       ยกเลิก
+                      ยกเลิก
                     </button>
 
                     <button

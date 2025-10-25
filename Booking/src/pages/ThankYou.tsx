@@ -1,12 +1,18 @@
+// src/pages/ThankYou.tsx
 import { useEffect } from "react";
-import { logoutLiff } from "../lib/liff";
+import { ensureLiffReady, logoutLiff } from "../lib/liff";
 
 export default function ThankYou() {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      // ✅ ออกจากระบบ LIFF (ล้าง token + ปิดหน้าต่าง หรือ redirect)
-      logoutLiff();
-    }, 2500);
+    const timer = setTimeout(async () => {
+      // ✅ ตรวจสอบ LIFF พร้อมก่อนออกจากระบบ
+      const ready = await ensureLiffReady();
+      if (ready) {
+        await logoutLiff();
+      } else {
+        console.warn("⚠️ LIFF not ready, skipping logout");
+      }
+    }, 30000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -21,9 +27,7 @@ export default function ThankYou() {
     >
       <div className="p-4 rounded shadow-sm bg-white border">
         <h2 className="fw-bold text-success mb-3">🎉 ขอบคุณที่ใช้บริการ!</h2>
-        <p className="text-muted mb-1">
-          ระบบได้รับข้อมูลของคุณเรียบร้อยแล้ว
-        </p>
+        <p className="text-muted mb-1">ระบบได้รับข้อมูลของคุณเรียบร้อยแล้ว</p>
         <p className="text-secondary small">
           หน้าต่างนี้จะปิดโดยอัตโนมัติภายในไม่กี่วินาที...
         </p>

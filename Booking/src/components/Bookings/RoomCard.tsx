@@ -29,10 +29,10 @@ export default function RoomCard({ room, onSelect }: Props) {
         <h2 className="card-title fw-bold">ห้อง {room.number}</h2>
 
         <div className="mb-2">
-          <small className="text-muted">ขนาด: {room.size}</small>
+          <small className="text-muted">ขนาด : {room.size}</small>
           <br />
           <small className="text-muted">
-            ค่าเช่า: {room.rent.toLocaleString("th-TH")} บาท
+            ค่าเช่า : {room.rent.toLocaleString("th-TH")} บาท
           </small>
         </div>
 
@@ -59,9 +59,7 @@ export default function RoomCard({ room, onSelect }: Props) {
             เลือกห้องนี้
           </button>
         ) : (
-          <button className="btn btn-secondary w-100" disabled>
-            ไม่สามารถจองได้
-          </button>
+          <button className="btn btn-secondary w-100" disabled></button>
         )}
       </div>
     </div>

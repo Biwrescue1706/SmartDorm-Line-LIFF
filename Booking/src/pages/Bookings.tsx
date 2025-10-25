@@ -34,9 +34,7 @@ export default function Bookings() {
           {/* 🔽 ตัวเลือกชั้นแบบ Dropdown */}
           <div className="d-flex justify-content-center mb-4">
             <div className="input-group" style={{ maxWidth: "300px" }}>
-              <label className="input-group-text bg-primary text-white fw-semibold">
-                ชั้น
-              </label>
+              <label className="input-group-text bg-primary text-white fw-semibold"></label>
               <select
                 className="form-select fw-semibold"
                 value={floor}

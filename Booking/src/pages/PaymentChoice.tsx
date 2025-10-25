@@ -6,7 +6,7 @@ import PaymentSummary from "../components/Payment/PaymentSummary";
 import type { Room } from "../types/Room";
 import { API_BASE } from "../config";
 import Swal from "sweetalert2";
-import { getAccessToken } from "../lib/liff";
+import { refreshLiffToken } from "../lib/liff";
 import axios from "axios";
 
 export default function PaymentChoice() {
@@ -19,28 +19,25 @@ export default function PaymentChoice() {
 
   // ✅ ตรวจสอบ token กับ backend
   useEffect(() => {
-    (async () => {
-      try {
-        const token = getAccessToken();
-        if (!token) {
-          await Swal.fire("⚠️ กรุณาเข้าสู่ระบบผ่าน LINE", "", "warning");
-          nav("/");
-          return;
-        }
+  (async () => {
+    try {
+      const token = await refreshLiffToken(); // ✅ ใช้อันนี้แทน getAccessToken()
+      console.log("🔑 Token ในหน้า PaymentChoice:", token);
+      if (!token) return;
 
-        // ตรวจสอบ token กับ backend
-        await axios.post(`${API_BASE}/user/me`, { accessToken: token });
-        setReady(true);
-      } catch {
-        await Swal.fire(
-          "❌ ไม่สามารถตรวจสอบสิทธิ์ได้",
-          "กรุณาเข้าสู่ระบบใหม่อีกครั้ง",
-          "error"
-        );
-        nav("/");
-      }
-    })();
-  }, [nav]);
+      await axios.post(`${API_BASE}/user/me`, { accessToken: token });
+      setReady(true);
+    } catch (err) {
+      console.warn("❌ verify failed:", err);
+      await Swal.fire(
+        "❌ ไม่สามารถตรวจสอบสิทธิ์ได้",
+        "กรุณาเข้าสู่ระบบใหม่อีกครั้ง",
+        "error"
+      );
+      nav("/");
+    }
+  })();
+}, [nav]);
 
   // ถ้าเข้ามาโดยไม่มีข้อมูลห้อง
   if (!room)
