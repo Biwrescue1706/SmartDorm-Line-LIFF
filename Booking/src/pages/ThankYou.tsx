@@ -1,24 +1,11 @@
-// src/pages/ThankYou.tsx
-import liff from "@line/liff";
 import { useEffect } from "react";
-import Swal from "sweetalert2";
+import { logoutLiff } from "../lib/liff";
 
 export default function ThankYou() {
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (liff.isInClient()) {
-        liff.closeWindow(); // ✅ ปิดอัตโนมัติถ้าอยู่ใน LINE
-      } else {
-        // ถ้าไม่ใช่ใน LINE ให้ถามผู้ใช้แทน
-        Swal.fire({
-          title: "✅ ส่งข้อมูลเรียบร้อย",
-          text: "ขอบคุณที่ใช้บริการ SmartDorm!",
-          icon: "success",
-          confirmButtonText: "กลับหน้าหลัก",
-        }).then(() => {
-          window.location.href = "/"; // กลับหน้าแรก
-        });
-      }
+      // ✅ ออกจากระบบ LIFF (ล้าง token + ปิดหน้าต่าง หรือ redirect)
+      logoutLiff();
     }, 2500);
 
     return () => clearTimeout(timer);
