@@ -3,9 +3,9 @@ import RoomDetailCard from "../components/RoomDetail/RoomDetailCard";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { getAccessToken } from "../lib/liff";
 import axios from "axios";
-import { API_BASE } from "../config";
+import { API_BASE, VITE_LIFF_ID } from "../config";
+import liff from "@line/liff";
 
 export default function RoomDetail() {
   const { room, roomId, loading, error } = useRoomDetail();
@@ -15,23 +15,33 @@ export default function RoomDetail() {
   useEffect(() => {
     (async () => {
       try {
-        const token = getAccessToken();
-        if (!token) {
-          Swal.fire("⚠️ กรุณาเข้าสู่ระบบผ่าน LINE", "", "warning").then(() =>
-            nav("/")
-          );
+        await liff.init({ liffId: VITE_LIFF_ID });
+
+        if (!liff.isLoggedIn()) {
+          liff.login();
           return;
         }
 
-        // ✅ ตรวจสอบ token กับ backend
+        const token = liff.getAccessToken();
+        if (!token) {
+          liff.login(); // หมดอายุ → login ใหม่
+          return;
+        }
+
+        // ตรวจสอบ token กับ backend
         await axios.post(`${API_BASE}/user/me`, { accessToken: token });
-      } catch {
-        Swal.fire("❌ การยืนยันสิทธิ์ล้มเหลว", "กรุณาเข้าสู่ระบบใหม่อีกครั้ง", "error").then(() =>
-          nav("/")
-        );
+      } catch (err) {
+        Swal.fire(
+          "❌ การยืนยันสิทธิ์ล้มเหลว",
+          "กรุณาเข้าสู่ระบบใหม่อีกครั้ง",
+          "error"
+        ).then(() => {
+          liff.logout();
+          liff.login(); // รี login ใหม่
+        });
       }
     })();
-  }, [nav]);
+  }, []);
 
   if (loading)
     return (
