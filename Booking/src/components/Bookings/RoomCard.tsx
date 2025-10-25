@@ -38,7 +38,8 @@ export default function RoomCard({ room, onSelect }: Props) {
 
         <div className="mb-3">{renderStatus()}</div>
 
-        {isAvailable ? (
+        {/* ✅ แสดงปุ่มเฉพาะห้องว่างเท่านั้น */}
+        {isAvailable && (
           <button
             className="btn fw-semibold w-100 text-dark"
             style={{
@@ -58,9 +59,8 @@ export default function RoomCard({ room, onSelect }: Props) {
           >
             เลือกห้องนี้
           </button>
-        ) : (
-          <button className="btn btn-secondary w-100" disabled></button>
         )}
+        {/* ❌ ถ้าไม่ว่าง (status != 0) จะไม่แสดงปุ่มเลย */}
       </div>
     </div>
   );
