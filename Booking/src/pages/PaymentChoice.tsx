@@ -1,10 +1,13 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AccountCard from "../components/Payment/AccountCard";
 import QRSection from "../components/Payment/QRSection";
 import PaymentSummary from "../components/Payment/PaymentSummary";
 import type { Room } from "../types/Room";
 import { API_BASE } from "../config";
+import Swal from "sweetalert2";
+import { getAccessToken } from "../lib/liff";
+import axios from "axios";
 
 export default function PaymentChoice() {
   const { state } = useLocation();
@@ -12,7 +15,32 @@ export default function PaymentChoice() {
   const room = state as Room;
 
   const [method, setMethod] = useState<"qr" | "account">("qr");
-  const [ready] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  // ✅ ตรวจสอบ token กับ backend
+  useEffect(() => {
+    (async () => {
+      try {
+        const token = getAccessToken();
+        if (!token) {
+          await Swal.fire("⚠️ กรุณาเข้าสู่ระบบผ่าน LINE", "", "warning");
+          nav("/");
+          return;
+        }
+
+        // ตรวจสอบ token กับ backend
+        await axios.post(`${API_BASE}/user/me`, { accessToken: token });
+        setReady(true);
+      } catch {
+        await Swal.fire(
+          "❌ ไม่สามารถตรวจสอบสิทธิ์ได้",
+          "กรุณาเข้าสู่ระบบใหม่อีกครั้ง",
+          "error"
+        );
+        nav("/");
+      }
+    })();
+  }, [nav]);
 
   // ถ้าเข้ามาโดยไม่มีข้อมูลห้อง
   if (!room)
