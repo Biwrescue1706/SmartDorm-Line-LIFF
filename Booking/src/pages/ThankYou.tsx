@@ -5,10 +5,10 @@ import { ensureLiffReady, logoutLiff } from "../lib/liff";
 export default function ThankYou() {
   useEffect(() => {
     const timer = setTimeout(async () => {
-      // ✅ ตรวจสอบ LIFF พร้อมก่อนออกจากระบบ
+      // ✅ ตรวจสอบว่า LIFF พร้อมก่อนออกจากระบบ
       const ready = await ensureLiffReady();
       if (ready) {
-axios.post        await logoutLiff();
+        await logoutLiff();
       } else {
         console.warn("⚠️ LIFF not ready, skipping logout");
       }
