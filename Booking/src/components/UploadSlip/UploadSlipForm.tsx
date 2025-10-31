@@ -156,7 +156,7 @@ export default function UploadSlipForm({
     <div className="min-vh-100 d-flex align-items-center bg-light">
       <div className="container">
         <div className="row justify-content-center">
-          <div className="col-10 col-sm-10 col-md-8 col-lg-5">
+          <div className="col-8 col-sm-8 col-md-8 col-lg-5">
             <div className="card shadow-lg border-0 rounded-4">
               <div className="card-body p-4">
                 <form onSubmit={handleSubmit}>
@@ -177,7 +177,7 @@ export default function UploadSlipForm({
                       <option value="">-- เลือก --</option>
                       <option value="นาย">นาย</option>
                       <option value="นาง">นาง</option>
-                      <option value="นางสาว">นางสาว</option>
+                      <option value="น.ส.">นางสาว</option>
                     </select>
                   </div>
 
