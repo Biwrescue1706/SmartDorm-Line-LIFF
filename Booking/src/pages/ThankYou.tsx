@@ -1,4 +1,4 @@
-// src/pages/ThankYou.tsx
+หลวง// src/pages/ThankYou.tsx
 import { useEffect } from "react";
 import { ensureLiffReady, logoutLiff } from "../lib/liff";
 
@@ -8,11 +8,11 @@ export default function ThankYou() {
       // ✅ ตรวจสอบ LIFF พร้อมก่อนออกจากระบบ
       const ready = await ensureLiffReady();
       if (ready) {
-        await logoutLiff();
+axios.post        await logoutLiff();
       } else {
         console.warn("⚠️ LIFF not ready, skipping logout");
       }
-    }, 30000);
+    }, 10000);
 
     return () => clearTimeout(timer);
   }, []);
