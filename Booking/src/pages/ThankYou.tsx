@@ -1,4 +1,4 @@
-หลวง// src/pages/ThankYou.tsx
+// src/pages/ThankYou.tsx
 import { useEffect } from "react";
 import { ensureLiffReady, logoutLiff } from "../lib/liff";
 
