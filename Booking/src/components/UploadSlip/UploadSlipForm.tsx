@@ -72,8 +72,12 @@ export default function UploadSlipForm({
       });
       return false;
     }
+
     const today = new Date();
     const selected = new Date(checkin);
+    today.setHours(0, 0, 0, 0);
+    selected.setHours(0, 0, 0, 0);
+
     if (selected < today) {
       Swal.fire({
         toast: true,
@@ -86,6 +90,7 @@ export default function UploadSlipForm({
       });
       return false;
     }
+
     return true;
   };
 
@@ -107,7 +112,7 @@ export default function UploadSlipForm({
     }
 
     try {
-      //  สมัคร / อัปเดตข้อมูลลูกค้า
+      // 🧾 สมัคร / อัปเดตข้อมูลลูกค้า
       await axios.post(`${API_BASE}/user/register`, {
         accessToken,
         ctitle,
@@ -117,9 +122,9 @@ export default function UploadSlipForm({
         cmumId,
       });
 
-      //  เตรียมข้อมูลการจอง
+      // 🏠 เตรียมข้อมูลการจอง
       const formData = new FormData();
-      formData.append("accessToken", accessToken); // ใช้ token เดิมที่ส่งมา
+      formData.append("accessToken", accessToken);
       formData.append("roomId", room.roomId);
       formData.append("ctitle", ctitle);
       formData.append("cname", cname);
@@ -129,7 +134,7 @@ export default function UploadSlipForm({
       formData.append("checkin", checkin);
       formData.append("slip", slip);
 
-      //  ส่งคำขอจองไป backend
+      // 🚀 ส่งข้อมูลไป backend
       const success = await submitSlip(formData);
       if (success) {
         Swal.fire({
@@ -142,7 +147,6 @@ export default function UploadSlipForm({
         });
         onSuccess();
 
-        // 🔁 Redirect
         setTimeout(() => {
           nav("/thankyou");
         }, 1500);
@@ -154,13 +158,14 @@ export default function UploadSlipForm({
 
   return (
     <div className="min-vh-100 d-flex align-items-center bg-light">
-      <div className="container">
+      <div className="container py-5">
         <div className="row justify-content-center">
-          <div className="col-12 col-sm-12 col-md-12 col-lg-5">
+          {/* ✅ ปรับความกว้างฟอร์มให้พอดีกับทุกขนาดจอ */}
+          <div className="col-11 col-sm-10 col-md-8 col-lg-7 col-xl-6 mx-auto">
             <div className="card shadow-lg border-0 rounded-4">
-              <div className="card-body p-4">
+              <div className="card-body p-4 p-md-5">
                 <form onSubmit={handleSubmit}>
-                  <h3 className="text-center mb-4">📤 อัปโหลดสลิป</h3>
+                  <h3 className="text-center mb-3">📤 อัปโหลดสลิป</h3>
                   <h5 className="text-center text-secondary mb-4">
                     ห้อง {room.number}
                   </h5>
@@ -276,7 +281,7 @@ export default function UploadSlipForm({
                       }}
                       disabled={loading}
                     >
-                      {loading ? "กำลังอัปโหลด..." : " ยืนยัน"}
+                      {loading ? "กำลังอัปโหลด..." : "ยืนยัน"}
                     </button>
                   </div>
                 </form>
