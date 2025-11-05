@@ -43,8 +43,7 @@ export function useRooms(includeBooked = false) {
 
   useEffect(() => {
     load(); // โหลดครั้งแรก
-    const interval = setInterval(load, 3000); // ✅ โหลดใหม่ทุก 3 วินาที
-    return () => clearInterval(interval);
+    return ;
   }, []);
 
   return { rooms, loading, reload: load };
