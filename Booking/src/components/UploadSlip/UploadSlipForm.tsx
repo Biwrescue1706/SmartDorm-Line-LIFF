@@ -23,96 +23,97 @@ export default function UploadSlipForm({
   const [csurname, setCsurname] = useState("");
   const [cphone, setCphone] = useState("");
   const [cmumId, setCmumId] = useState("");
-  const [slip, setSlip] = useState<File | null>(null);
   const [checkin, setCheckin] = useState("");
+   const [slip, setSlip] = useState<File | null>(null);
 
   const { loading, submitSlip } = useUploadSlip();
   const nav = useNavigate();
 
+  // ✅ ตรวจสอบความถูกต้องของข้อมูลก่อนส่ง
   const validateForm = (): boolean => {
     const nameRegex = /^[ก-๙a-zA-Z]+$/;
     const phoneRegex = /^[0-9]{10}$/;
     const idRegex = /^[0-9]{13}$/;
 
-    if (!nameRegex.test(cname) || !nameRegex.test(csurname)) {
+    if (!ctitle) {
       Swal.fire({
+        icon: "warning",
+        title: "กรุณาเลือกคำนำหน้า",
         toast: true,
         position: "top-end",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      return false;
+    }
+    if (!nameRegex.test(cname) || !nameRegex.test(csurname)) {
+      Swal.fire({
         icon: "error",
         title: "ชื่อ-นามสกุลห้ามมีอักษรพิเศษ",
+        toast: true,
+        position: "top-end",
+        timer: 2000,
         showConfirmButton: false,
-        timer: 2500,
       });
       return false;
     }
     if (!phoneRegex.test(cphone)) {
       Swal.fire({
+        icon: "error",
+        title: "เบอร์โทรต้องมี 10 หลัก",
         toast: true,
         position: "top-end",
-        icon: "error",
-        title: "เบอร์โทรต้องเป็น 10 หลัก",
+        timer: 2000,
         showConfirmButton: false,
-        timer: 2500,
       });
       return false;
     }
     if (!idRegex.test(cmumId)) {
       Swal.fire({
-        toast: true,
-        position: "top-end",
         icon: "error",
         title: "เลขบัตรประชาชนต้อง 13 หลัก",
-        showConfirmButton: false,
-        timer: 2500,
-      });
-      return false;
-    }
-
-    const today = new Date();
-    const selected = new Date(checkin);
-    today.setHours(0, 0, 0, 0);
-    selected.setHours(0, 0, 0, 0);
-
-    if (selected < today) {
-      Swal.fire({
         toast: true,
         position: "top-end",
-        icon: "warning",
-        title: "ไม่สามารถเลือกวันย้อนหลังได้",
+        timer: 2000,
         showConfirmButton: false,
-        timer: 2500,
       });
       return false;
     }
-
+    if (!checkin) {
+      Swal.fire({
+        icon: "warning",
+        title: "กรุณาเลือกวันที่เข้าพัก",
+        toast: true,
+        position: "top-end",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      return false;
+    }
+    if (!slip) {
+      Swal.fire({
+        icon: "warning",
+        title: "กรุณาแนบสลิปก่อนกดยืนยัน",
+        toast: true,
+        position: "top-end",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      return false;
+    }
     return true;
   };
 
+  // ✅ เมื่อกดยืนยัน
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-    if (!slip) {
-      Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "warning",
-        title: "กรุณาแนบสลิปก่อนกดยืนยัน",
-        showConfirmButton: false,
-        timer: 2500,
-      });
-      return;
-    }
 
     try {
-      await axios.post(`${API_BASE}/user/register`, {
-        accessToken,
-        ctitle,
-        cname,
-        csurname,
-        cphone,
-        cmumId,
-      });
+      // สมัครหรืออัปเดตข้อมูลลูกค้าจาก accessToken
+      await axios.post(`${API_BASE}/user/register`, { accessToken });
 
+      // เตรียม FormData เพื่อส่งไป backend
       const formData = new FormData();
       formData.append("accessToken", accessToken);
       formData.append("roomId", room.roomId);
@@ -122,7 +123,9 @@ export default function UploadSlipForm({
       formData.append("cphone", cphone);
       formData.append("cmumId", cmumId);
       formData.append("checkin", checkin);
-      formData.append("slip", slip);
+      formData.append("slip", slip!);
+
+      console.log("📦 ส่งข้อมูลไป /booking/create:", [...formData.entries()]);
 
       const success = await submitSlip(formData);
       if (success) {
@@ -130,7 +133,7 @@ export default function UploadSlipForm({
           toast: true,
           position: "top-end",
           icon: "success",
-          title: "จองห้องสำเร็จ",
+          title: "ส่งคำขอจองห้องสำเร็จ",
           showConfirmButton: false,
           timer: 2000,
         });
@@ -145,7 +148,7 @@ export default function UploadSlipForm({
 
   return (
     <div className="min-vh-100 d-flex align-items-center bg-light">
-      <div className="container-fluid liff-full px-3 px-sm-4 px-md-5 py-5">
+      <div className="container-fluid px-3 px-sm-4 px-md-5 py-5">
         <div className="row justify-content-center">
           <div className="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
             <div
@@ -154,11 +157,14 @@ export default function UploadSlipForm({
             >
               <div className="card-body p-4 p-md-5">
                 <form onSubmit={handleSubmit}>
-                  <h3 className="text-center mb-3">📤 อัปโหลดสลิป</h3>
+                  <h3 className="text-center mb-3 fw-bold">
+                    📤 อัปโหลดสลิปจองห้อง
+                  </h3>
                   <h5 className="text-center text-secondary mb-4">
                     ห้อง {room.number}
                   </h5>
 
+                  {/* 🧍‍♂️ ข้อมูลผู้จอง */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold">คำนำหน้า</label>
                     <select
@@ -222,6 +228,7 @@ export default function UploadSlipForm({
                     />
                   </div>
 
+                  {/* 🗓️ วันที่เข้าพัก */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold">
                       วันที่เข้าพัก
@@ -235,6 +242,7 @@ export default function UploadSlipForm({
                     />
                   </div>
 
+                  {/* 📸 แนบสลิป */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold">แนบสลิป</label>
                     <input
@@ -248,6 +256,7 @@ export default function UploadSlipForm({
 
                   <UploadSlipPreview slip={slip} />
 
+                  {/* ปุ่ม */}
                   <div className="d-flex justify-content-between mt-4">
                     <button
                       type="button"
@@ -270,11 +279,11 @@ export default function UploadSlipForm({
                     >
                       {loading ? (
                         <>
-                          <span className="spinner-border spinner-border-sm me-2" />{" "}
+                          <span className="spinner-border spinner-border-sm me-2" />
                           กำลังอัปโหลด...
                         </>
                       ) : (
-                        "ยืนยัน"
+                        "ยืนยันการจอง"
                       )}
                     </button>
                   </div>

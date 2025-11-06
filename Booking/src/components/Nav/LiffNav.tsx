@@ -10,10 +10,9 @@ export default function LiffNav() {
       nav("/bookings"); // ถ้าอยู่ในหน้า payment กลับ bookings
     } else if (location.pathname.startsWith("/upload-slip")) {
       nav("/payment");
-    } else if (location.pathname.startsWith("/bookings/")) {
-      nav("/bookings");
     } else {
-      nav(-1); // fallback กลับหน้าก่อนหน้า
+      location.pathname.startsWith("/bookings/");
+      nav("/bookings");
     }
   };
 
@@ -25,6 +24,7 @@ export default function LiffNav() {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        background: "linear-gradient(90deg, #43cea2, #185a9d)",
         padding: "0 1rem",
         zIndex: 10,
       }}
@@ -35,7 +35,7 @@ export default function LiffNav() {
         style={{ borderRadius: "10px" }}
         onClick={handleBack}
       >
-        ← 
+        ←
       </button>
 
       {/* 🏢 ชื่อ SmartDorm */}

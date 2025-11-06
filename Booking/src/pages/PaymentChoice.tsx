@@ -24,13 +24,11 @@ export default function PaymentChoice() {
     (async () => {
       try {
         const token = await refreshLiffToken();
-        console.log("🔑 Token ในหน้า PaymentChoice:", token);
         if (!token) return;
 
         await axios.post(`${API_BASE}/user/me`, { accessToken: token });
         setReady(true);
       } catch (err) {
-        console.warn("❌ verify failed:", err);
         await Swal.fire(
           "❌ ไม่สามารถตรวจสอบสิทธิ์ได้",
           "กรุณาเข้าสู่ระบบใหม่อีกครั้ง",

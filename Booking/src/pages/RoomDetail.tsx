@@ -17,16 +17,11 @@ export default function RoomDetail() {
     (async () => {
       try {
         const token = await refreshLiffToken();
-        console.log("🔑 Token ก่อนส่ง:", token);
         if (!token) return;
 
         await axios.post(`${API_BASE}/user/me`, { accessToken: token });
         console.log("✅ ตรวจสอบสิทธิ์ผ่าน");
       } catch (err: any) {
-        console.warn(
-          "❌ verify failed:",
-          err.response?.data?.error || err.message
-        );
         if (
           err.response?.data?.error?.includes("หมดอายุ") ||
           err.response?.data?.error?.includes("invalid")
