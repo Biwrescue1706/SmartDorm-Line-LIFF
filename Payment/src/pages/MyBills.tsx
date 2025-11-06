@@ -1,20 +1,22 @@
+// src/pages/MyBills.tsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { refreshLiffToken } from "../lib/liff";
 import { API_BASE } from "../config";
-import NavBar from "../components/NavBar"; // ✅ เพิ่มบรรทัดนี้
+import NavBar from "../components/NavBar";
 
 interface Bill {
   billId: string;
-  month: string;
+  month?: string;
   total: number;
   status: number;
-  room: { number: string };
+  room?: { number?: string };
 }
 
-const formatThaiMonth = (d: string) => {
+const formatThaiMonth = (d?: string) => {
+  if (!d || isNaN(new Date(d).getTime())) return "-";
   const date = new Date(d);
   return date.toLocaleDateString("th-TH", { year: "numeric", month: "long" });
 };
@@ -30,29 +32,35 @@ export default function MyBills() {
         const token = await refreshLiffToken();
         if (!token) throw new Error("token not found");
 
-        const unpaid = await axios.post(`${API_BASE}/user/bills/unpaid`, {
+        const unpaidRes = await axios.post(`${API_BASE}/user/bills/unpaid`, {
           accessToken: token,
         });
-        const paid = await axios.post(`${API_BASE}/user/payments`, {
+        const paidRes = await axios.post(`${API_BASE}/user/payments`, {
           accessToken: token,
         });
 
-        const allBills = [
-          ...unpaid.data.bills.map((b: any) => ({
-            ...b,
-            status: 0,
-            room: b.room || { number: b.number || "-" }, // ✅ ป้องกัน b.room undefined
-          })),
-          ...paid.data.bills.map((b: any) => ({
-            ...b,
-            status: 1,
-            room: b.room || { number: b.number || "-" }, // ✅ เช่นเดียวกัน
-          })),
-        ];
+        const unpaid = unpaidRes.data.bills.map((b: any) => ({
+          ...b,
+          status: 0,
+          room: b.room ?? { number: b.roomNumber ?? "-" },
+        }));
 
-        const sorted = allBills.sort(
-          (a, b) => new Date(b.month).getTime() - new Date(a.month).getTime()
-        );
+        const paid = paidRes.data.bills.map((b: any) => ({
+          ...b,
+          status: 1,
+          room: b.room ?? { number: b.roomNumber ?? "-" },
+        }));
+
+        const allBills = [...unpaid, ...paid];
+
+        // ✅ เรียงใหม่สุดก่อน และกรองเฉพาะบิลที่ยังไม่ชำระ
+        const sorted = allBills
+          .filter((b) => b.status === 0)
+          .sort(
+            (a, b) =>
+              new Date(b.month ?? "").getTime() -
+              new Date(a.month ?? "").getTime()
+          );
 
         setBills(sorted);
       } catch (err) {
@@ -75,7 +83,7 @@ export default function MyBills() {
   if (bills.length === 0)
     return (
       <div className="smartdorm-page text-center justify-content-center">
-        <NavBar /> {/* ✅ เพิ่ม Navbar */}
+        <NavBar />
         <div className="mt-5"></div>
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
@@ -88,8 +96,9 @@ export default function MyBills() {
 
   return (
     <div className="smartdorm-page">
-      <NavBar /> {/* ✅ แถบ SmartDorm ด้านบน */}
+      <NavBar />
       <div className="mt-5"></div>
+
       <div className="text-center mb-3">
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
@@ -97,10 +106,9 @@ export default function MyBills() {
           className="smartdorm-logo"
         />
         <h4 className="fw-bold text-success mb-0">🧾 รายการบิลของฉัน</h4>
-        <p className="text-muted small mt-1">
-          ดูบิลทั้งหมดของห้องที่คุณพักอาศัย
-        </p>
+        <p className="text-muted small mt-1">บิลที่รอการชำระของห้องคุณ</p>
       </div>
+
       <div
         className="w-100"
         style={{
@@ -115,44 +123,38 @@ export default function MyBills() {
             key={i}
             className="smartdorm-card"
             style={{
-              borderLeft:
-                b.status === 1 ? "6px solid #28a745" : "6px solid #ffc107",
+              borderLeft: "6px solid #ffc107",
             }}
           >
             <div className="d-flex justify-content-between align-items-start flex-wrap">
               <div>
                 <h6 className="fw-bold mb-1 text-dark">
-                  ห้อง {b.room?.number ?? "-"} — {formatThaiMonth(b.month)}
+                  ห้อง {b.room?.number ?? "-"}
                 </h6>
                 <p className="mb-1 text-muted small">
-                  💰 ยอดชำระ {b.total.toLocaleString()} บาท
+                  เดือน {formatThaiMonth(b.month)}
                 </p>
-                <span
-                  className={`badge rounded-pill px-3 py-2 ${
-                    b.status === 1
-                      ? "bg-success"
-                      : "bg-warning text-dark fw-semibold"
-                  }`}
-                >
-                  {b.status === 1 ? "✅ ชำระแล้ว" : "⌛ ยังไม่ชำระ"}
+                <p className="mb-1 text-muted small">
+                  💰 ยอด {b.total.toLocaleString()} บาท
+                </p>
+                <span className="badge rounded-pill px-3 py-2 bg-warning text-dark fw-semibold">
+                  ⌛ ยังไม่ชำระ
                 </span>
               </div>
 
-              {b.status === 0 && (
-                <button
-                  className="btn-primary-smart fw-semibold text-white px-3 py-2 mt-2 mt-sm-0"
-                  style={{
-                    borderRadius: "8px",
-                    minWidth: "110px",
-                    whiteSpace: "nowrap",
-                  }}
-                  onClick={() =>
-                    nav("/bill-detail", { state: { billId: b.billId } })
-                  }
-                >
-                  💸 ชำระบิล
-                </button>
-              )}
+              <button
+                className="btn-primary-smart fw-semibold text-white px-3 py-2 mt-2 mt-sm-0"
+                style={{
+                  borderRadius: "8px",
+                  minWidth: "110px",
+                  whiteSpace: "nowrap",
+                }}
+                onClick={() =>
+                  nav("/bill-detail", { state: { billId: b.billId } })
+                }
+              >
+                💸 ชำระบิล
+              </button>
             </div>
           </div>
         ))}

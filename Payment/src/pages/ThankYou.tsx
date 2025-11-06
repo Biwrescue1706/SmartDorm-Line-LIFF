@@ -15,7 +15,7 @@ export default function ThankYou() {
 
   return (
     <div className="smartdorm-page justify-content-center text-center">
-      <NavBar showBack={false} /> {/* ✅ Navbar ด้านบน (ไม่ต้องมีปุ่มย้อนกลับ) */}
+      <NavBar /> {/* ✅ Navbar ด้านบน (ไม่ต้องมีปุ่มย้อนกลับ) */}
       <div className="mt-5"></div> {/* เผื่อพื้นที่ Navbar */}
 
       {/* 🔹 โลโก้ SmartDorm */}

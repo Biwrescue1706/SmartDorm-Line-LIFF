@@ -1,11 +1,10 @@
-// src/pages/BillDetail.tsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { API_BASE } from "../config";
 import { refreshLiffToken } from "../lib/liff";
-import NavBar from "../components/NavBar"; // ✅ เพิ่ม NavBar
+import NavBar from "../components/NavBar"; // ✅ Navbar ใหม่ (auto back)
 
 interface BillDetail {
   billId: string;
@@ -43,14 +42,16 @@ export default function BillDetail() {
         setBill(res.data);
       } catch (err) {
         console.error(err);
-        Swal.fire("โหลดข้อมูลล้มเหลว", "ไม่พบบิล", "error");
+        Swal.fire("❌ โหลดข้อมูลล้มเหลว", "ไม่พบบิล", "error");
       }
     })();
   }, [billId]);
 
   if (!bill)
     return (
-      <div className="text-center py-5">
+      <div className="smartdorm-page text-center justify-content-center">
+        <NavBar />
+        <div className="mt-5"></div>
         <div className="spinner-border text-success" role="status"></div>
         <p className="mt-3 text-muted">กำลังโหลดข้อมูล...</p>
       </div>
@@ -58,9 +59,8 @@ export default function BillDetail() {
 
   return (
     <div className="smartdorm-page">
-      <NavBar /> {/* ✅ แถบด้านบน SmartDorm + ปุ่มย้อนกลับ */}
+      <NavBar /> {/* ✅ แถบ SmartDorm ด้านบน */}
       <div className="mt-5"></div> {/* เผื่อระยะ Navbar */}
-
       {/* 🔹 โลโก้ SmartDorm */}
       <div className="text-center mb-3">
         <img
@@ -70,9 +70,8 @@ export default function BillDetail() {
         />
         <h5 className="fw-bold text-success">รายละเอียดบิล SmartDorm</h5>
       </div>
-
-      {/* 🔹 การ์ดข้อมูลบิล */}
-      <div className="smartdorm-card">
+      {/* 🔹 กล่องข้อมูลบิล */}
+      <div className="smartdorm-card shadow-sm">
         <table className="table table-borderless align-middle mb-0">
           <tbody>
             <tr>

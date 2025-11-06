@@ -1,49 +1,62 @@
+// src/components/NavBar.tsx
 import { useNavigate, useLocation } from "react-router-dom";
 
-interface NavBarProps {
-  showBack?: boolean; // ✅ เพิ่ม prop นี้ (optional)
-}
-
-export default function NavBar({ showBack = true }: NavBarProps) {
+export default function NavBar() {
   const nav = useNavigate();
   const location = useLocation();
 
-  const handleBack = () => {
-    if (location.pathname === "/mybills") return;
-    nav(-1);
-  };
+  // ✅ ถ้าหน้าไม่ใช่ MyBills ให้แสดงปุ่มย้อนกลับ
+  const showBack =
+    location.pathname === "/bill-detail" ||
+    location.pathname === "/payment-choice" ||
+    location.pathname === "/upload-slip";
 
   return (
     <nav
-      className="w-100 d-flex align-items-center justify-content-between shadow-sm px-3 py-2"
       style={{
-        background: "linear-gradient(90deg, #43cea2, #185a9d)",
-        color: "white",
         position: "fixed",
         top: 0,
         left: 0,
-        zIndex: 999,
-        height: "56px",
+        width: "100%",
+        height: "60px",
+        background: "linear-gradient(90deg, #43cea2, #185a9d)",
+        color: "white",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: showBack ? "space-between" : "center",
+        padding:
+          "0 16px env(safe-area-inset-left) 0 env(safe-area-inset-right)",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+        zIndex: 1000,
       }}
     >
-      {/* 🔙 ปุ่มย้อนกลับ */}
-      {showBack ? (
+      {showBack && (
         <button
-          onClick={handleBack}
-          className="btn btn-sm text-white fw-bold"
-          style={{ background: "transparent", border: "none" }}
+          onClick={() => nav(-1)}
+          style={{
+            background: "none",
+            border: "none",
+            color: "white",
+            fontSize: "1.5rem",
+            fontWeight: "bold",
+            cursor: "pointer",
+          }}
         >
-          ⬅️
+          ←
         </button>
-      ) : (
-        <div style={{ width: "32px" }}></div> // ช่องว่างแทนปุ่ม
       )}
-
-      {/* 🏠 ชื่อระบบ */}
-      <h5 className="m-0 fw-bold text-center flex-grow-1">SmartDorm</h5>
-
-      {/* เว้นที่ขวาให้สมดุล */}
-      <div style={{ width: "32px" }}></div>
+      <h5
+        style={{
+          flexGrow: 1,
+          textAlign: showBack ? "center" : "center",
+          margin: 0,
+          fontWeight: 700,
+          letterSpacing: "0.5px",
+        }}
+      >
+        SmartDorm
+      </h5>
+      {showBack && <div style={{ width: "30px" }}></div>}
     </nav>
   );
 }

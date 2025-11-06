@@ -88,7 +88,6 @@ export default function PaymentChoice() {
     <div className="smartdorm-page">
       <NavBar /> {/* ✅ Navbar แสดง SmartDorm และปุ่มย้อนกลับ */}
       <div className="mt-5"></div> {/* เผื่อพื้นที่ Navbar */}
-
       {/* 🔹 โลโก้ */}
       <div className="text-center mb-3">
         <img
@@ -98,7 +97,6 @@ export default function PaymentChoice() {
         />
         <h5 className="fw-bold text-success mb-0">SmartDorm Payment</h5>
       </div>
-
       {/* 🔹 การ์ดหลัก */}
       <div className="smartdorm-card">
         <h4 className="fw-bold text-center mb-3 text-primary">
@@ -147,9 +145,7 @@ export default function PaymentChoice() {
               background: "linear-gradient(135deg, #f8f9fa, #e9ecef)",
             }}
           >
-            <h6 className="fw-semibold mb-2">
-              📲 สแกนเพื่อชำระผ่าน PromptPay
-            </h6>
+            <h6 className="fw-semibold mb-2">📲 สแกนเพื่อชำระผ่าน PromptPay</h6>
             <img
               src={qrUrl}
               alt="QR PromptPay"
