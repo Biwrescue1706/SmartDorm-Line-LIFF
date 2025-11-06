@@ -24,96 +24,57 @@ export default function UploadSlipForm({
   const [cphone, setCphone] = useState("");
   const [cmumId, setCmumId] = useState("");
   const [checkin, setCheckin] = useState("");
-   const [slip, setSlip] = useState<File | null>(null);
+  const [slip, setSlip] = useState<File | null>(null);
 
   const { loading, submitSlip } = useUploadSlip();
   const nav = useNavigate();
 
-  // ✅ ตรวจสอบความถูกต้องของข้อมูลก่อนส่ง
+  /* ✅ ตรวจสอบความถูกต้องของฟอร์ม */
   const validateForm = (): boolean => {
     const nameRegex = /^[ก-๙a-zA-Z]+$/;
     const phoneRegex = /^[0-9]{10}$/;
     const idRegex = /^[0-9]{13}$/;
 
-    if (!ctitle) {
-      Swal.fire({
-        icon: "warning",
-        title: "กรุณาเลือกคำนำหน้า",
-        toast: true,
-        position: "top-end",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      return false;
-    }
-    if (!nameRegex.test(cname) || !nameRegex.test(csurname)) {
-      Swal.fire({
-        icon: "error",
-        title: "ชื่อ-นามสกุลห้ามมีอักษรพิเศษ",
-        toast: true,
-        position: "top-end",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      return false;
-    }
-    if (!phoneRegex.test(cphone)) {
-      Swal.fire({
-        icon: "error",
-        title: "เบอร์โทรต้องมี 10 หลัก",
-        toast: true,
-        position: "top-end",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      return false;
-    }
-    if (!idRegex.test(cmumId)) {
-      Swal.fire({
-        icon: "error",
-        title: "เลขบัตรประชาชนต้อง 13 หลัก",
-        toast: true,
-        position: "top-end",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      return false;
-    }
-    if (!checkin) {
-      Swal.fire({
-        icon: "warning",
-        title: "กรุณาเลือกวันที่เข้าพัก",
-        toast: true,
-        position: "top-end",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      return false;
-    }
-    if (!slip) {
-      Swal.fire({
-        icon: "warning",
-        title: "กรุณาแนบสลิปก่อนกดยืนยัน",
-        toast: true,
-        position: "top-end",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      return false;
-    }
+    if (!ctitle) return showToast("warning", "กรุณาเลือกคำนำหน้า");
+    if (!nameRegex.test(cname) || !nameRegex.test(csurname))
+      return showToast("error", "ชื่อ-นามสกุลห้ามมีอักษรพิเศษ");
+    if (!phoneRegex.test(cphone))
+      return showToast("error", "เบอร์โทรต้องมี 10 หลัก");
+    if (!idRegex.test(cmumId))
+      return showToast("error", "เลขบัตรประชาชนต้อง 13 หลัก");
+    if (!checkin) return showToast("warning", "กรุณาเลือกวันที่เข้าพัก");
+    if (!slip) return showToast("warning", "กรุณาแนบสลิปก่อนกดยืนยัน");
     return true;
   };
 
-  // ✅ เมื่อกดยืนยัน
+  /* 🔔 ฟังก์ชัน toast */
+  const showToast = (icon: "success" | "error" | "warning", title: string) => {
+    Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon,
+      title,
+      showConfirmButton: false,
+      timer: 2000,
+    });
+    return false;
+  };
+
+  /* ✅ เมื่อกดยืนยัน */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     try {
-      // สมัครหรืออัปเดตข้อมูลลูกค้าจาก accessToken
+      if (!accessToken) {
+        Swal.fire("❌", "ไม่พบ accessToken กรุณาเข้าสู่ระบบใหม่", "error");
+        return;
+      }
+
+      // สมัคร/อัปเดตข้อมูลลูกค้าก่อน
       await axios.post(`${API_BASE}/user/register`, { accessToken });
 
-      // เตรียม FormData เพื่อส่งไป backend
+      // สร้าง formData เพื่อส่ง booking
       const formData = new FormData();
       formData.append("accessToken", accessToken);
       formData.append("roomId", room.roomId);
@@ -136,13 +97,18 @@ export default function UploadSlipForm({
           title: "ส่งคำขอจองห้องสำเร็จ",
           showConfirmButton: false,
           timer: 2000,
+        }).then(() => {
+          onSuccess();
+          nav("/thankyou");
         });
-        onSuccess();
-        setTimeout(() => nav("/thankyou"), 1500);
       }
     } catch (err: any) {
       console.error("❌ Booking submit failed:", err);
-      Swal.fire("❌ เกิดข้อผิดพลาด", "ไม่สามารถส่งคำขอจองได้", "error");
+      Swal.fire(
+        "❌ เกิดข้อผิดพลาด",
+        err?.response?.data?.error || "ไม่สามารถส่งคำขอจองได้",
+        "error"
+      );
     }
   };
 
