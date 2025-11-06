@@ -29,7 +29,6 @@ export default function UploadSlipForm({
   const { loading, submitSlip } = useUploadSlip();
   const nav = useNavigate();
 
-  // 🧩 ตรวจสอบข้อมูลก่อนส่ง
   const validateForm = (): boolean => {
     const nameRegex = /^[ก-๙a-zA-Z]+$/;
     const phoneRegex = /^[0-9]{10}$/;
@@ -40,8 +39,7 @@ export default function UploadSlipForm({
         toast: true,
         position: "top-end",
         icon: "error",
-        title: "ข้อมูลไม่ถูกต้อง",
-        text: "ชื่อ-นามสกุลห้ามมีอักษรพิเศษ",
+        title: "ชื่อ-นามสกุลห้ามมีอักษรพิเศษ",
         showConfirmButton: false,
         timer: 2500,
       });
@@ -52,8 +50,7 @@ export default function UploadSlipForm({
         toast: true,
         position: "top-end",
         icon: "error",
-        title: "ข้อมูลไม่ถูกต้อง",
-        text: "เบอร์โทรต้องเป็น 10 หลัก",
+        title: "เบอร์โทรต้องเป็น 10 หลัก",
         showConfirmButton: false,
         timer: 2500,
       });
@@ -64,8 +61,7 @@ export default function UploadSlipForm({
         toast: true,
         position: "top-end",
         icon: "error",
-        title: "ข้อมูลไม่ถูกต้อง",
-        text: "เลขบัตรประชาชนต้อง 13 หลัก",
+        title: "เลขบัตรประชาชนต้อง 13 หลัก",
         showConfirmButton: false,
         timer: 2500,
       });
@@ -82,8 +78,7 @@ export default function UploadSlipForm({
         toast: true,
         position: "top-end",
         icon: "warning",
-        title: "แจ้งเตือน",
-        text: "ไม่สามารถเลือกวันย้อนหลังได้",
+        title: "ไม่สามารถเลือกวันย้อนหลังได้",
         showConfirmButton: false,
         timer: 2500,
       });
@@ -93,7 +88,6 @@ export default function UploadSlipForm({
     return true;
   };
 
-  // 📤 ฟังก์ชันส่งข้อมูลจอง
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -102,8 +96,7 @@ export default function UploadSlipForm({
         toast: true,
         position: "top-end",
         icon: "warning",
-        title: "แจ้งเตือน",
-        text: "กรุณาแนบสลิปก่อนกดยืนยัน",
+        title: "กรุณาแนบสลิปก่อนกดยืนยัน",
         showConfirmButton: false,
         timer: 2500,
       });
@@ -111,7 +104,6 @@ export default function UploadSlipForm({
     }
 
     try {
-      // สมัคร / อัปเดตข้อมูลลูกค้า
       await axios.post(`${API_BASE}/user/register`, {
         accessToken,
         ctitle,
@@ -121,7 +113,6 @@ export default function UploadSlipForm({
         cmumId,
       });
 
-      // เตรียมข้อมูลการจอง
       const formData = new FormData();
       formData.append("accessToken", accessToken);
       formData.append("roomId", room.roomId);
@@ -133,7 +124,6 @@ export default function UploadSlipForm({
       formData.append("checkin", checkin);
       formData.append("slip", slip);
 
-      // ส่งข้อมูลไป backend
       const success = await submitSlip(formData);
       if (success) {
         Swal.fire({
@@ -145,12 +135,10 @@ export default function UploadSlipForm({
           timer: 2000,
         });
         onSuccess();
-
-        setTimeout(() => {
-          nav("/thankyou");
-        }, 1500);
+        setTimeout(() => nav("/thankyou"), 1500);
       }
-    } catch (err) {
+    } catch (err: any) {
+      console.error("❌ Booking submit failed:", err);
       Swal.fire("❌ เกิดข้อผิดพลาด", "ไม่สามารถส่งคำขอจองได้", "error");
     }
   };
@@ -159,7 +147,6 @@ export default function UploadSlipForm({
     <div className="min-vh-100 d-flex align-items-center bg-light">
       <div className="container-fluid liff-full px-3 px-sm-4 px-md-5 py-5">
         <div className="row justify-content-center">
-          {/* ✅ ฟอร์มขยายเต็มหน้าจอ LIFF */}
           <div className="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
             <div
               className="card shadow-lg border-0 rounded-4 mx-auto"
@@ -172,7 +159,6 @@ export default function UploadSlipForm({
                     ห้อง {room.number}
                   </h5>
 
-                  {/* ===== ข้อมูลลูกค้า ===== */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold">คำนำหน้า</label>
                     <select
@@ -262,7 +248,6 @@ export default function UploadSlipForm({
 
                   <UploadSlipPreview slip={slip} />
 
-                  {/* ===== ปุ่ม ===== */}
                   <div className="d-flex justify-content-between mt-4">
                     <button
                       type="button"
@@ -283,7 +268,14 @@ export default function UploadSlipForm({
                       }}
                       disabled={loading}
                     >
-                      {loading ? "กำลังอัปโหลด..." : "ยืนยัน"}
+                      {loading ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" />{" "}
+                          กำลังอัปโหลด...
+                        </>
+                      ) : (
+                        "ยืนยัน"
+                      )}
                     </button>
                   </div>
                 </form>

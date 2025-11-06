@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import RoomGrid from "../components/Bookings/RoomGrid";
 import { useRooms } from "../hooks/useRooms";
 import type { Room } from "../types/Room";
+import LiffNav from "../components/Nav/LiffNav"; // ✅ เพิ่ม navbar
 
 export default function Bookings() {
   const { rooms, loading } = useRooms(true);
@@ -26,43 +27,48 @@ export default function Bookings() {
   };
 
   return (
-    <div className="container my-4">
-      <div className="card shadow-sm border-0">
-        <div className="card-body">
-          <h2 className="text-center mb-4 fw-bold">เลือกห้องพัก</h2>
+    <>
+      {/* ✅ Navbar ด้านบน */}
+      <LiffNav />
 
-          {/* 🔽 ตัวเลือกชั้นแบบ Dropdown */}
-          <div className="d-flex justify-content-center mb-4">
-            <div className="input-group" style={{ maxWidth: "300px" }}>
-              <label className="input-group-text"></label>
-              <select
-                className="form-select fw-semibold"
-                value={floor}
-                onChange={(e) => setFloor(Number(e.target.value))}
-              >
-                {[...Array(10)].map((_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    ชั้น {i + 1}
-                  </option>
-                ))}
-              </select>
+      <div className="container my-4">
+        <div className="card shadow-sm border-0">
+          <div className="card-body">
+            <h2 className="text-center mb-4 fw-bold">เลือกห้องพัก</h2>
+
+            {/* 🔽 ตัวเลือกชั้นแบบ Dropdown */}
+            <div className="d-flex justify-content-center mb-4">
+              <div className="input-group" style={{ maxWidth: "300px" }}>
+                <label className="input-group-text"></label>
+                <select
+                  className="form-select fw-semibold"
+                  value={floor}
+                  onChange={(e) => setFloor(Number(e.target.value))}
+                >
+                  {[...Array(10)].map((_, i) => (
+                    <option key={i + 1} value={i + 1}>
+                      ชั้น {i + 1}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
+
+            {/* 🔹 แสดงผลตามสถานะ */}
+            {loading ? (
+              <div className="text-center text-muted py-4">
+                ⏳ กำลังโหลดข้อมูลห้อง...
+              </div>
+            ) : roomsByFloor.length === 0 ? (
+              <div className="text-center text-muted py-4">
+                ❌ ไม่มีห้องในชั้น {floor} ให้แสดง
+              </div>
+            ) : (
+              <RoomGrid rooms={roomsByFloor} onSelect={handleSelect} />
+            )}
           </div>
-
-          {/* 🔹 แสดงผลตามสถานะ */}
-          {loading ? (
-            <div className="text-center text-muted py-4">
-              ⏳ กำลังโหลดข้อมูลห้อง...
-            </div>
-          ) : roomsByFloor.length === 0 ? (
-            <div className="text-center text-muted py-4">
-              ❌ ไม่มีห้องในชั้น {floor} ให้แสดง
-            </div>
-          ) : (
-            <RoomGrid rooms={roomsByFloor} onSelect={handleSelect} />
-          )}
         </div>
       </div>
-    </div>
+    </>
   );
 }

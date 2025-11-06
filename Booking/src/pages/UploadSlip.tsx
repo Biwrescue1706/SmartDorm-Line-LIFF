@@ -23,18 +23,15 @@ export default function UploadSlip() {
   useEffect(() => {
     (async () => {
       try {
-        // ✅ ใช้ ensureLiffReady ให้แน่ใจว่า LIFF พร้อมใช้งาน
         const ready = await ensureLiffReady();
         if (!ready) return;
 
-        // ✅ ดึง token ใหม่ (ถ้ายังไม่มีจะ login ให้เอง)
         const token = getAccessToken();
         if (!token) {
           console.warn("⚠️ token หาย — login ใหม่");
           return;
         }
 
-        // ✅ ดึงโปรไฟล์ผู้ใช้
         const profile = await getUserProfile();
         if (!profile) {
           Swal.fire({
@@ -42,17 +39,14 @@ export default function UploadSlip() {
             position: "top-end",
             icon: "warning",
             title: "ไม่สามารถดึงโปรไฟล์ LINE ได้",
-            text: "ไม่สามารถดึงโปรไฟล์ LINE ได้",
             showConfirmButton: false,
             timer: 2500,
           });
           return;
         }
 
-        // ✅ ตรวจสอบ token กับ backend
         await axios.post(`${API_BASE}/user/me`, { accessToken: token });
 
-        // ✅ ตั้งค่า state หลังจากยืนยันสำเร็จ
         setAccessToken(token);
         setReady(true);
       } catch (err: any) {
@@ -60,8 +54,6 @@ export default function UploadSlip() {
           "❌ verify failed:",
           err.response?.data?.error || err.message
         );
-
-        // 🔁 ถ้า token หมดอายุหรือ invalid → logout แล้ว login ใหม่
         if (
           err.response?.data?.error?.includes("หมดอายุ") ||
           err.response?.data?.error?.includes("invalid")
@@ -87,7 +79,7 @@ export default function UploadSlip() {
   if (!room) {
     return (
       <div className="text-center py-5">
-        <h4 className="text-danger"> ไม่พบข้อมูลห้อง</h4>
+        <h4 className="text-danger">ไม่พบข้อมูลห้อง</h4>
         <button className="btn btn-primary mt-3" onClick={() => nav("/")}>
           กลับหน้าแรก
         </button>

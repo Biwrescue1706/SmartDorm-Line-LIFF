@@ -7,22 +7,13 @@ import { CreateBooking } from "../apis/endpoint.api";
 export const useUploadSlip = () => {
   const [loading, setLoading] = useState(false);
 
-  /**
-   * 📤 ส่งข้อมูลสลิปและรายละเอียดการจองไปยัง backend
-   * - ต้องแนบ accessToken ของ LINE (มาจาก LIFF)
-   * - ต้องมี roomId, checkin, slip
-   */
   async function submitSlip(formData: FormData) {
     try {
       setLoading(true);
-
       const res = await axios.post(`${API_BASE}${CreateBooking}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
-      //  ถ้าสำเร็จ
       Swal.fire({
         toast: true,
         position: "top-end",
@@ -34,7 +25,6 @@ export const useUploadSlip = () => {
 
       return res.data;
     } catch (err: any) {
-      // ถ้าผิดพลาด
       Swal.fire({
         toast: true,
         position: "top-end",
