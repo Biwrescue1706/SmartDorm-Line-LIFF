@@ -1,35 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route, Navigate } from "react-router-dom";
+import { ensureLiffReady } from "./lib/liff";
+import { useEffect } from "react";
 
-function App() {
-  const [count, setCount] = useState(0)
+// 📄 Pages
+import MyBills from "./pages/MyBills";
+import BillDetail from "./pages/BillDetail";
+import PaymentChoice from "./pages/PaymentChoice";
+import UploadSlip from "./pages/UploadSlip";
+import ThankYou from "./pages/ThankYou";
+
+export default function App() {
+  // ✅ เริ่มต้น LIFF ตอนเปิดเว็บครั้งแรก
+  useEffect(() => {
+    ensureLiffReady();
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <Routes>
+      {/* 📋 หน้ารายการบิลทั้งหมด */}
+      <Route path="/" element={<MyBills />} />
 
-export default App
+      {/* 🔍 หน้ารายละเอียดบิล */}
+      <Route path="/bill-detail" element={<BillDetail />} />
+
+      {/* 💳 หน้าชำระเงิน (เลือกวิธีการจ่าย) */}
+      <Route path="/payment-choice" element={<PaymentChoice />} />
+
+      {/* 📸 หน้าส่งสลิปการชำระเงิน */}
+      <Route path="/upload-slip" element={<UploadSlip />} />
+
+      {/* 🎉 หน้าขอบคุณหลังส่งสลิปสำเร็จ */}
+      <Route path="/thankyou" element={<ThankYou />} />
+
+      {/* 🧭 default redirect */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
