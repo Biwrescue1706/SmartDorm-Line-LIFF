@@ -1,7 +1,6 @@
-// src/App.tsx
 import { Routes, Route, Navigate } from "react-router-dom";
-import { ensureLiffReady } from "./lib/liff";
 import { useEffect } from "react";
+import { ensureLiffReady } from "./lib/liff";
 
 import MyBills from "./pages/MyBills";
 import BillDetail from "./pages/BillDetail";
@@ -25,4 +24,3 @@ export default function App() {
     </Routes>
   );
 }
-

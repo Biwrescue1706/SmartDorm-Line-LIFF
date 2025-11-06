@@ -55,41 +55,99 @@ export default function UploadSlip() {
     );
 
   return (
-    <div className="container my-4">
-      <div className="card shadow-sm p-3">
-        <h4 className="fw-bold text-center mb-3">📸 อัปโหลดสลิปการชำระเงิน</h4>
-
-        <p className="text-center mb-2">
-          ห้อง <b>{bill.room?.number}</b> — ยอด{" "}
-          <b>{bill.total.toLocaleString()} บาท</b>
-        </p>
-
-        <input
-          type="file"
-          accept="image/*"
-          className="form-control mb-3"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
+    <div
+      className="min-vh-100 d-flex flex-column align-items-center py-4"
+      style={{
+        background: "linear-gradient(135deg, #e0f7fa, #f1fff0)",
+      }}
+    >
+      {/* 🔹 โลโก้ SmartDorm */}
+      <div className="text-center mb-4">
+        <img
+          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
+          alt="SmartDorm Logo"
+          width={120}
+          className="mb-2"
+          style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))" }}
         />
-
-        {file && (
-          <div className="text-center mb-3">
-            <img
-              src={URL.createObjectURL(file)}
-              alt="preview"
-              width="200"
-              className="rounded border shadow-sm"
-            />
-          </div>
-        )}
-
-        <button
-          className="btn btn-success w-100 fw-semibold"
-          disabled={loading}
-          onClick={handleSubmit}
-        >
-          {loading ? "กำลังส่ง..." : "📤 ส่งสลิป"}
-        </button>
+        <h5 className="fw-bold text-success">📸 อัปโหลดสลิป SmartDorm</h5>
       </div>
+
+      {/* 🔹 กล่องอัปโหลดสลิป */}
+      <div
+        className="card shadow-lg border-0 p-3"
+        style={{
+          width: "90%",
+          maxWidth: "460px",
+          borderRadius: "16px",
+          background: "white",
+        }}
+      >
+        <div className="card-body">
+          <h5 className="fw-bold text-center mb-3 text-primary">
+            อัปโหลดสลิปการชำระเงิน
+          </h5>
+
+          <p className="text-center mb-3">
+            ห้อง <b>{bill.room?.number}</b> — ยอด{" "}
+            <b>{bill.total.toLocaleString()} บาท</b>
+          </p>
+
+          {/* 🔹 เลือกไฟล์ */}
+          <input
+            type="file"
+            accept="image/*"
+            className="form-control mb-3"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+          />
+
+          {/* 🔹 แสดงภาพ Preview */}
+          {file && (
+            <div className="text-center mb-3">
+              <img
+                src={URL.createObjectURL(file)}
+                alt="preview"
+                width="220"
+                className="rounded border shadow-sm"
+                style={{
+                  objectFit: "cover",
+                  borderRadius: "10px",
+                }}
+              />
+            </div>
+          )}
+
+          {/* 🔹 ปุ่มส่ง */}
+          <button
+            className="btn w-100 fw-semibold text-white py-2"
+            style={{
+              background: "linear-gradient(90deg, #43cea2, #185a9d)",
+              borderRadius: "10px",
+              transition: "0.3s",
+            }}
+            disabled={loading}
+            onClick={handleSubmit}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.background =
+                "linear-gradient(90deg, #74ebd5, #ACB6E5)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background =
+                "linear-gradient(90deg, #43cea2, #185a9d)")
+            }
+          >
+            {loading ? "⏳ กำลังส่ง..." : "📤 ส่งสลิปการชำระเงิน"}
+          </button>
+        </div>
+      </div>
+
+      {/* 🔹 ปุ่มกลับ */}
+      <button
+        className="btn btn-link text-muted mt-3 fw-semibold"
+        onClick={() => nav(-1)}
+      >
+        ⬅️ กลับหน้าก่อนหน้า
+      </button>
     </div>
   );
 }

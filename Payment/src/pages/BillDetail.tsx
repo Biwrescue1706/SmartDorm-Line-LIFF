@@ -1,3 +1,4 @@
+// src/pages/BillDetail.tsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -49,71 +50,97 @@ export default function BillDetail() {
   if (!bill)
     return (
       <div className="text-center py-5">
-        <div className="spinner-border text-primary"></div>
-        <p className="mt-3">กำลังโหลดข้อมูล...</p>
+        <div className="spinner-border text-success" role="status"></div>
+        <p className="mt-3 text-muted">กำลังโหลดข้อมูล...</p>
       </div>
     );
 
   return (
-    <div className="container my-4">
-      <div className="card p-3 shadow-sm">
-        <h4 className="fw-bold text-center mb-3">รายละเอียดบิล</h4>
-        <table className="table table-sm">
-          <tbody>
-            <tr>
-              <th>ห้อง</th>
-              <td>{bill.room.number}</td>
-            </tr>
-            <tr>
-              <th>เดือน</th>
-              <td>{formatThaiDate(bill.month)}</td>
-            </tr>
-            <tr>
-              <th>ค่าเช่าห้อง</th>
-              <td>{bill.rent.toLocaleString()} บาท</td>
-            </tr>
-            <tr>
-              <th>ค่าน้ำ</th>
-              <td>{bill.waterCost.toLocaleString()} บาท</td>
-            </tr>
-            <tr>
-              <th>ค่าไฟ</th>
-              <td>{bill.electricCost.toLocaleString()} บาท</td>
-            </tr>
-            <tr>
-              <th>ค่าส่วนกลาง</th>
-              <td>{bill.service.toLocaleString()} บาท</td>
-            </tr>
-            <tr>
-              <th>ค่าปรับ</th>
-              <td>{bill.fine.toLocaleString()} บาท</td>
-            </tr>
-            <tr>
-              <th>ครบกำหนดชำระ</th>
-              <td>{formatThaiDate(bill.dueDate)}</td>
-            </tr>
-            <tr>
-              <th>ยอดรวม</th>
-              <td className="fw-bold text-success">
-                {bill.total.toLocaleString()} บาท
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <div className="min-vh-100 d-flex flex-column align-items-center bg-light py-4">
+      {/* 🔹 โลโก้ SmartDorm */}
+      <div className="text-center mb-4">
+        <img
+          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
+          alt="SmartDorm Logo"
+          width={120}
+          className="mb-2 img-fluid"
+          style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))" }}
+        />
+        <h5 className="fw-bold text-success">รายละเอียดบิล SmartDorm</h5>
+      </div>
 
-        <div className="text-center mt-3">
-          {bill.status === 0 ? (
-            <button
-              className="btn btn-success w-100 fw-semibold"
-              onClick={() => nav("/payment-choice", { state: bill })}
-            >
-              💳 ไปชำระเงิน
-            </button>
-          ) : (
-            <button className="btn btn-secondary w-100 fw-semibold" disabled>
-              ✅ ชำระแล้ว
-            </button>
-          )}
+      {/* 🔹 กล่องข้อมูลบิล */}
+      <div
+        className="card shadow-lg border-0 p-3"
+        style={{ maxWidth: "460px", width: "90%", borderRadius: "1rem" }}
+      >
+        <div className="card-body">
+          <table className="table table-borderless align-middle">
+            <tbody>
+              <tr>
+                <th className="text-muted w-50">🏠 ห้อง</th>
+                <td className="fw-semibold">{bill.room.number}</td>
+              </tr>
+              <tr>
+                <th className="text-muted">📅 เดือน</th>
+                <td>{formatThaiDate(bill.month)}</td>
+              </tr>
+              <tr>
+                <th className="text-muted">💰 ค่าเช่าห้อง</th>
+                <td>{bill.rent.toLocaleString()} บาท</td>
+              </tr>
+              <tr>
+                <th className="text-muted">💧 ค่าน้ำ</th>
+                <td>{bill.waterCost.toLocaleString()} บาท</td>
+              </tr>
+              <tr>
+                <th className="text-muted">⚡ ค่าไฟ</th>
+                <td>{bill.electricCost.toLocaleString()} บาท</td>
+              </tr>
+              <tr>
+                <th className="text-muted">🏢 ค่าส่วนกลาง</th>
+                <td>{bill.service.toLocaleString()} บาท</td>
+              </tr>
+              <tr>
+                <th className="text-muted">⚠️ ค่าปรับ</th>
+                <td>{bill.fine.toLocaleString()} บาท</td>
+              </tr>
+              <tr>
+                <th className="text-muted">🗓️ ครบกำหนดชำระ</th>
+                <td>{formatThaiDate(bill.dueDate)}</td>
+              </tr>
+              <tr className="border-top">
+                <th className="fw-bold text-dark">💵 ยอดรวมทั้งหมด</th>
+                <td className="fw-bold text-success">
+                  {bill.total.toLocaleString()} บาท
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          {/* 🔹 ปุ่ม */}
+          <div className="mt-3 text-center">
+            {bill.status === 0 ? (
+              <button
+                className="btn w-100 fw-semibold text-white py-2"
+                style={{
+                  background: "linear-gradient(90deg, #43cea2, #185a9d)",
+                  borderRadius: "8px",
+                }}
+                onClick={() => nav("/payment-choice", { state: bill })}
+              >
+                💳 ไปชำระเงิน
+              </button>
+            ) : (
+              <button
+                className="btn btn-secondary w-100 fw-semibold py-2"
+                style={{ borderRadius: "8px" }}
+                disabled
+              >
+                ✅ ชำระแล้ว
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

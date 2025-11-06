@@ -7,7 +7,7 @@ export default function ThankYou() {
     const timer = setTimeout(async () => {
       const ready = await ensureLiffReady();
       if (ready) await logoutLiff();
-    }, 10000); // ออกจากระบบอัตโนมัติหลัง 10 วินาที
+    }, 10000); // ✅ ออกจากระบบอัตโนมัติหลัง 10 วินาที
 
     return () => clearTimeout(timer);
   }, []);
@@ -16,13 +16,47 @@ export default function ThankYou() {
     <div
       className="vh-100 d-flex flex-column justify-content-center align-items-center text-center"
       style={{
-        background: "linear-gradient(135deg, #f4fff4, #e0f7fa)",
+        background: "linear-gradient(135deg, #e0f7fa, #f1fff0)",
       }}
     >
-      <div className="p-4 rounded shadow-sm bg-white border">
-        <h2 className="fw-bold text-success mb-3">🎉 ขอบคุณที่ชำระเงิน!</h2>
-        <p className="text-muted mb-2">ระบบได้บันทึกข้อมูลการชำระเรียบร้อย</p>
-        <p className="text-muted small">(จะกลับไปหน้า LINE อัตโนมัติ)</p>
+      {/* 🔹 โลโก้ SmartDorm */}
+      <div className="text-center mb-3">
+        <img
+          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
+          alt="SmartDorm Logo"
+          width={130}
+          className="mb-2"
+          style={{
+            filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))",
+          }}
+        />
+      </div>
+
+      {/* 🔹 การ์ดข้อความขอบคุณ */}
+      <div
+        className="p-4 rounded shadow-lg bg-white border text-center"
+        style={{
+          maxWidth: "420px",
+          borderRadius: "16px",
+        }}
+      >
+        <h2 className="fw-bold text-success mb-3">
+          🎉 ขอบคุณที่ชำระเงินเรียบร้อย!
+        </h2>
+        <p className="text-muted mb-2">
+          ระบบได้บันทึกข้อมูลการชำระของคุณเรียบร้อยแล้ว
+        </p>
+        <p className="text-muted small mb-0">
+          (จะกลับไปหน้า LINE อัตโนมัติภายใน <b>10 วินาที</b>)
+        </p>
+
+        <div className="mt-4">
+          <div
+            className="spinner-border text-success"
+            style={{ width: "2.5rem", height: "2.5rem" }}
+          ></div>
+          <p className="mt-2 text-secondary small">กำลังกลับไปยังหน้าหลัก...</p>
+        </div>
       </div>
     </div>
   );

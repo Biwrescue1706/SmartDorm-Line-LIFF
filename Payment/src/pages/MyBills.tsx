@@ -1,3 +1,4 @@
+// src/pages/MyBills.tsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -44,61 +45,115 @@ export default function MyBills() {
         setBills(allBills);
       } catch (err) {
         console.error(err);
-        Swal.fire("โหลดข้อมูลล้มเหลว", "กรุณาลองใหม่", "error");
+        Swal.fire("โหลดข้อมูลล้มเหลว", "กรุณาลองใหม่อีกครั้ง", "error");
       } finally {
         setLoading(false);
       }
     })();
   }, []);
 
+  // 🌀 Loading
   if (loading)
     return (
       <div className="text-center py-5">
         <div className="spinner-border text-success"></div>
-        <p className="mt-3">กำลังโหลดข้อมูลบิล...</p>
+        <p className="mt-3 text-muted">กำลังโหลดข้อมูลบิล...</p>
       </div>
     );
 
+  // 🕳️ ไม่มีบิล
   if (bills.length === 0)
     return (
-      <div className="text-center p-5">
-        <h5 className="text-muted">ไม่มีบิลในระบบ</h5>
+      <div
+        className="min-vh-100 d-flex flex-column align-items-center justify-content-center text-center"
+        style={{
+          background: "linear-gradient(135deg, #e0f7fa, #f1fff0)",
+        }}
+      >
+        <img
+          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
+          alt="SmartDorm Logo"
+          width={120}
+          className="mb-3"
+          style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))" }}
+        />
+        <h5 className="text-muted">ยังไม่มีบิลในระบบ</h5>
       </div>
     );
 
+  // ✅ แสดงรายการบิล
   return (
-    <div className="container my-4">
-      <h3 className="fw-bold text-center mb-4">🧾 รายการบิลของฉัน</h3>
+    <div
+      className="min-vh-100 py-4"
+      style={{
+        background: "linear-gradient(135deg, #e0f7fa, #f1fff0)",
+      }}
+    >
+      {/* 🔹 โลโก้ */}
+      <div className="text-center mb-4">
+        <img
+          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
+          alt="SmartDorm Logo"
+          width={120}
+          className="mb-2"
+          style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))" }}
+        />
+        <h4 className="fw-bold text-success">🧾 รายการบิลของฉัน</h4>
+      </div>
 
-      <div className="list-group shadow-sm">
+      <div className="container">
         {bills.map((b, i) => (
           <div
             key={i}
-            className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+            className="card mb-3 shadow-sm border-0"
+            style={{
+              borderRadius: "14px",
+              overflow: "hidden",
+            }}
           >
-            <div>
-              <h6 className="fw-bold mb-1">
-                ห้อง {b.room.number} — {formatThaiMonth(b.month)}
-              </h6>
-              <p className="mb-1 text-muted">
-                ยอด {b.total.toLocaleString()} บาท
-              </p>
-              <span
-                className={`badge ${
-                  b.status === 1 ? "bg-success" : "bg-warning text-dark"
-                }`}
-              >
-                {b.status === 1 ? "ชำระแล้ว" : "ยังไม่ชำระ"}
-              </span>
+            <div className="card-body d-flex justify-content-between align-items-center">
+              <div>
+                <h6 className="fw-bold mb-1 text-dark">
+                  ห้อง {b.room.number} — {formatThaiMonth(b.month)}
+                </h6>
+                <p className="mb-1 text-muted">
+                  💰 ยอด {b.total.toLocaleString()} บาท
+                </p>
+                <span
+                  className={`badge rounded-pill px-3 py-2 ${
+                    b.status === 1
+                      ? "bg-success"
+                      : "bg-warning text-dark fw-semibold"
+                  }`}
+                >
+                  {b.status === 1 ? "✅ ชำระแล้ว" : "⌛ ยังไม่ชำระ"}
+                </span>
+              </div>
+
+              {b.status === 0 && (
+                <button
+                  className="btn fw-semibold text-white px-3 py-2"
+                  style={{
+                    background: "linear-gradient(90deg, #43cea2, #185a9d)",
+                    borderRadius: "8px",
+                    transition: "0.2s",
+                  }}
+                  onClick={() =>
+                    nav("/bill-detail", { state: { billId: b.billId } })
+                  }
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background =
+                      "linear-gradient(90deg, #74ebd5, #ACB6E5)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background =
+                      "linear-gradient(90deg, #43cea2, #185a9d)")
+                  }
+                >
+                  💸 ชำระบิล
+                </button>
+              )}
             </div>
-            {b.status === 0 && (
-              <button
-                className="btn btn-sm btn-outline-primary fw-semibold"
-                onClick={() => nav("/bill-detail", { state: { billId: b.billId } })}
-              >
-                💸 ชำระบิล
-              </button>
-            )}
           </div>
         ))}
       </div>

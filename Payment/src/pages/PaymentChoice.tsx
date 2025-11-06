@@ -1,3 +1,4 @@
+// src/pages/PaymentChoice.tsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { API_BASE } from "../config";
@@ -69,13 +70,40 @@ export default function PaymentChoice() {
   };
 
   return (
-    <div className="container my-4">
-      <div className="card shadow-sm p-3 border-0">
-        <h3 className="fw-bold text-center mb-3">💳 วิธีการชำระเงิน</h3>
-        <p className="text-center text-muted">
+    <div
+      className="min-vh-100 d-flex flex-column align-items-center py-4"
+      style={{ background: "linear-gradient(135deg, #e0f7fa, #f1fff0)" }}
+    >
+      {/* 🔹 โลโก้ */}
+      <div className="text-center mb-4">
+        <img
+          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
+          alt="SmartDorm Logo"
+          width={120}
+          className="mb-2"
+          style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))" }}
+        />
+        <h5 className="fw-bold text-success mb-0">SmartDorm Payment</h5>
+        <p className="text-muted small mb-0">
           สวัสดีคุณ <b>{userName}</b>
         </p>
+      </div>
 
+      {/* 🔹 การ์ดเลือกชำระ */}
+      <div
+        className="card shadow-lg border-0 p-3"
+        style={{
+          width: "90%",
+          maxWidth: "460px",
+          borderRadius: "16px",
+          background: "white",
+        }}
+      >
+        <h4 className="fw-bold text-center mb-3 text-primary">
+          💳 วิธีการชำระเงิน
+        </h4>
+
+        {/* 🔘 ปุ่มเลือกวิธีชำระ */}
         <div className="btn-group w-100 mb-4">
           <button
             className={`btn ${
@@ -95,20 +123,22 @@ export default function PaymentChoice() {
           </button>
         </div>
 
+        {/* 💰 ยอดรวม */}
         <div
           className="p-3 mb-3 rounded text-center shadow-sm"
           style={{ background: "linear-gradient(135deg, #b1f370, #b3efea)" }}
         >
-          <h5 className="fw-bold">
+          <h5 className="fw-bold text-dark">
             💰 ยอดรวม {total.toLocaleString("th-TH")} บาท
           </h5>
         </div>
 
+        {/* 🔹 QR PromptPay หรือ บัญชี */}
         {method === "qr" ? (
           <div className="text-center mb-3">
             <img
               src={qrUrl}
-              alt="QR"
+              alt="QR PromptPay"
               width="220"
               className="border rounded shadow-sm my-2"
             />
@@ -128,7 +158,7 @@ export default function PaymentChoice() {
                   link.click();
                 }}
               >
-                📥 บันทึก QR
+                📥 ดาวน์โหลด QR
               </button>
             )}
           </div>
@@ -139,22 +169,38 @@ export default function PaymentChoice() {
               background: "linear-gradient(135deg, #5d00ff, #9bc5ee)",
             }}
           >
-            <h5>ธนาคารไทยพาณิชย์</h5>
-            <p>505-2997156</p>
-            <p>นายภูวณัฐ พาหะละ</p>
-            <button className="btn btn-warning fw-semibold" onClick={handleCopy}>
+            <h5 className="fw-bold">ธนาคารไทยพาณิชย์</h5>
+            <p className="fw-semibold mb-0">505-2997156</p>
+            <p className="mb-3">นายภูวณัฐ พาหะละ</p>
+            <button
+              className="btn btn-warning fw-semibold"
+              onClick={handleCopy}
+            >
               📋 คัดลอกเลขบัญชี
             </button>
           </div>
         )}
 
+        {/* 🔹 ปุ่มดำเนินการต่อ */}
         <button
-          className="btn btn-success w-100 fw-semibold mt-3"
+          className="btn w-100 fw-semibold text-white mt-3 py-2"
+          style={{
+            background: "linear-gradient(90deg, #43cea2, #185a9d)",
+            borderRadius: "10px",
+          }}
           onClick={() => nav("/upload-slip", { state: bill })}
         >
           ➡️ ดำเนินการต่อ
         </button>
       </div>
+
+      {/* 🔹 ปุ่มกลับ */}
+      <button
+        className="btn btn-link text-muted mt-3 fw-semibold"
+        onClick={() => nav(-1)}
+      >
+        ⬅️ กลับหน้าก่อนหน้า
+      </button>
     </div>
   );
 }
