@@ -1,75 +1,131 @@
+/* 🌈 SmartDorm Global Styles — Fullscreen LIFF Friendly */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: system-ui, "Segoe UI", Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  color: #213547;
+  background-color: #ffffff;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
+/* ✅ รีเซ็ตพื้นฐาน ให้ LIFF ใช้พื้นที่เต็ม */
+html,
+body,
+#root {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: linear-gradient(135deg, #e0f7fa, #f1fff0);
+  font-family: system-ui, "Segoe UI", Avenir, Helvetica, Arial, sans-serif;
+  color: #213547;
+  box-sizing: border-box;
+}
+
+/* ป้องกัน Vite default style บีบ layout */
+body {
+  display: block !important;
+  place-items: unset !important;
+}
+
+/* 🔹 โครงหลัก SmartDorm */
+.smartdorm-page {
   min-height: 100vh;
+  width: 100%;
+  max-width: 500px; /* เหมาะกับจอมือถือ LINE */
+  margin: 0 auto;
+  padding: 30px 16px 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #e0f7fa, #f1fff0);
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* 🔹 การ์ดหลัก */
+.smartdorm-card {
+  width: 100%;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  padding: 22px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  transition: all 0.2s ease;
 }
 
+.smartdorm-card:hover {
+  transform: scale(1.01);
+}
+
+/* ✅ เผื่อพื้นที่ให้ Navbar ด้านบน */
+.smartdorm-page {
+  padding-top: 70px; /* มี header สูง ~56px + margin */
+}
+
+/* 🔹 โลโก้ SmartDorm */
+.smartdorm-logo {
+  width: 110px;
+  height: auto;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25));
+}
+
+/* 🔹 ปุ่มหลัก */
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8em 1.2em;
+  font-size: 1rem;
+  font-weight: 600;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-.liff-full {
-  width: 100vw !important;
-  max-width: 100% !important;
-  margin: 0 auto !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+  transition: all 0.2s ease;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+button:hover {
+  transform: scale(1.03);
+  opacity: 0.95;
+}
+
+.btn-primary-smart {
+  background: linear-gradient(90deg, #43cea2, #185a9d);
+  color: white;
+}
+
+.btn-primary-smart:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* 🔹 Responsive สำหรับจอเล็ก (iPhone SE / Android) */
+@media screen and (max-width: 400px) {
+  .smartdorm-logo {
+    width: 90px;
   }
-  a:hover {
-    color: #747bff;
+
+  .smartdorm-card {
+    padding: 16px;
   }
+
   button {
-    background-color: #f9f9f9;
+    font-size: 0.9rem;
+  }
+}
+
+/* 🔹 Dark Mode */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #121212;
+  }
+  .smartdorm-card {
+    background: #1e1e1e;
+    color: #f1f1f1;
   }
 }

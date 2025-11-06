@@ -1,10 +1,10 @@
-// src/pages/MyBills.tsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { refreshLiffToken } from "../lib/liff";
 import { API_BASE } from "../config";
+import NavBar from "../components/NavBar"; // ✅ เพิ่มบรรทัดนี้
 
 interface Bill {
   billId: string;
@@ -42,7 +42,11 @@ export default function MyBills() {
           ...paid.data.bills.map((b: any) => ({ ...b, status: 1 })),
         ];
 
-        setBills(allBills);
+        const sorted = allBills.sort(
+          (a, b) => new Date(b.month).getTime() - new Date(a.month).getTime()
+        );
+
+        setBills(sorted);
       } catch (err) {
         console.error(err);
         Swal.fire("โหลดข้อมูลล้มเหลว", "กรุณาลองใหม่อีกครั้ง", "error");
@@ -52,7 +56,6 @@ export default function MyBills() {
     })();
   }, []);
 
-  // 🌀 Loading
   if (loading)
     return (
       <div className="text-center py-5">
@@ -61,66 +64,63 @@ export default function MyBills() {
       </div>
     );
 
-  // 🕳️ ไม่มีบิล
   if (bills.length === 0)
     return (
-      <div
-        className="min-vh-100 d-flex flex-column align-items-center justify-content-center text-center"
-        style={{
-          background: "linear-gradient(135deg, #e0f7fa, #f1fff0)",
-        }}
-      >
+      <div className="smartdorm-page text-center justify-content-center">
+        <NavBar /> {/* ✅ เพิ่ม Navbar */}
+        <div className="mt-5"></div>
+
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
           alt="SmartDorm Logo"
-          width={50}
-          height={50}
-          className="mb-3"
-          style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))" }}
+          className="smartdorm-logo mb-3"
         />
         <h5 className="text-muted">ยังไม่มีบิลในระบบ</h5>
       </div>
     );
 
-  // ✅ แสดงรายการบิล
   return (
-    <div
-      className="min-vh-100 d-flex flex-column align-items-center py-4 px-2"
-      style={{
-        background: "linear-gradient(135deg, #e0f7fa, #f1fff0)",
-      }}
-    >
-      {/* 🔹 โลโก้ */}
+    <div className="smartdorm-page">
+      <NavBar /> {/* ✅ แถบ SmartDorm ด้านบน */}
+      <div className="mt-5"></div>
+
       <div className="text-center mb-3">
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
           alt="SmartDorm Logo"
-          width={50}
-          height={50}
-          className="mb-2"
-          style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))" }}
+          className="smartdorm-logo"
         />
         <h4 className="fw-bold text-success mb-0">🧾 รายการบิลของฉัน</h4>
+        <p className="text-muted small mt-1">
+          ดูบิลทั้งหมดของห้องที่คุณพักอาศัย
+        </p>
       </div>
 
-      {/* ✅ ใช้ div ปกติแทน container */}
-      <div className="w-100" style={{ maxWidth: "480px" }}>
+      <div
+        className="w-100"
+        style={{
+          maxWidth: "500px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "14px",
+        }}
+      >
         {bills.map((b, i) => (
           <div
             key={i}
-            className="card mb-3 shadow-sm border-0"
+            className="smartdorm-card"
             style={{
-              borderRadius: "14px",
-              overflow: "hidden",
+              borderLeft:
+                b.status === 1 ? "6px solid #28a745" : "6px solid #ffc107",
             }}
           >
-            <div className="card-body d-flex justify-content-between align-items-center">
+            <div className="d-flex justify-content-between align-items-start flex-wrap">
               <div>
                 <h6 className="fw-bold mb-1 text-dark">
                   ห้อง {b.room.number} — {formatThaiMonth(b.month)}
                 </h6>
-                <p className="mb-1 text-muted">
-                  💰 ยอด {b.total.toLocaleString()} บาท
+                <p className="mb-1 text-muted small">
+                  💰 ยอดชำระ {b.total.toLocaleString()} บาท
                 </p>
                 <span
                   className={`badge rounded-pill px-3 py-2 ${
@@ -135,22 +135,14 @@ export default function MyBills() {
 
               {b.status === 0 && (
                 <button
-                  className="btn fw-semibold text-white px-3 py-2"
+                  className="btn-primary-smart fw-semibold text-white px-3 py-2 mt-2 mt-sm-0"
                   style={{
-                    background: "linear-gradient(90deg, #43cea2, #185a9d)",
                     borderRadius: "8px",
-                    transition: "0.2s",
+                    minWidth: "110px",
+                    whiteSpace: "nowrap",
                   }}
                   onClick={() =>
                     nav("/bill-detail", { state: { billId: b.billId } })
-                  }
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.background =
-                      "linear-gradient(90deg, #74ebd5, #ACB6E5)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.background =
-                      "linear-gradient(90deg, #43cea2, #185a9d)")
                   }
                 >
                   💸 ชำระบิล

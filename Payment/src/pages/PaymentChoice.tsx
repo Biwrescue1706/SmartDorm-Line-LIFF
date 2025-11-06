@@ -3,29 +3,30 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { API_BASE } from "../config";
 import Swal from "sweetalert2";
-import { ensureLiffReady, refreshLiffToken } from "../lib/liff";
+import { refreshLiffToken } from "../lib/liff";
 import axios from "axios";
 import liff from "@line/liff";
+import NavBar from "../components/NavBar"; // ✅ เพิ่ม NavBar
+
+interface Room {
+  rent: number;
+  deposit: number;
+  bookingFee: number;
+}
 
 export default function PaymentChoice() {
   const { state } = useLocation();
   const nav = useNavigate();
-  const bill = state as any;
+  const room = state as Room;
 
   const [method, setMethod] = useState<"qr" | "account">("qr");
   const [ready, setReady] = useState(false);
-  const [userName, setUserName] = useState<string>("");
 
   useEffect(() => {
     (async () => {
       try {
-        const ok = await ensureLiffReady();
-        if (!ok) throw new Error("LIFF not ready");
-
         const token = await refreshLiffToken();
-        const profile = await liff.getProfile();
-        setUserName(profile.displayName);
-
+        if (!token) throw new Error("ไม่มี token");
         await axios.post(`${API_BASE}/user/me`, { accessToken: token });
         setReady(true);
       } catch {
@@ -35,17 +36,17 @@ export default function PaymentChoice() {
     })();
   }, [nav]);
 
-  if (!bill)
+  if (!room)
     return (
       <div className="text-center p-5">
-        <h5 className="text-danger mb-3">❌ ไม่พบบิล</h5>
+        <h5 className="text-danger mb-3">❌ ไม่พบข้อมูลห้อง</h5>
         <button className="btn btn-primary" onClick={() => nav("/")}>
           กลับหน้าแรก
         </button>
       </div>
     );
 
-  const total = bill.total;
+  const total = room.rent + room.deposit + room.bookingFee;
   const qrUrl = `${API_BASE}/qr/${total}`;
   const isInLine = liff.isInClient();
 
@@ -53,7 +54,7 @@ export default function PaymentChoice() {
     return (
       <div className="text-center py-5">
         <div className="spinner-border text-success"></div>
-        <p className="mt-3">กำลังตรวจสอบสิทธิ์...</p>
+        <p className="mt-3">กำลังตรวจสอบสิทธิ์ผู้ใช้งาน...</p>
       </div>
     );
 
@@ -69,142 +70,151 @@ export default function PaymentChoice() {
     });
   };
 
+  const handleDownload = async (url: string) => {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("โหลด QR ล้มเหลว");
+      const blob = await res.blob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "SmartDorm_QR.png";
+      link.click();
+    } catch {
+      Swal.fire("❌ ไม่สามารถบันทึก QR ได้", "", "error");
+    }
+  };
+
   return (
-    <div
-      className="min-vh-100 d-flex flex-column align-items-center justify-content-start py-4 px-2"
-      style={{
-        background: "linear-gradient(135deg, #e0f7fa, #f1fff0)",
-      }}
-    >
+    <div className="smartdorm-page">
+      <NavBar /> {/* ✅ Navbar แสดง SmartDorm และปุ่มย้อนกลับ */}
+      <div className="mt-5"></div> {/* เผื่อพื้นที่ Navbar */}
+
       {/* 🔹 โลโก้ */}
       <div className="text-center mb-3">
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
           alt="SmartDorm Logo"
-          width={50}
-          height={50}
-          className="mb-2"
-          style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))" }}
+          className="smartdorm-logo"
         />
         <h5 className="fw-bold text-success mb-0">SmartDorm Payment</h5>
-        <p className="text-muted small mb-0">
-          สวัสดีคุณ <b>{userName}</b>
-        </p>
       </div>
 
-      {/* 🔹 กล่องการ์ด */}
-      <div
-        className="card shadow-lg border-0 w-100"
-        style={{
-          maxWidth: "480px",
-          borderRadius: "16px",
-          background: "white",
-        }}
-      >
-        <div className="card-body p-4">
-          <h4 className="fw-bold text-center mb-3 text-primary">
-            💳 วิธีการชำระเงิน
-          </h4>
+      {/* 🔹 การ์ดหลัก */}
+      <div className="smartdorm-card">
+        <h4 className="fw-bold text-center mb-3 text-primary">
+          💳 วิธีการชำระเงิน
+        </h4>
 
-          {/* 🔘 ปุ่มเลือกวิธีชำระ */}
-          <div className="btn-group w-100 mb-4 gap-2 d-flex">
-            <button
-              className={`btn flex-fill ${
-                method === "account" ? "btn-success" : "btn-outline-success"
-              } fw-semibold`}
-              onClick={() => setMethod("account")}
-            >
-              🏦 โอนบัญชีธนาคาร
-            </button>
-            <button
-              className={`btn flex-fill ${
-                method === "qr" ? "btn-primary" : "btn-outline-primary"
-              } fw-semibold`}
-              onClick={() => setMethod("qr")}
-            >
-              📲 สแกน QR พร้อมเพย์
-            </button>
-          </div>
-
-          {/* 💰 ยอดรวม */}
-          <div
-            className="p-3 mb-3 rounded text-center shadow-sm"
-            style={{ background: "linear-gradient(135deg, #b1f370, #b3efea)" }}
-          >
-            <h5 className="fw-bold text-dark">
-              💰 ยอดรวม {total.toLocaleString("th-TH")} บาท
-            </h5>
-          </div>
-
-          {/* 🔹 QR PromptPay หรือ บัญชี */}
-          {method === "qr" ? (
-            <div className="text-center mb-3">
-              <img
-                src={qrUrl}
-                alt="QR PromptPay"
-                width="220"
-                className="border rounded shadow-sm my-2"
-              />
-              {isInLine ? (
-                <p className="text-danger small fw-semibold">
-                  กดค้างที่ QR แล้วเลือก “บันทึกภาพ”
-                </p>
-              ) : (
-                <button
-                  className="btn btn-outline-success w-100 fw-semibold"
-                  onClick={async () => {
-                    const res = await fetch(qrUrl);
-                    const blob = await res.blob();
-                    const link = document.createElement("a");
-                    link.href = URL.createObjectURL(blob);
-                    link.download = "SmartDorm_QR.png";
-                    link.click();
-                  }}
-                >
-                  📥 ดาวน์โหลด QR
-                </button>
-              )}
-            </div>
-          ) : (
-            <div
-              className="text-center text-white p-3 rounded"
-              style={{
-                background: "linear-gradient(135deg, #5d00ff, #9bc5ee)",
-              }}
-            >
-              <h5 className="fw-bold">ธนาคารไทยพาณิชย์</h5>
-              <p className="fw-semibold mb-0">505-2997156</p>
-              <p className="mb-3">นายภูวณัฐ พาหะละ</p>
-              <button
-                className="btn btn-warning fw-semibold"
-                onClick={handleCopy}
-              >
-                📋 คัดลอกเลขบัญชี
-              </button>
-            </div>
-          )}
-
-          {/* 🔹 ปุ่มดำเนินการต่อ */}
+        {/* 🔘 ปุ่มเลือกวิธี */}
+        <div className="btn-group w-100 mb-4">
           <button
-            className="btn w-100 fw-semibold text-white mt-3 py-2"
-            style={{
-              background: "linear-gradient(90deg, #43cea2, #185a9d)",
-              borderRadius: "10px",
-            }}
-            onClick={() => nav("/upload-slip", { state: bill })}
+            className={`btn fw-semibold ${
+              method === "account" ? "btn-success" : "btn-outline-success"
+            }`}
+            style={{ borderRadius: "8px 0 0 8px" }}
+            onClick={() => setMethod("account")}
           >
-            ➡️ ดำเนินการต่อ
+            🏦 โอนบัญชีธนาคาร
+          </button>
+          <button
+            className={`btn fw-semibold ${
+              method === "qr" ? "btn-primary" : "btn-outline-primary"
+            }`}
+            style={{ borderRadius: "0 8px 8px 0" }}
+            onClick={() => setMethod("qr")}
+          >
+            📲 QR พร้อมเพย์
           </button>
         </div>
-      </div>
 
-      {/* 🔹 ปุ่มกลับ */}
-      <button
-        className="btn btn-link text-muted mt-3 fw-semibold"
-        onClick={() => nav(-1)}
-      >
-        ⬅️ กลับหน้าก่อนหน้า
-      </button>
+        {/* 💰 สรุปยอด */}
+        <div
+          className="p-3 mb-3 rounded shadow-sm text-center"
+          style={{
+            background: "linear-gradient(135deg, #b1f370, #b3efea)",
+          }}
+        >
+          <h5 className="fw-bold text-dark mb-0">
+            💰 ยอดรวมที่ต้องชำระ {total.toLocaleString("th-TH")} บาท
+          </h5>
+        </div>
+
+        {/* 🔹 ส่วน QR หรือ บัญชี */}
+        {method === "qr" ? (
+          <div
+            className="p-3 mb-3 rounded shadow-sm text-center"
+            style={{
+              background: "linear-gradient(135deg, #f8f9fa, #e9ecef)",
+            }}
+          >
+            <h6 className="fw-semibold mb-2">
+              📲 สแกนเพื่อชำระผ่าน PromptPay
+            </h6>
+            <img
+              src={qrUrl}
+              alt="QR PromptPay"
+              width="220"
+              className="border rounded shadow-sm my-2"
+            />
+            {isInLine ? (
+              <p className="small text-danger fw-semibold mt-2">
+                กดค้างที่ QR แล้วเลือก “บันทึกภาพ” เพื่อบันทึกลงเครื่อง
+              </p>
+            ) : (
+              <button
+                className="btn btn-outline-success w-100 fw-semibold"
+                onClick={() => handleDownload(qrUrl)}
+              >
+                📥 ดาวน์โหลด QR PromptPay
+              </button>
+            )}
+          </div>
+        ) : (
+          <div
+            className="p-3 mb-3 rounded shadow-sm text-center text-white"
+            style={{
+              background: "linear-gradient(135deg, #5d00ff, #9bc5ee)",
+            }}
+          >
+            <h5 className="fw-bold mb-1">ธนาคารไทยพาณิชย์</h5>
+            <p className="mb-1 fw-semibold">เลขบัญชี: 505-2997156</p>
+            <p className="mb-2">นายภูวณัฐ พาหะละ</p>
+
+            <button
+              className="btn fw-semibold w-100"
+              style={{
+                background: "linear-gradient(90deg, #ffcc70, #ff8177)",
+                border: "none",
+                color: "black",
+              }}
+              onClick={handleCopy}
+            >
+              📋 คัดลอกเลขบัญชี
+            </button>
+          </div>
+        )}
+
+        {/* 🔹 ปุ่มดำเนินการต่อ */}
+        <button
+          className="btn w-100 fw-semibold text-white py-2"
+          style={{
+            background: "linear-gradient(90deg, #43cea2, #185a9d)",
+            borderRadius: "10px",
+            transition: "0.3s",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.background =
+              "linear-gradient(90deg, #74ebd5, #ACB6E5)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.background =
+              "linear-gradient(90deg, #43cea2, #185a9d)")
+          }
+          onClick={() => nav("/upload-slip", { state: room })}
+        >
+          ➡️ ดำเนินการต่อ
+        </button>
+      </div>
     </div>
   );
 }

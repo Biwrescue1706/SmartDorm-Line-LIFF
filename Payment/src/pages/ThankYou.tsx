@@ -1,53 +1,42 @@
 // src/pages/ThankYou.tsx
 import { useEffect } from "react";
 import { logoutLiff, ensureLiffReady } from "../lib/liff";
+import NavBar from "../components/NavBar"; // ✅ เพิ่ม Navbar
 
 export default function ThankYou() {
   useEffect(() => {
     const timer = setTimeout(async () => {
       const ready = await ensureLiffReady();
       if (ready) await logoutLiff();
-    }, 10000); // ✅ ออกจากระบบอัตโนมัติหลัง 10 วินาที
+    }, 10000); // ✅ ออกจากระบบอัตโนมัติหลัง 10 วิ
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div
-      className="min-vh-100 d-flex flex-column justify-content-center align-items-center text-center px-3"
-      style={{
-        background: "linear-gradient(135deg, #e0f7fa, #f1fff0)",
-      }}
-    >
+    <div className="smartdorm-page justify-content-center text-center">
+      <NavBar showBack={false} /> {/* ✅ Navbar ด้านบน (ไม่ต้องมีปุ่มย้อนกลับ) */}
+      <div className="mt-5"></div> {/* เผื่อพื้นที่ Navbar */}
+
       {/* 🔹 โลโก้ SmartDorm */}
       <div className="text-center mb-3">
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
           alt="SmartDorm Logo"
-          width={50}
-          height={50}
-          className="mb-2"
-          style={{
-            filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))",
-          }}
+          className="smartdorm-logo"
         />
       </div>
 
-      {/* 🔹 การ์ดข้อความขอบคุณ */}
-      <div
-        className="p-4 rounded shadow-lg bg-white border text-center animate__animated animate__fadeIn"
-        style={{
-          width: "90%",
-          maxWidth: "480px",
-          borderRadius: "16px",
-        }}
-      >
+      {/* 🔹 การ์ดขอบคุณ */}
+      <div className="smartdorm-card text-center shadow-sm animate__animated animate__fadeIn">
         <h2 className="fw-bold text-success mb-3">
           🎉 ขอบคุณที่ชำระเงินเรียบร้อย!
         </h2>
+
         <p className="text-muted mb-2">
           ระบบได้บันทึกข้อมูลการชำระของคุณเรียบร้อยแล้ว
         </p>
+
         <p className="text-muted small mb-0">
           (จะกลับไปหน้า LINE อัตโนมัติภายใน <b>10 วินาที</b>)
         </p>

@@ -5,6 +5,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { API_BASE } from "../config";
 import { refreshLiffToken } from "../lib/liff";
+import NavBar from "../components/NavBar"; // ✅ เพิ่ม NavBar
 
 interface BillDetail {
   billId: string;
@@ -56,103 +57,82 @@ export default function BillDetail() {
     );
 
   return (
-    <div
-      className="min-vh-100 d-flex flex-column align-items-center justify-content-start py-4 px-2"
-      style={{
-        background: "linear-gradient(135deg, #e0f7fa, #f1fff0)",
-      }}
-    >
+    <div className="smartdorm-page">
+      <NavBar /> {/* ✅ แถบด้านบน SmartDorm + ปุ่มย้อนกลับ */}
+      <div className="mt-5"></div> {/* เผื่อระยะ Navbar */}
+
       {/* 🔹 โลโก้ SmartDorm */}
       <div className="text-center mb-3">
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
           alt="SmartDorm Logo"
-          width={50}
-          height={50}
-          className="mb-2"
-          style={{
-            filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))",
-          }}
+          className="smartdorm-logo"
         />
-        <h5 className="fw-bold text-success mb-0">รายละเอียดบิล SmartDorm</h5>
+        <h5 className="fw-bold text-success">รายละเอียดบิล SmartDorm</h5>
       </div>
 
-      {/* 🔹 กล่องข้อมูลบิล */}
-      <div
-        className="card shadow-lg border-0 w-100"
-        style={{
-          maxWidth: "480px",
-          borderRadius: "16px",
-          background: "white",
-        }}
-      >
-        <div className="card-body p-4">
-          <table className="table table-borderless align-middle mb-0">
-            <tbody>
-              <tr>
-                <th className="text-muted w-50">🏠 ห้อง</th>
-                <td className="fw-semibold">{bill.room.number}</td>
-              </tr>
-              <tr>
-                <th className="text-muted">📅 เดือน</th>
-                <td>{formatThaiDate(bill.month)}</td>
-              </tr>
-              <tr>
-                <th className="text-muted">💰 ค่าเช่าห้อง</th>
-                <td>{bill.rent.toLocaleString()} บาท</td>
-              </tr>
-              <tr>
-                <th className="text-muted">💧 ค่าน้ำ</th>
-                <td>{bill.waterCost.toLocaleString()} บาท</td>
-              </tr>
-              <tr>
-                <th className="text-muted">⚡ ค่าไฟ</th>
-                <td>{bill.electricCost.toLocaleString()} บาท</td>
-              </tr>
-              <tr>
-                <th className="text-muted">🏢 ค่าส่วนกลาง</th>
-                <td>{bill.service.toLocaleString()} บาท</td>
-              </tr>
-              <tr>
-                <th className="text-muted">⚠️ ค่าปรับ</th>
-                <td>{bill.fine.toLocaleString()} บาท</td>
-              </tr>
-              <tr>
-                <th className="text-muted">🗓️ ครบกำหนดชำระ</th>
-                <td>{formatThaiDate(bill.dueDate)}</td>
-              </tr>
-              <tr className="border-top">
-                <th className="fw-bold text-dark">💵 ยอดรวมทั้งหมด</th>
-                <td className="fw-bold text-success">
-                  {bill.total.toLocaleString()} บาท
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      {/* 🔹 การ์ดข้อมูลบิล */}
+      <div className="smartdorm-card">
+        <table className="table table-borderless align-middle mb-0">
+          <tbody>
+            <tr>
+              <th className="text-muted w-50">🏠 ห้อง</th>
+              <td className="fw-semibold">{bill.room.number}</td>
+            </tr>
+            <tr>
+              <th className="text-muted">📅 เดือน</th>
+              <td>{formatThaiDate(bill.month)}</td>
+            </tr>
+            <tr>
+              <th className="text-muted">💰 ค่าเช่าห้อง</th>
+              <td>{bill.rent.toLocaleString()} บาท</td>
+            </tr>
+            <tr>
+              <th className="text-muted">💧 ค่าน้ำ</th>
+              <td>{bill.waterCost.toLocaleString()} บาท</td>
+            </tr>
+            <tr>
+              <th className="text-muted">⚡ ค่าไฟ</th>
+              <td>{bill.electricCost.toLocaleString()} บาท</td>
+            </tr>
+            <tr>
+              <th className="text-muted">🏢 ค่าส่วนกลาง</th>
+              <td>{bill.service.toLocaleString()} บาท</td>
+            </tr>
+            <tr>
+              <th className="text-muted">⚠️ ค่าปรับ</th>
+              <td>{bill.fine.toLocaleString()} บาท</td>
+            </tr>
+            <tr>
+              <th className="text-muted">🗓️ ครบกำหนดชำระ</th>
+              <td>{formatThaiDate(bill.dueDate)}</td>
+            </tr>
+            <tr className="border-top">
+              <th className="fw-bold text-dark">💵 ยอดรวมทั้งหมด</th>
+              <td className="fw-bold text-success">
+                {bill.total.toLocaleString()} บาท
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-          {/* 🔹 ปุ่มดำเนินการ */}
-          <div className="mt-4">
-            {bill.status === 0 ? (
-              <button
-                className="btn w-100 fw-semibold text-white py-2"
-                style={{
-                  background: "linear-gradient(90deg, #43cea2, #185a9d)",
-                  borderRadius: "10px",
-                }}
-                onClick={() => nav("/payment-choice", { state: bill })}
-              >
-                💳 ไปชำระเงิน
-              </button>
-            ) : (
-              <button
-                className="btn btn-secondary w-100 fw-semibold py-2"
-                style={{ borderRadius: "10px" }}
-                disabled
-              >
-                ✅ ชำระแล้ว
-              </button>
-            )}
-          </div>
+        {/* 🔹 ปุ่มชำระเงิน */}
+        <div className="mt-4 text-center">
+          {bill.status === 0 ? (
+            <button
+              className="btn-primary-smart w-100 fw-semibold py-2"
+              onClick={() => nav("/payment-choice", { state: bill })}
+            >
+              💳 ไปชำระเงิน
+            </button>
+          ) : (
+            <button
+              className="btn btn-secondary w-100 fw-semibold py-2"
+              disabled
+            >
+              ✅ ชำระแล้ว
+            </button>
+          )}
         </div>
       </div>
     </div>
