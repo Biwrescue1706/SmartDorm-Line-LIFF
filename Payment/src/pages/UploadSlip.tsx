@@ -56,34 +56,34 @@ export default function UploadSlip() {
 
   return (
     <div
-      className="min-vh-100 d-flex flex-column align-items-center py-4"
+      className="min-vh-100 d-flex flex-column align-items-center justify-content-start py-4 px-2"
       style={{
         background: "linear-gradient(135deg, #e0f7fa, #f1fff0)",
       }}
     >
       {/* 🔹 โลโก้ SmartDorm */}
-      <div className="text-center mb-4">
+      <div className="text-center mb-3">
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
           alt="SmartDorm Logo"
-          width={120}
+          width={50}
+          height={50}
           className="mb-2"
           style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))" }}
         />
-        <h5 className="fw-bold text-success">📸 อัปโหลดสลิป SmartDorm</h5>
+        <h5 className="fw-bold text-success mb-0">📸 อัปโหลดสลิป SmartDorm</h5>
       </div>
 
       {/* 🔹 กล่องอัปโหลดสลิป */}
       <div
-        className="card shadow-lg border-0 p-3"
+        className="card shadow-lg border-0 w-100"
         style={{
-          width: "90%",
-          maxWidth: "460px",
+          maxWidth: "480px",
           borderRadius: "16px",
           background: "white",
         }}
       >
-        <div className="card-body">
+        <div className="card-body p-4">
           <h5 className="fw-bold text-center mb-3 text-primary">
             อัปโหลดสลิปการชำระเงิน
           </h5>

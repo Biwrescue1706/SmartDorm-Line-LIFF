@@ -14,7 +14,7 @@ export default function ThankYou() {
 
   return (
     <div
-      className="vh-100 d-flex flex-column justify-content-center align-items-center text-center"
+      className="min-vh-100 d-flex flex-column justify-content-center align-items-center text-center px-3"
       style={{
         background: "linear-gradient(135deg, #e0f7fa, #f1fff0)",
       }}
@@ -24,7 +24,8 @@ export default function ThankYou() {
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
           alt="SmartDorm Logo"
-          width={130}
+          width={50}
+          height={50}
           className="mb-2"
           style={{
             filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))",
@@ -34,9 +35,10 @@ export default function ThankYou() {
 
       {/* 🔹 การ์ดข้อความขอบคุณ */}
       <div
-        className="p-4 rounded shadow-lg bg-white border text-center"
+        className="p-4 rounded shadow-lg bg-white border text-center animate__animated animate__fadeIn"
         style={{
-          maxWidth: "420px",
+          width: "90%",
+          maxWidth: "480px",
           borderRadius: "16px",
         }}
       >

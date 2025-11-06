@@ -73,7 +73,8 @@ export default function MyBills() {
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
           alt="SmartDorm Logo"
-          width={120}
+          width={50}
+          height={50}
           className="mb-3"
           style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))" }}
         />
@@ -84,24 +85,26 @@ export default function MyBills() {
   // ✅ แสดงรายการบิล
   return (
     <div
-      className="min-vh-100 py-4"
+      className="min-vh-100 d-flex flex-column align-items-center py-4 px-2"
       style={{
         background: "linear-gradient(135deg, #e0f7fa, #f1fff0)",
       }}
     >
       {/* 🔹 โลโก้ */}
-      <div className="text-center mb-4">
+      <div className="text-center mb-3">
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
           alt="SmartDorm Logo"
-          width={120}
+          width={50}
+          height={50}
           className="mb-2"
           style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))" }}
         />
-        <h4 className="fw-bold text-success">🧾 รายการบิลของฉัน</h4>
+        <h4 className="fw-bold text-success mb-0">🧾 รายการบิลของฉัน</h4>
       </div>
 
-      <div className="container">
+      {/* ✅ ใช้ div ปกติแทน container */}
+      <div className="w-100" style={{ maxWidth: "480px" }}>
         {bills.map((b, i) => (
           <div
             key={i}

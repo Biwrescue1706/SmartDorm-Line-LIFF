@@ -56,26 +56,38 @@ export default function BillDetail() {
     );
 
   return (
-    <div className="min-vh-100 d-flex flex-column align-items-center bg-light py-4">
+    <div
+      className="min-vh-100 d-flex flex-column align-items-center justify-content-start py-4 px-2"
+      style={{
+        background: "linear-gradient(135deg, #e0f7fa, #f1fff0)",
+      }}
+    >
       {/* 🔹 โลโก้ SmartDorm */}
-      <div className="text-center mb-4">
+      <div className="text-center mb-3">
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
           alt="SmartDorm Logo"
-          width={120}
-          className="mb-2 img-fluid"
-          style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))" }}
+          width={50}
+          height={50}
+          className="mb-2"
+          style={{
+            filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.25))",
+          }}
         />
-        <h5 className="fw-bold text-success">รายละเอียดบิล SmartDorm</h5>
+        <h5 className="fw-bold text-success mb-0">รายละเอียดบิล SmartDorm</h5>
       </div>
 
       {/* 🔹 กล่องข้อมูลบิล */}
       <div
-        className="card shadow-lg border-0 p-3"
-        style={{ maxWidth: "460px", width: "90%", borderRadius: "1rem" }}
+        className="card shadow-lg border-0 w-100"
+        style={{
+          maxWidth: "480px",
+          borderRadius: "16px",
+          background: "white",
+        }}
       >
-        <div className="card-body">
-          <table className="table table-borderless align-middle">
+        <div className="card-body p-4">
+          <table className="table table-borderless align-middle mb-0">
             <tbody>
               <tr>
                 <th className="text-muted w-50">🏠 ห้อง</th>
@@ -118,14 +130,14 @@ export default function BillDetail() {
             </tbody>
           </table>
 
-          {/* 🔹 ปุ่ม */}
-          <div className="mt-3 text-center">
+          {/* 🔹 ปุ่มดำเนินการ */}
+          <div className="mt-4">
             {bill.status === 0 ? (
               <button
                 className="btn w-100 fw-semibold text-white py-2"
                 style={{
                   background: "linear-gradient(90deg, #43cea2, #185a9d)",
-                  borderRadius: "8px",
+                  borderRadius: "10px",
                 }}
                 onClick={() => nav("/payment-choice", { state: bill })}
               >
@@ -134,7 +146,7 @@ export default function BillDetail() {
             ) : (
               <button
                 className="btn btn-secondary w-100 fw-semibold py-2"
-                style={{ borderRadius: "8px" }}
+                style={{ borderRadius: "10px" }}
                 disabled
               >
                 ✅ ชำระแล้ว
