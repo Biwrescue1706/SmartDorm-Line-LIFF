@@ -38,8 +38,16 @@ export default function MyBills() {
         });
 
         const allBills = [
-          ...unpaid.data.bills.map((b: any) => ({ ...b, status: 0 })),
-          ...paid.data.bills.map((b: any) => ({ ...b, status: 1 })),
+          ...unpaid.data.bills.map((b: any) => ({
+            ...b,
+            status: 0,
+            room: b.room || { number: b.number || "-" }, // ✅ ป้องกัน b.room undefined
+          })),
+          ...paid.data.bills.map((b: any) => ({
+            ...b,
+            status: 1,
+            room: b.room || { number: b.number || "-" }, // ✅ เช่นเดียวกัน
+          })),
         ];
 
         const sorted = allBills.sort(
@@ -69,7 +77,6 @@ export default function MyBills() {
       <div className="smartdorm-page text-center justify-content-center">
         <NavBar /> {/* ✅ เพิ่ม Navbar */}
         <div className="mt-5"></div>
-
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
           alt="SmartDorm Logo"
@@ -83,7 +90,6 @@ export default function MyBills() {
     <div className="smartdorm-page">
       <NavBar /> {/* ✅ แถบ SmartDorm ด้านบน */}
       <div className="mt-5"></div>
-
       <div className="text-center mb-3">
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
@@ -95,7 +101,6 @@ export default function MyBills() {
           ดูบิลทั้งหมดของห้องที่คุณพักอาศัย
         </p>
       </div>
-
       <div
         className="w-100"
         style={{
@@ -117,7 +122,7 @@ export default function MyBills() {
             <div className="d-flex justify-content-between align-items-start flex-wrap">
               <div>
                 <h6 className="fw-bold mb-1 text-dark">
-                  ห้อง {b.room.number} — {formatThaiMonth(b.month)}
+                  ห้อง {b.room?.number ?? "-"} — {formatThaiMonth(b.month)}
                 </h6>
                 <p className="mb-1 text-muted small">
                   💰 ยอดชำระ {b.total.toLocaleString()} บาท
