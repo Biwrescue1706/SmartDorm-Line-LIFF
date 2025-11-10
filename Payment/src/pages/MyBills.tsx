@@ -178,7 +178,7 @@ export default function MyBills() {
                   </h4>
                   <h4 className="mb-1 text-muted">
                     💰 ยอด {b.total.toLocaleString()} บาท
-                  </p>
+                  </h4>
                   <span className="badge rounded-pill px-3 py-2 bg-warning text-dark fw-semibold">
                     ⌛ ยังไม่ชำระ
                   </span>
