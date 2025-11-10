@@ -57,17 +57,21 @@ export default function MyBills() {
         const allBills = [...unpaid, ...paid];
         setBills(allBills);
 
-        // ✅ ดึงรายชื่อห้องทั้งหมดไม่ซ้ำกัน
-        const uniqueRooms = Array.from(
-          new Set(allBills.map((b) => b.room?.number ?? "-"))
+        // ✅ ดึงรายชื่อห้องที่ยังมีบิลรอชำระเท่านั้น
+        const unpaidRooms = Array.from(
+          new Set(
+            allBills
+              .filter((b) => b.status === 0) // ✅ เอาเฉพาะบิลรอชำระ
+              .map((b) => b.room?.number ?? "-")
+          )
         ).filter((r) => r !== "-");
-        setRooms(uniqueRooms);
 
-        // ✅ ตั้งค่า default เป็นห้องแรก (ถ้ามี)
-        if (uniqueRooms.length > 0) {
-          setSelectedRoom(uniqueRooms[0]);
+        setRooms(unpaidRooms);
+
+        // ✅ ตั้งค่า default เป็นห้องแรกที่ยังมีบิลรอชำระ
+        if (unpaidRooms.length > 0) {
+          setSelectedRoom(unpaidRooms[0]);
         }
-
       } catch (err) {
         console.error(err);
         Swal.fire("โหลดข้อมูลล้มเหลว", "กรุณาลองใหม่อีกครั้ง", "error");
@@ -77,7 +81,7 @@ export default function MyBills() {
     })();
   }, []);
 
-  // ✅ เมื่อเลือกห้องใหม่ ให้กรองบิลของห้องนั้น
+  // ✅ เมื่อเลือกห้องใหม่ ให้กรองเฉพาะบิลของห้องนั้น (เฉพาะที่ยังไม่ชำระ)
   useEffect(() => {
     if (!selectedRoom) {
       setFilteredBills([]);
@@ -85,7 +89,7 @@ export default function MyBills() {
     }
 
     const filtered = bills
-      .filter((b) => b.room?.number === selectedRoom)
+      .filter((b) => b.room?.number === selectedRoom && b.status === 0)
       .sort(
         (a, b) =>
           new Date(b.month ?? "").getTime() - new Date(a.month ?? "").getTime()
@@ -112,7 +116,7 @@ export default function MyBills() {
           alt="SmartDorm Logo"
           className="smartdorm-logo mb-3"
         />
-        <h5 className="text-muted">ยังไม่มีบิลในระบบ</h5>
+        <h5 className="text-muted">ไม่มีบิลที่รอการชำระในระบบ</h5>
       </div>
     );
 
@@ -127,8 +131,8 @@ export default function MyBills() {
           alt="SmartDorm Logo"
           className="smartdorm-logo"
         />
-        <h4 className="fw-bold text-success mb-0">🧾 รายการบิลของฉัน</h4>
-        <p className="text-muted small mt-1">เลือกห้องเพื่อดูบิลที่เกี่ยวข้อง</p>
+        <h4 className="fw-bold text-success mb-0">🧾 รายการบิลที่รอชำระ</h4>
+        <p className="text-muted small mt-1">เลือกห้องเพื่อดูบิลของคุณ</p>
       </div>
 
       {/* 🔽 Dropdown เลือกห้อง */}
@@ -149,7 +153,7 @@ export default function MyBills() {
 
       {/* 🧾 แสดงรายการบิลของห้องที่เลือก */}
       {filteredBills.length === 0 ? (
-        <p className="text-center text-muted">ไม่มีบิลของห้องนี้</p>
+        <p className="text-center text-muted">ไม่มีบิลของห้องนี้ที่รอชำระ</p>
       ) : (
         <div
           className="w-100"
@@ -165,7 +169,7 @@ export default function MyBills() {
               key={i}
               className="smartdorm-card"
               style={{
-                borderLeft: b.status === 1 ? "6px solid #28a745" : "6px solid #ffc107",
+                borderLeft: "6px solid #ffc107",
               }}
             >
               <div className="d-flex justify-content-between align-items-start flex-wrap">
@@ -179,14 +183,8 @@ export default function MyBills() {
                   <p className="mb-1 text-muted small">
                     💰 ยอด {b.total.toLocaleString()} บาท
                   </p>
-                  <span
-                    className={`badge rounded-pill px-3 py-2 fw-semibold ${
-                      b.status === 1
-                        ? "bg-success"
-                        : "bg-warning text-dark"
-                    }`}
-                  >
-                    {b.status === 1 ? "✅ ชำระแล้ว" : "⌛ ยังไม่ชำระ"}
+                  <span className="badge rounded-pill px-3 py-2 bg-warning text-dark fw-semibold">
+                    ⌛ ยังไม่ชำระ
                   </span>
                 </div>
 
@@ -197,11 +195,9 @@ export default function MyBills() {
                     minWidth: "110px",
                     whiteSpace: "nowrap",
                   }}
-                  onClick={() =>
-                    nav(`/bill/${b.billId}`)
-                  }
+                  onClick={() => nav(`/bill/${b.billId}`)}
                 >
-                  💸 ดูรายละเอียด
+                  💸 ชำระบิล
                 </button>
               </div>
             </div>
