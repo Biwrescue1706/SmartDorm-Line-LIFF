@@ -29,12 +29,15 @@ export default function MyBills() {
   const [loading, setLoading] = useState(true);
   const nav = useNavigate();
 
+  // ✅ โหลดข้อมูลบิลทั้งหมด
   useEffect(() => {
     (async () => {
       try {
         const token = await refreshLiffToken();
-        if (!token) throw new Error("token not found");
+        console.log("🔑 LINE Token:", token);
+        if (!token) throw new Error("ไม่พบ token (ต้องเปิดผ่าน LIFF)");
 
+        // ดึงข้อมูลจาก backend
         const unpaidRes = await axios.post(`${API_BASE}/user/bills/unpaid`, {
           accessToken: token,
         });
@@ -42,6 +45,7 @@ export default function MyBills() {
           accessToken: token,
         });
 
+        // สร้างข้อมูลบิล
         const unpaid = unpaidRes.data.bills.map((b: any) => ({
           ...b,
           status: 0,
@@ -57,47 +61,47 @@ export default function MyBills() {
         const allBills = [...unpaid, ...paid];
         setBills(allBills);
 
-        // ✅ ดึงรายชื่อห้องที่ยังมีบิลรอชำระเท่านั้น
+        // ✅ เอาเฉพาะห้องที่ยังมีบิลรอชำระ
         const unpaidRooms = Array.from(
           new Set(
             allBills
-              .filter((b) => b.status === 0) // ✅ เอาเฉพาะบิลรอชำระ
+              .filter((b) => b.status === 0)
               .map((b) => b.room?.number ?? "-")
           )
         ).filter((r) => r !== "-");
 
         setRooms(unpaidRooms);
-
-        // ✅ ตั้งค่า default เป็นห้องแรกที่ยังมีบิลรอชำระ
-        if (unpaidRooms.length > 0) {
-          setSelectedRoom(unpaidRooms[0]);
-        }
-      } catch (err) {
-        console.error(err);
-        Swal.fire("โหลดข้อมูลล้มเหลว", "กรุณาลองใหม่อีกครั้ง", "error");
+        if (unpaidRooms.length > 0) setSelectedRoom(unpaidRooms[0]);
+      } catch (err: any) {
+        console.error("❌ โหลดบิลผิดพลาด:", err);
+        Swal.fire({
+          icon: "error",
+          title: "โหลดข้อมูลล้มเหลว",
+          text:
+            err.response?.data?.error ||
+            err.response?.data?.message ||
+            err.message ||
+            "ไม่พบบิล",
+        });
       } finally {
         setLoading(false);
       }
     })();
   }, []);
 
-  // ✅ เมื่อเลือกห้องใหม่ ให้กรองเฉพาะบิลของห้องนั้น (เฉพาะที่ยังไม่ชำระ)
+  // ✅ กรองบิลตามห้องที่เลือก
   useEffect(() => {
-    if (!selectedRoom) {
-      setFilteredBills([]);
-      return;
-    }
-
+    if (!selectedRoom) return;
     const filtered = bills
       .filter((b) => b.room?.number === selectedRoom && b.status === 0)
       .sort(
         (a, b) =>
           new Date(b.month ?? "").getTime() - new Date(a.month ?? "").getTime()
       );
-
     setFilteredBills(filtered);
   }, [selectedRoom, bills]);
 
+  // ✅ แสดง Loading
   if (loading)
     return (
       <div className="text-center py-5">
@@ -106,6 +110,7 @@ export default function MyBills() {
       </div>
     );
 
+  // ✅ ไม่มีบิลเลย
   if (rooms.length === 0)
     return (
       <div className="smartdorm-page text-center justify-content-center">
@@ -120,6 +125,7 @@ export default function MyBills() {
       <NavBar />
       <div className="mt-5"></div>
 
+      {/* Header */}
       <div className="text-center mb-3">
         <h4 className="fw-bold text-success mb-0">🧾 รายการบิลที่รอชำระ</h4>
         <p className="text-muted small mt-1">เลือกห้องเพื่อดูบิลของคุณ</p>
@@ -141,7 +147,7 @@ export default function MyBills() {
         </select>
       </div>
 
-      {/* 🧾 แสดงรายการบิลของห้องที่เลือก */}
+      {/* 🧾 รายการบิล */}
       {filteredBills.length === 0 ? (
         <p className="text-center text-muted">ไม่มีบิลของห้องนี้ที่รอชำระ</p>
       ) : (
@@ -178,6 +184,7 @@ export default function MyBills() {
                   </span>
                 </div>
 
+                {/* ✅ ปุ่มไปหน้ารายละเอียดบิล */}
                 <button
                   className="btn-primary-smart fw-semibold text-white px-3 py-2 mt-2 mt-sm-0"
                   style={{
@@ -185,7 +192,7 @@ export default function MyBills() {
                     minWidth: "110px",
                     whiteSpace: "nowrap",
                   }}
-                  onClick={() => nav(`/bill-detail`)}
+                  onClick={() => nav("/bill-detail", { state: { billId: b.billId } })}
                 >
                   💸 ชำระบิล
                 </button>
