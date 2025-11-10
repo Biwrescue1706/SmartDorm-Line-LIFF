@@ -91,10 +91,10 @@ export default function PaymentChoice() {
       <div className="mt-5"></div>
 
       <div className="text-center mb-3">
-        <h2 className="fw-bold text-success mb-0">SmartDorm Payment</h2>
-        <p className="text-muted small mt-1">
+        <h2 className="fw-bold text-success mb-0">ชำระค่าเช่า</h2>
+        <h3 className="text-muted mt-1">
           เลขที่บิล: {bill.billId} | ห้อง {bill.room.number}
-        </p>
+        </h3>
       </div>
 
       {/* 🔹 การ์ดหลัก */}
@@ -132,9 +132,9 @@ export default function PaymentChoice() {
             background: "linear-gradient(135deg, #b1f370, #b3efea)",
           }}
         >
-          <h5 className="fw-bold text-dark mb-0">
+          <h4 className="fw-bold text-dark mb-0">
             💰 ยอดรวมที่ต้องชำระ {bill.total.toLocaleString("th-TH")} บาท
-          </h5>
+          </h4>
         </div>
 
         {/* 🔹 QR หรือ บัญชี */}
@@ -145,7 +145,7 @@ export default function PaymentChoice() {
               background: "linear-gradient(135deg, #f8f9fa, #e9ecef)",
             }}
           >
-            <h6 className="fw-semibold mb-2">📲 สแกนเพื่อชำระผ่าน PromptPay</h6>
+            <h3 className="fw-semibold mb-2 text-black">📲 สแกนเพื่อชำระผ่าน PromptPay</h3>
             <img
               src={qrUrl}
               alt="QR PromptPay"
@@ -192,7 +192,7 @@ export default function PaymentChoice() {
 
         {/* 🔹 ปุ่มดำเนินการต่อ */}
         <button
-          className="btn w-100 fw-semibold text-white py-2"
+          className="btn w-100 mt-2 fw-semibold text-white py-2"
           style={{
             background: "linear-gradient(90deg, #43cea2, #185a9d)",
             borderRadius: "10px",
