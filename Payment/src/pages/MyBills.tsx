@@ -111,11 +111,6 @@ export default function MyBills() {
       <div className="smartdorm-page text-center justify-content-center">
         <NavBar />
         <div className="mt-5"></div>
-        <img
-          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
-          alt="SmartDorm Logo"
-          className="smartdorm-logo mb-3"
-        />
         <h5 className="text-muted">ไม่มีบิลที่รอการชำระในระบบ</h5>
       </div>
     );
