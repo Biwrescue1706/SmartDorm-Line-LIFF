@@ -127,8 +127,8 @@ export default function MyBills() {
 
       {/* Header */}
       <div className="text-center mb-3">
-        <h4 className="fw-bold text-success mb-0">🧾 รายการบิลที่รอชำระ</h4>
-        <p className="text-muted small mt-1">เลือกห้องเพื่อดูบิลของคุณ</p>
+        <h2 className="fw-bold text-success mb-0">🧾 รายการบิลที่รอชำระ</h2>
+        <h3 className="text-muted mt-1">เลือกห้องเพื่อดูบิลของคุณ</h3>
       </div>
 
       {/* 🔽 Dropdown เลือกห้อง */}
@@ -170,13 +170,13 @@ export default function MyBills() {
             >
               <div className="d-flex justify-content-between align-items-start flex-wrap">
                 <div>
-                  <h6 className="fw-bold mb-1 text-dark">
+                  <h4 className="fw-bold mb-1 text-dark">
                     ห้อง {b.room?.number ?? "-"}
-                  </h6>
-                  <p className="mb-1 text-muted small">
+                  </h4>
+                  <h4 className="mb-1 text-muted">
                     เดือน {formatThaiMonth(b.month)}
-                  </p>
-                  <p className="mb-1 text-muted small">
+                  </h4>
+                  <h4 className="mb-1 text-muted">
                     💰 ยอด {b.total.toLocaleString()} บาท
                   </p>
                   <span className="badge rounded-pill px-3 py-2 bg-warning text-dark fw-semibold">
