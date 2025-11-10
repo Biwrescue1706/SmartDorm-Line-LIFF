@@ -121,11 +121,6 @@ export default function MyBills() {
       <div className="mt-5"></div>
 
       <div className="text-center mb-3">
-        <img
-          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
-          alt="SmartDorm Logo"
-          className="smartdorm-logo"
-        />
         <h4 className="fw-bold text-success mb-0">🧾 รายการบิลที่รอชำระ</h4>
         <p className="text-muted small mt-1">เลือกห้องเพื่อดูบิลของคุณ</p>
       </div>
