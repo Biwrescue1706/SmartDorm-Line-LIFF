@@ -63,7 +63,8 @@ export default function NavBar() {
             letterSpacing: "0.5px",
           }}
         >
-          SmartDorm
+          
+🏫SmartDorm🎉
         </h5>
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
