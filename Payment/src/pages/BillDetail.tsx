@@ -59,17 +59,8 @@ export default function BillDetail() {
 
   return (
     <div className="smartdorm-page">
-      <NavBar /> {/* ✅ แถบ SmartDorm ด้านบน */}
-      <div className="mt-5"></div> {/* เผื่อระยะ Navbar */}
-      {/* 🔹 โลโก้ SmartDorm */}
-      <div className="text-center mb-3">
-        <img
-          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
-          alt="SmartDorm Logo"
-          className="smartdorm-logo"
-        />
-        <h5 className="fw-bold text-success">รายละเอียดบิล SmartDorm</h5>
-      </div>
+      <NavBar />
+        <h3 className="fw-bold text-success">รายละเอียดบิล SmartDorm</h3>
       {/* 🔹 กล่องข้อมูลบิล */}
       <div className="smartdorm-card shadow-sm">
         <table className="table table-borderless align-middle mb-0">
