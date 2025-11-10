@@ -185,7 +185,7 @@ export default function MyBills() {
                     minWidth: "110px",
                     whiteSpace: "nowrap",
                   }}
-                  onClick={() => nav(`/bill/${b.billId}`)}
+                  onClick={() => nav(`/bill-detail`)}
                 >
                   💸 ชำระบิล
                 </button>
