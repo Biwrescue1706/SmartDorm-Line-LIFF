@@ -1,10 +1,11 @@
+// src/pages/BillDetail.tsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { API_BASE } from "../config";
 import { refreshLiffToken } from "../lib/liff";
-import NavBar from "../components/NavBar"; // ✅ Navbar ใหม่ (auto back)
+import NavBar from "../components/NavBar"; // ✅ Navbar (auto back)
 
 interface BillDetail {
   billId: string;
@@ -32,22 +33,38 @@ export default function BillDetail() {
   const nav = useNavigate();
   const { billId } = state || {};
   const [bill, setBill] = useState<BillDetail | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
+        // 🧩 ถ้าไม่มี billId กลับหน้า MyBills
+        if (!billId) {
+          Swal.fire("ไม่พบบิล", "กรุณาเลือกบิลจากหน้าเดิมอีกครั้ง", "warning");
+          nav("/mybills");
+          return;
+        }
+
         const token = await refreshLiffToken();
-        if (!token) throw new Error("ไม่มี token");
+        if (!token) throw new Error("ไม่มี token (ต้องเปิดผ่าน LIFF)");
+
+        console.log("🔍 กำลังโหลดข้อมูลบิล:", billId);
         const res = await axios.get(`${API_BASE}/bill/${billId}`);
         setBill(res.data);
-      } catch (err) {
-        console.error(err);
-        Swal.fire("❌ โหลดข้อมูลล้มเหลว", "ไม่พบบิล", "error");
+      } catch (err: any) {
+        console.error("❌ โหลดข้อมูลบิลล้มเหลว:", err);
+        Swal.fire(
+          "❌ โหลดข้อมูลล้มเหลว",
+          err.response?.data?.message || "ไม่พบบิลในระบบ",
+          "error"
+        );
+      } finally {
+        setLoading(false);
       }
     })();
-  }, [billId]);
+  }, [billId, nav]);
 
-  if (!bill)
+  if (loading)
     return (
       <div className="smartdorm-page text-center justify-content-center">
         <NavBar />
@@ -57,21 +74,28 @@ export default function BillDetail() {
       </div>
     );
 
+  if (!bill)
+    return (
+      <div className="smartdorm-page text-center justify-content-center">
+        <NavBar />
+        <div className="mt-5"></div>
+        <h5 className="text-danger fw-bold">❌ ไม่พบบิลนี้</h5>
+      </div>
+    );
+
   return (
     <div className="smartdorm-page">
-      <NavBar /> {/* ✅ แถบ SmartDorm ด้านบน */}
-      <div className="mt-5"></div> {/* เผื่อระยะ Navbar */}
-      {/* 🔹 โลโก้ SmartDorm */}
-      <div className="text-center mb-3">
-        <img
-          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
-          alt="SmartDorm Logo"
-          className="smartdorm-logo"
-        />
-        <h5 className="fw-bold text-success">รายละเอียดบิล SmartDorm</h5>
+      <NavBar />
+      <div className="mt-4 text-center">
+        <h4 className="fw-bold text-success">รายละเอียดบิล SmartDorm</h4>
+        <p className="text-muted small mb-0">เลขที่บิล: {bill.billId}</p>
       </div>
+
       {/* 🔹 กล่องข้อมูลบิล */}
-      <div className="smartdorm-card shadow-sm">
+      <div
+        className="smartdorm-card shadow-sm mt-3"
+        style={{ maxWidth: "500px", margin: "0 auto" }}
+      >
         <table className="table table-borderless align-middle mb-0">
           <tbody>
             <tr>
@@ -117,19 +141,12 @@ export default function BillDetail() {
 
         {/* 🔹 ปุ่มชำระเงิน */}
         <div className="mt-4 text-center">
-          {bill.status === 0 ? (
+          {bill.status === 0 && (
             <button
               className="btn-primary-smart w-100 fw-semibold py-2"
               onClick={() => nav("/payment-choice", { state: bill })}
             >
               💳 ไปชำระเงิน
-            </button>
-          ) : (
-            <button
-              className="btn btn-secondary w-100 fw-semibold py-2"
-              disabled
-            >
-              ✅ ชำระแล้ว
             </button>
           )}
         </div>

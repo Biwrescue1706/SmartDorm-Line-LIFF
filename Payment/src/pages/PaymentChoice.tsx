@@ -6,18 +6,19 @@ import Swal from "sweetalert2";
 import { refreshLiffToken } from "../lib/liff";
 import axios from "axios";
 import liff from "@line/liff";
-import NavBar from "../components/NavBar"; // ✅ เพิ่ม NavBar
+import NavBar from "../components/NavBar";
 
-interface Room {
-  rent: number;
-  deposit: number;
-  bookingFee: number;
+interface Bill {
+  billId: string;
+  total: number;
+  status: number;
+  room: { number: string };
 }
 
 export default function PaymentChoice() {
   const { state } = useLocation();
   const nav = useNavigate();
-  const room = state as Room;
+  const bill = state as Bill; // ✅ รับข้อมูลบิลจากหน้า BillDetail
 
   const [method, setMethod] = useState<"qr" | "account">("qr");
   const [ready, setReady] = useState(false);
@@ -36,18 +37,18 @@ export default function PaymentChoice() {
     })();
   }, [nav]);
 
-  if (!room)
+  // ✅ ถ้าไม่มีบิล ให้กลับหน้าก่อนหน้า
+  if (!bill)
     return (
       <div className="text-center p-5">
-        <h5 className="text-danger mb-3">❌ ไม่พบข้อมูลห้อง</h5>
-        <button className="btn btn-primary" onClick={() => nav("/")}>
-          กลับหน้าแรก
+        <h5 className="text-danger mb-3">❌ ไม่พบข้อมูลบิล</h5>
+        <button className="btn btn-primary" onClick={() => nav(-1)}>
+          กลับหน้าก่อนหน้า
         </button>
       </div>
     );
 
-  const total = room.rent + room.deposit + room.bookingFee;
-  const qrUrl = `${API_BASE}/qr/${total}`;
+  const qrUrl = `${API_BASE}/qr/${bill.total}`;
   const isInLine = liff.isInClient();
 
   if (!ready)
@@ -86,22 +87,21 @@ export default function PaymentChoice() {
 
   return (
     <div className="smartdorm-page">
-      <NavBar /> {/* ✅ Navbar แสดง SmartDorm และปุ่มย้อนกลับ */}
-      <div className="mt-5"></div> {/* เผื่อพื้นที่ Navbar */}
-      {/* 🔹 โลโก้ */}
+      <NavBar />
+      <div className="mt-5"></div>
+
       <div className="text-center mb-3">
-        <img
-          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
-          alt="SmartDorm Logo"
-          className="smartdorm-logo"
-        />
-        <h5 className="fw-bold text-success mb-0">SmartDorm Payment</h5>
+        <h2 className="fw-bold text-success mb-0">ชำระค่าเช่า</h2>
+        <h3 className="text-muted mt-1">
+          เลขที่บิล: {bill.billId} | ห้อง {bill.room.number}
+        </h3>
       </div>
+
       {/* 🔹 การ์ดหลัก */}
       <div className="smartdorm-card">
-        <h4 className="fw-bold text-center mb-3 text-primary">
+        <h2 className="fw-bold text-center mb-3 text-primary">
           💳 วิธีการชำระเงิน
-        </h4>
+        </h2>
 
         {/* 🔘 ปุ่มเลือกวิธี */}
         <div className="btn-group w-100 mb-4">
@@ -132,12 +132,12 @@ export default function PaymentChoice() {
             background: "linear-gradient(135deg, #b1f370, #b3efea)",
           }}
         >
-          <h5 className="fw-bold text-dark mb-0">
-            💰 ยอดรวมที่ต้องชำระ {total.toLocaleString("th-TH")} บาท
-          </h5>
+          <h4 className="fw-bold text-dark mb-0">
+            💰 ยอดรวมที่ต้องชำระ {bill.total.toLocaleString("th-TH")} บาท
+          </h4>
         </div>
 
-        {/* 🔹 ส่วน QR หรือ บัญชี */}
+        {/* 🔹 QR หรือ บัญชี */}
         {method === "qr" ? (
           <div
             className="p-3 mb-3 rounded shadow-sm text-center"
@@ -145,7 +145,7 @@ export default function PaymentChoice() {
               background: "linear-gradient(135deg, #f8f9fa, #e9ecef)",
             }}
           >
-            <h6 className="fw-semibold mb-2">📲 สแกนเพื่อชำระผ่าน PromptPay</h6>
+            <h3 className="fw-semibold mb-2 text-black">📲 สแกนเพื่อชำระผ่าน PromptPay</h3>
             <img
               src={qrUrl}
               alt="QR PromptPay"
@@ -192,21 +192,13 @@ export default function PaymentChoice() {
 
         {/* 🔹 ปุ่มดำเนินการต่อ */}
         <button
-          className="btn w-100 fw-semibold text-white py-2"
+          className="btn w-100 mt-2 fw-semibold text-white py-2"
           style={{
             background: "linear-gradient(90deg, #43cea2, #185a9d)",
             borderRadius: "10px",
             transition: "0.3s",
           }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.background =
-              "linear-gradient(90deg, #74ebd5, #ACB6E5)")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.background =
-              "linear-gradient(90deg, #43cea2, #185a9d)")
-          }
-          onClick={() => nav("/upload-slip", { state: room })}
+          onClick={() => nav("/upload-slip", { state: bill })}
         >
           ➡️ ดำเนินการต่อ
         </button>

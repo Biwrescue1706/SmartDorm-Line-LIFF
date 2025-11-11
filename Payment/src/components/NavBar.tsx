@@ -45,17 +45,40 @@ export default function NavBar() {
           ←
         </button>
       )}
-      <h5
+
+      {/* ✅ ส่วนกลาง: SmartDorm + โลโก้ */}
+      <div
         style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "8px",
           flexGrow: 1,
-          textAlign: showBack ? "center" : "center",
-          margin: 0,
-          fontWeight: 700,
-          letterSpacing: "0.5px",
         }}
       >
-        SmartDorm
-      </h5>
+        <h5
+          style={{
+            margin: 0,
+            fontWeight: 700,
+            letterSpacing: "0.5px",
+          }}
+        >
+          
+🏫SmartDorm🎉
+        </h5>
+        <img
+          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
+          alt="SmartDorm Logo"
+          style={{
+            width: "32px",
+            height: "32px",
+            borderRadius: "6px",
+            background: "white",
+            padding: "2px",
+          }}
+        />
+      </div>
+
       {showBack && <div style={{ width: "30px" }}></div>}
     </nav>
   );
