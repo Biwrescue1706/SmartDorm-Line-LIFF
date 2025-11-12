@@ -1,10 +1,10 @@
 // src/pages/ThankYou.tsx
 import { useEffect, useState } from "react";
 import { ensureLiffReady, logoutLiff } from "../lib/liff";
-import LiffNav from "../components/Nav/LiffNav"; // ✅ Navbar
+import LiffNav from "../components/Nav/LiffNav"; //  Navbar
 
 export default function ThankYou() {
-  const [countdown, setCountdown] = useState(10); // ✅ เริ่มที่ 10 วินาที
+  const [countdown, setCountdown] = useState(10); //  เริ่มที่ 10 วินาที
 
   useEffect(() => {
     // 🕐 ตั้ง interval นับถอยหลังทุก 1 วินาที
@@ -22,7 +22,7 @@ export default function ThankYou() {
       }
     }, 10000);
 
-    // ✅ ล้าง interval และ timeout เมื่อ component ถูก unmount
+    //  ล้าง interval และ timeout เมื่อ component ถูก unmount
     return () => {
       clearInterval(interval);
       clearTimeout(timer);
@@ -31,7 +31,7 @@ export default function ThankYou() {
 
   return (
     <>
-      {/* ✅ แถบ SmartDorm ด้านบน */}
+      {/*  แถบ SmartDorm ด้านบน */}
       <LiffNav />
 
       <div

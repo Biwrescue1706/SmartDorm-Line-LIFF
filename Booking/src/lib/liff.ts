@@ -6,9 +6,7 @@ import { VITE_LIFF_ID } from "../config";
 const LIFF_ID = VITE_LIFF_ID;
 let initialized = false;
 
-/* ============================================================
-   ✅ เริ่มต้น LIFF และตรวจสอบสถานะล็อกอิน
-============================================================ */
+// เริ่มต้น LIFF และตรวจสอบสถานะล็อกอิน
 export async function ensureLiffReady(): Promise<boolean> {
   try {
     if (!initialized) {
@@ -31,9 +29,7 @@ export async function ensureLiffReady(): Promise<boolean> {
   }
 }
 
-/* ============================================================
-   ✅ ดึง Access Token สำหรับส่งไป Backend
-============================================================ */
+   // ดึง Access Token สำหรับส่งไป Backend
 export function getAccessToken(): string | null {
   try {
     return liff.getAccessToken() || null;
@@ -43,9 +39,7 @@ export function getAccessToken(): string | null {
   }
 }
 
-/* ============================================================
-   ✅ รีเฟรช Access Token อัตโนมัติ (กรณี token หาย)
-============================================================ */
+// รีเฟรช Access Token อัตโนมัติ (กรณี token หาย)
 export async function refreshLiffToken(): Promise<string | null> {
   try {
     await ensureLiffReady();
@@ -71,9 +65,7 @@ export async function refreshLiffToken(): Promise<string | null> {
   }
 }
 
-/* ============================================================
-   ✅ ดึงข้อมูลโปรไฟล์ผู้ใช้ (ชื่อ, userId)
-============================================================ */
+// ดึงข้อมูลโปรไฟล์ผู้ใช้ (ชื่อ, userId)
 export async function getUserProfile() {
   try {
     return await liff.getProfile();
@@ -83,9 +75,7 @@ export async function getUserProfile() {
   }
 }
 
-/* ============================================================
-   🚪 ออกจากระบบ (รองรับทั้งใน LINE และ Browser)
-============================================================ */
+//🚪 ออกจากระบบ (รองรับทั้งใน LINE และ Browser)
 export async function logoutLiff(showAlert = true) {
   try {
     if (liff.isLoggedIn()) liff.logout();
@@ -107,7 +97,7 @@ export async function logoutLiff(showAlert = true) {
       window.location.href = "/";
     }
 
-    console.log("✅ ออกจากระบบสำเร็จ");
+    console.log(" ออกจากระบบสำเร็จ");
   } catch (err) {
     console.error("❌ logoutLiff error:", err);
   }

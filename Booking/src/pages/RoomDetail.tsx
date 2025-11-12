@@ -7,13 +7,13 @@ import { useRoomDetail } from "../hooks/useRoomDetail";
 import RoomDetailCard from "../components/RoomDetail/RoomDetailCard";
 import { refreshLiffToken, logoutLiff } from "../lib/liff";
 import { API_BASE } from "../config";
-import LiffNav from "../components/Nav/LiffNav"; // ✅ Navbar
+import LiffNav from "../components/Nav/LiffNav"; //  Navbar
 
 export default function RoomDetail() {
   const { room, roomId, loading, error } = useRoomDetail();
   const nav = useNavigate();
 
-  // ✅ ตรวจสอบสิทธิ์ LIFF
+  //  ตรวจสอบสิทธิ์ LIFF
   useEffect(() => {
     (async () => {
       try {
@@ -21,7 +21,7 @@ export default function RoomDetail() {
         if (!token) return;
 
         await axios.post(`${API_BASE}/user/me`, { accessToken: token });
-        console.log("✅ ตรวจสอบสิทธิ์ผ่าน");
+        console.log(" ตรวจสอบสิทธิ์ผ่าน");
       } catch (err: any) {
         if (
           err.response?.data?.error?.includes("หมดอายุ") ||
@@ -32,7 +32,7 @@ export default function RoomDetail() {
         }
 
         Swal.fire(
-          "❌ การยืนยันสิทธิ์ล้มเหลว",
+          " การยืนยันสิทธิ์ล้มเหลว",
           "กรุณาเข้าสู่ระบบใหม่อีกครั้ง",
           "error"
         ).then(() => nav("/"));
@@ -54,7 +54,7 @@ export default function RoomDetail() {
       </>
     );
 
-  // ❌ Error state
+  //  Error state
   if (error)
     return (
       <>
@@ -63,7 +63,7 @@ export default function RoomDetail() {
           className="container text-center text-danger"
           style={{ paddingTop: "80px" }}
         >
-          ❌ {error} (ID: {roomId})
+           {error} (ID: {roomId})
         </div>
       </>
     );
@@ -77,7 +77,7 @@ export default function RoomDetail() {
           className="container text-center"
           style={{ paddingTop: "80px" }}
         >
-          ❌ ไม่พบข้อมูลห้อง {roomId}
+           ไม่พบข้อมูลห้อง {roomId}
           <div>
             <button className="btn btn-primary mt-3" onClick={() => nav("/")}>
               กลับหน้าแรก
@@ -87,7 +87,7 @@ export default function RoomDetail() {
       </>
     );
 
-  // ✅ แสดงข้อมูลห้อง
+  //  แสดงข้อมูลห้อง
   return (
     <>
       <LiffNav />

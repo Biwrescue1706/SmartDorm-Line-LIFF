@@ -9,7 +9,7 @@ import { API_BASE } from "../config";
 import Swal from "sweetalert2";
 import { refreshLiffToken } from "../lib/liff";
 import axios from "axios";
-import LiffNav from "../components/Nav/LiffNav"; // ✅ Navbar
+import LiffNav from "../components/Nav/LiffNav"; //  Navbar
 
 export default function PaymentChoice() {
   const { state } = useLocation();
@@ -19,7 +19,7 @@ export default function PaymentChoice() {
   const [method, setMethod] = useState<"qr" | "account">("qr");
   const [ready, setReady] = useState(false);
 
-  // ✅ ตรวจสอบ token กับ backend
+  //  ตรวจสอบ token กับ backend
   useEffect(() => {
     (async () => {
       try {
@@ -30,7 +30,7 @@ export default function PaymentChoice() {
         setReady(true);
       } catch (err) {
         await Swal.fire(
-          "❌ ไม่สามารถตรวจสอบสิทธิ์ได้",
+          " ไม่สามารถตรวจสอบสิทธิ์ได้",
           "กรุณาเข้าสู่ระบบใหม่อีกครั้ง",
           "error"
         );
@@ -39,18 +39,18 @@ export default function PaymentChoice() {
     })();
   }, [nav]);
 
-  // ❌ ถ้าเข้ามาโดยไม่มีข้อมูลห้อง
+  //  ถ้าเข้ามาโดยไม่มีข้อมูลห้อง
   if (!room)
     return (
       <div className="text-center p-5">
-        <h5 className="text-danger mb-3">❌ ไม่พบข้อมูลห้อง</h5>
+        <h5 className="text-danger mb-3"> ไม่พบข้อมูลห้อง</h5>
         <button className="btn btn-primary" onClick={() => nav("/")}>
           กลับหน้าแรก
         </button>
       </div>
     );
 
-  // ✅ คำนวณยอดรวม
+  //  คำนวณยอดรวม
   const total = room.rent + room.deposit + room.bookingFee;
   const qrUrl = `${API_BASE}/qr/${total}`;
 
@@ -68,7 +68,7 @@ export default function PaymentChoice() {
       {/* 🔝 Navbar */}
       <LiffNav />
 
-      {/* ✅ เว้นระยะให้พ้น Navbar fixed */}
+      {/*  เว้นระยะให้พ้น Navbar fixed */}
       <div style={{ paddingTop: "70px" }}>
         <div className="container my-4">
           <div className="card shadow-sm p-3 border-0">

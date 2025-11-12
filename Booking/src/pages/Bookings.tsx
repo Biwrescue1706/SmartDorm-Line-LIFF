@@ -2,14 +2,14 @@ import { useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { useRooms } from "../hooks/useRooms";
 import type { Room } from "../types/Room";
-import LiffNav from "../components/Nav/LiffNav"; // ✅ Navbar ด้านบน
+import LiffNav from "../components/Nav/LiffNav"; //  Navbar ด้านบน
 
 export default function Bookings() {
   const { rooms, loading } = useRooms(true);
   const nav = useNavigate();
   const [floor, setFloor] = useState(1);
 
-  // ✅ กรองห้องตามชั้น
+  //  กรองห้องตามชั้น
   const roomsByFloor = useMemo(() => {
     const start = floor * 100 + 1;
     const end = floor * 100 + 100;
@@ -19,7 +19,7 @@ export default function Bookings() {
     });
   }, [rooms, floor]);
 
-  // ✅ เรียงห้อง: ห้องว่างก่อน แล้วเรียงตามเลขห้อง
+  //  เรียงห้อง: ห้องว่างก่อน แล้วเรียงตามเลขห้อง
   const sortedRooms = useMemo(() => {
     return [...roomsByFloor].sort((a, b) => {
       if (a.status === 0 && b.status !== 0) return -1;
@@ -28,7 +28,7 @@ export default function Bookings() {
     });
   }, [roomsByFloor]);
 
-  // ✅ เมื่อเลือกห้อง
+  //  เมื่อเลือกห้อง
   const handleSelect = (room: Room) => {
     if (room.status !== 0) return; // ป้องกันจองห้องเต็ม
     nav(`/bookings/${room.roomId}`, { state: room });
@@ -39,7 +39,7 @@ export default function Bookings() {
       {/* 🔝 Navbar */}
       <LiffNav />
 
-      {/* ✅ เว้นระยะด้านบนจาก Navbar */}
+      {/*  เว้นระยะด้านบนจาก Navbar */}
       <div style={{ paddingTop: "70px" }}>
         <div className="container my-4">
           <div className="card shadow-sm border-0">
@@ -75,7 +75,7 @@ export default function Bookings() {
                 </div>
               ) : sortedRooms.length === 0 ? (
                 <div className="text-center text-muted py-4">
-                  ❌ ไม่มีห้องในชั้น {floor} ให้แสดง
+                   ไม่มีห้องในชั้น {floor} ให้แสดง
                 </div>
               ) : (
                 <div className="row row-cols-2 row-cols-sm-2 row-cols-md-4 row-cols-lg-6 g-3">
@@ -115,7 +115,7 @@ export default function Bookings() {
                               )}
                             </div>
 
-                            {/* ✅ ปุ่มเฉพาะห้องว่าง */}
+                            {/*  ปุ่มเฉพาะห้องว่าง */}
                             {isAvailable && (
                               <button
                                 className="btn fw-semibold w-100 text-dark"

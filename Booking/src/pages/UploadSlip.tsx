@@ -21,7 +21,7 @@ export default function UploadSlip() {
   const [ready, setReady] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
 
-  // ✅ ตรวจสอบ LIFF พร้อมใช้งาน
+  //  ตรวจสอบ LIFF พร้อมใช้งาน
   useEffect(() => {
     (async () => {
       try {
@@ -52,7 +52,7 @@ export default function UploadSlip() {
         setReady(true);
       } catch (err: any) {
         console.warn(
-          "❌ verify failed:",
+          " verify failed:",
           err.response?.data?.error || err.message
         );
         if (
@@ -77,7 +77,7 @@ export default function UploadSlip() {
     })();
   }, [nav]);
 
-  // ❌ ถ้าไม่มีข้อมูลห้อง
+  //  ถ้าไม่มีข้อมูลห้อง
   if (!room) {
     return (
       <>
@@ -105,7 +105,7 @@ export default function UploadSlip() {
     );
   }
 
-  // ✅ เมื่อพร้อม
+  //  เมื่อพร้อม
   return (
     <>
       <LiffNav />
@@ -159,10 +159,10 @@ function UploadSlipForm({
     })
       .then((res) => res.json())
       .then((data) => data.displayName && setUserName(data.displayName))
-      .catch((err) => console.error("❌ ดึงชื่อ LINE ไม่สำเร็จ:", err));
+      .catch((err) => console.error(" ดึงชื่อ LINE ไม่สำเร็จ:", err));
   }, [accessToken]);
 
-  // ✅ helper function
+  //  helper function
   const showAlert = (text: string, icon: any) => {
     Swal.fire({
       toast: true,
@@ -175,7 +175,7 @@ function UploadSlipForm({
     return false;
   };
 
-  // ✅ ตรวจสอบข้อมูลก่อนส่ง
+  //  ตรวจสอบข้อมูลก่อนส่ง
   const validateForm = (): boolean => {
     const nameRegex = /^[ก-๙a-zA-Z]+$/;
     const phoneRegex = /^[0-9]{10}$/;
@@ -243,7 +243,7 @@ function UploadSlipForm({
         setTimeout(() => nav("/thankyou"), 1500);
       }
     } catch {
-      Swal.fire("❌ เกิดข้อผิดพลาด", "ไม่สามารถส่งคำขอจองได้", "error");
+      Swal.fire(" เกิดข้อผิดพลาด", "ไม่สามารถส่งคำขอจองได้", "error");
     }
   };
 

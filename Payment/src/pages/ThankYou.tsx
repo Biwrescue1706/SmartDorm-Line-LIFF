@@ -1,21 +1,41 @@
 // src/pages/ThankYou.tsx
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { logoutLiff, ensureLiffReady } from "../lib/liff";
-import NavBar from "../components/NavBar"; // ✅ เพิ่ม Navbar
+import NavBar from "../components/NavBar"; // ✅ Navbar ด้านบน
 
 export default function ThankYou() {
+  const [countdown, setCountdown] = useState(10); // ✅ ตัวนับถอยหลัง (10 วินาที)
+
   useEffect(() => {
+    let interval: ReturnType<typeof setInterval>; // ✅ ใช้ ReturnType แทน NodeJS.Timeout
+    const startCountdown = () => {
+      interval = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    };
+
+    startCountdown();
+
     const timer = setTimeout(async () => {
       const ready = await ensureLiffReady();
       if (ready) await logoutLiff();
     }, 10000); // ✅ ออกจากระบบอัตโนมัติหลัง 10 วิ
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, []);
 
   return (
     <div className="smartdorm-page justify-content-center text-center">
-      <NavBar /> {/* ✅ Navbar ด้านบน (ไม่ต้องมีปุ่มย้อนกลับ) */}
+      <NavBar /> {/* ✅ Navbar ด้านบน */}
       <div className="mt-5"></div> {/* เผื่อพื้นที่ Navbar */}
 
       {/* 🔹 โลโก้ SmartDorm */}
@@ -38,7 +58,8 @@ export default function ThankYou() {
         </p>
 
         <p className="text-muted small mb-0">
-          (จะกลับไปหน้า LINE อัตโนมัติภายใน <b>10 วินาที</b>)
+          (หน้าต่างนี้จะปิดโดยอัตโนมัติภายใน{" "}
+          <b>{countdown}</b> วินาที)
         </p>
 
         <div className="mt-4">
