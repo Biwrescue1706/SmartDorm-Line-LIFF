@@ -1,4 +1,3 @@
-// src/pages/UploadSlip.tsx
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -12,9 +11,8 @@ import {
 import { API_BASE } from "../config";
 import { useUploadSlip } from "../hooks/useUploadSlip";
 import type { Room } from "../types/Room";
-import LiffNav from "../components/Nav/LiffNav"; // ✅ Navbar
+import LiffNav from "../components/Nav/LiffNav";
 
-// 🧩 ========== Component หลัก ========== //
 export default function UploadSlip() {
   const { state } = useLocation();
   const nav = useNavigate();
@@ -31,14 +29,11 @@ export default function UploadSlip() {
         if (!ready) return;
 
         const token = getAccessToken();
-        if (!token) {
-          console.warn("⚠️ token หาย — login ใหม่");
-          return;
-        }
+        if (!token) return console.warn("⚠️ token หาย — login ใหม่");
 
         const profile = await getUserProfile();
-        if (!profile) {
-          Swal.fire({
+        if (!profile)
+          return Swal.fire({
             toast: true,
             position: "top-end",
             icon: "warning",
@@ -46,11 +41,8 @@ export default function UploadSlip() {
             showConfirmButton: false,
             timer: 2500,
           });
-          return;
-        }
 
         await axios.post(`${API_BASE}/user/me`, { accessToken: token });
-
         setAccessToken(token);
         setReady(true);
       } catch (err: any) {
@@ -81,7 +73,7 @@ export default function UploadSlip() {
   }, [nav]);
 
   // ❌ ถ้าไม่มีข้อมูลห้อง
-  if (!room) {
+  if (!room)
     return (
       <>
         <LiffNav />
@@ -93,10 +85,9 @@ export default function UploadSlip() {
         </div>
       </>
     );
-  }
 
   // ⏳ ยังไม่พร้อม
-  if (!ready) {
+  if (!ready)
     return (
       <>
         <LiffNav />
@@ -106,7 +97,6 @@ export default function UploadSlip() {
         </div>
       </>
     );
-  }
 
   // ✅ เมื่อพร้อม
   return (
@@ -132,7 +122,7 @@ export default function UploadSlip() {
   );
 }
 
-// 🧾 ========== ฟอร์มอัปโหลดสลิป ========== //
+// 🧾 ================= ฟอร์มอัปโหลดสลิป ================= //
 function UploadSlipForm({
   room,
   accessToken,
@@ -157,14 +147,11 @@ function UploadSlipForm({
   // 🟢 ดึงชื่อผู้ใช้จาก LINE API
   useEffect(() => {
     if (!accessToken) return;
-
     fetch("https://api.line.me/v2/profile", {
       headers: { Authorization: `Bearer ${accessToken}` },
     })
       .then((res) => res.json())
-      .then((data) => {
-        if (data.displayName) setUserName(data.displayName);
-      })
+      .then((data) => data.displayName && setUserName(data.displayName))
       .catch((err) => console.error("❌ ดึงชื่อ LINE ไม่สำเร็จ:", err));
   }, [accessToken]);
 
@@ -173,75 +160,39 @@ function UploadSlipForm({
     const nameRegex = /^[ก-๙a-zA-Z]+$/;
     const phoneRegex = /^[0-9]{10}$/;
     const idRegex = /^[0-9]{13}$/;
-
-    if (!nameRegex.test(cname) || !nameRegex.test(csurname)) {
-      Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "error",
-        title: "ชื่อ-นามสกุลไม่ถูกต้อง",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      return false;
-    }
-    if (!phoneRegex.test(cphone)) {
-      Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "error",
-        title: "เบอร์โทรต้องมี 10 หลัก",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      return false;
-    }
-    if (!idRegex.test(cmumId)) {
-      Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "error",
-        title: "เลขบัตรประชาชนต้อง 13 หลัก",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      return false;
-    }
-
     const today = new Date();
     const selected = new Date(checkin);
     today.setHours(0, 0, 0, 0);
     selected.setHours(0, 0, 0, 0);
-    if (selected < today) {
-      Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "warning",
-        title: "ไม่สามารถเลือกวันย้อนหลังได้",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      return false;
-    }
 
+    if (!nameRegex.test(cname) || !nameRegex.test(csurname))
+      return showAlert("ชื่อ-นามสกุลไม่ถูกต้อง", "error");
+    if (!phoneRegex.test(cphone))
+      return showAlert("เบอร์โทรต้องมี 10 หลัก", "error");
+    if (!idRegex.test(cmumId))
+      return showAlert("เลขบัตรประชาชนต้อง 13 หลัก", "error");
+    if (selected < today)
+      return showAlert("ไม่สามารถเลือกวันย้อนหลังได้", "warning");
     return true;
+  };
+
+  const showAlert = (text: string, icon: any) => {
+    Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon,
+      title: text,
+      showConfirmButton: false,
+      timer: 2000,
+    });
+    return false;
   };
 
   // 📤 ส่งข้อมูล
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
-    if (!slip) {
-      Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "warning",
-        title: "กรุณาแนบสลิปก่อนยืนยัน",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      return;
-    }
+    if (!validateForm() || !slip)
+      return showAlert("กรุณาแนบสลิปก่อนยืนยัน", "warning");
 
     try {
       await axios.post(`${API_BASE}/user/register`, {
@@ -284,7 +235,7 @@ function UploadSlipForm({
 
   return (
     <div className="min-vh-100 d-flex align-items-center bg-light">
-      <div className="container-fluid liff-full px-3 px-sm-4 px-md-5 py-5">
+      <div className="container-fluid px-3 px-sm-4 px-md-5 py-5">
         <div className="row justify-content-center">
           <div className="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
             <div
@@ -298,113 +249,40 @@ function UploadSlipForm({
                     ห้อง {room.number}
                   </h5>
 
-                  {/* 🔹 LINE Username */}
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">LINE ผู้ใช้</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={userName}
-                      readOnly
-                    />
-                  </div>
+                  <FormInput label="LINE ผู้ใช้" value={userName} readOnly />
+                  <FormSelect
+                    label="คำนำหน้า"
+                    value={ctitle}
+                    onChange={setCtitle}
+                    options={["นาย", "นาง", "นางสาว"]}
+                  />
+                  <FormInput label="ชื่อ" value={cname} onChange={setCname} />
+                  <FormInput
+                    label="นามสกุล"
+                    value={csurname}
+                    onChange={setCsurname}
+                  />
+                  <FormInput
+                    label="เบอร์โทร"
+                    type="tel"
+                    value={cphone}
+                    onChange={setCphone}
+                  />
+                  <FormInput
+                    label="เลขบัตรประชาชน"
+                    value={cmumId}
+                    onChange={setCmumId}
+                  />
+                  <FormInput
+                    label="วันที่เข้าพัก"
+                    type="date"
+                    value={checkin}
+                    onChange={setCheckin}
+                  />
+                  <FormFile onChange={setSlip} />
 
-                  {/* 🔹 คำนำหน้า */}
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">คำนำหน้า</label>
-                    <select
-                      className="form-select"
-                      value={ctitle}
-                      onChange={(e) => setCtitle(e.target.value)}
-                      required
-                    >
-                      <option value="">-- เลือก --</option>
-                      <option value="นาย">นาย</option>
-                      <option value="นาง">นาง</option>
-                      <option value="น.ส.">นางสาว</option>
-                    </select>
-                  </div>
-
-                  {/* 🔹 ชื่อ */}
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">ชื่อ</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={cname}
-                      onChange={(e) => setCname(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  {/* 🔹 นามสกุล */}
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">นามสกุล</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={csurname}
-                      onChange={(e) => setCsurname(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  {/* 🔹 เบอร์โทร */}
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">เบอร์โทร</label>
-                    <input
-                      type="tel"
-                      className="form-control"
-                      maxLength={10}
-                      value={cphone}
-                      onChange={(e) => setCphone(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  {/* 🔹 เลขบัตรประชาชน */}
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">
-                      เลขบัตรประชาชน
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      maxLength={13}
-                      value={cmumId}
-                      onChange={(e) => setCmumId(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  {/* 🔹 วันที่เข้าพัก */}
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">วันที่เข้าพัก</label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      value={checkin}
-                      onChange={(e) => setCheckin(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  {/* 🔹 แนบสลิป */}
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">แนบสลิป</label>
-                    <input
-                      type="file"
-                      className="form-control"
-                      accept="image/*"
-                      onChange={(e) => setSlip(e.target.files?.[0] || null)}
-                      required
-                    />
-                  </div>
-
-                  {/* 🔹 Preview */}
                   <UploadSlipPreview slip={slip} />
 
-                  {/* 🔹 ปุ่ม */}
                   <div className="d-flex justify-content-between mt-4">
                     <button
                       type="button"
@@ -437,7 +315,65 @@ function UploadSlipForm({
   );
 }
 
-// 🖼️ ========== ตัวอย่างรูปสลิป ========== //
+// 📦 ========== Components ย่อยเล็กในไฟล์เดียว ========== //
+function FormInput({
+  label,
+  value,
+  onChange,
+  type = "text",
+  readOnly = false,
+}: any) {
+  return (
+    <div className="mb-3">
+      <label className="form-label fw-semibold">{label}</label>
+      <input
+        type={type}
+        className="form-control"
+        value={value}
+        readOnly={readOnly}
+        onChange={(e) => onChange && onChange(e.target.value)}
+        required={!readOnly}
+      />
+    </div>
+  );
+}
+
+function FormSelect({ label, value, onChange, options }: any) {
+  return (
+    <div className="mb-3">
+      <label className="form-label fw-semibold">{label}</label>
+      <select
+        className="form-select"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        required
+      >
+        <option value="">-- เลือก --</option>
+        {options.map((o: string) => (
+          <option key={o} value={o}>
+            {o}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function FormFile({ onChange }: any) {
+  return (
+    <div className="mb-3">
+      <label className="form-label fw-semibold">แนบสลิป</label>
+      <input
+        type="file"
+        className="form-control"
+        accept="image/*"
+        onChange={(e) => onChange(e.target.files?.[0] || null)}
+        required
+      />
+    </div>
+  );
+}
+
 function UploadSlipPreview({ slip }: { slip: File | null }) {
   if (!slip) return null;
   const imageUrl = URL.createObjectURL(slip);
