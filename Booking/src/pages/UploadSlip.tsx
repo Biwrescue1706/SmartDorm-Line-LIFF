@@ -1,3 +1,4 @@
+// src/pages/UploadSlip.tsx
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -11,6 +12,7 @@ import {
 import { API_BASE } from "../config";
 import { useUploadSlip } from "../hooks/useUploadSlip";
 import type { Room } from "../types/Room";
+import LiffNav from "../components/Nav/LiffNav"; // ✅ Navbar
 
 // 🧩 ========== Component หลัก ========== //
 export default function UploadSlip() {
@@ -21,6 +23,7 @@ export default function UploadSlip() {
   const [ready, setReady] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
 
+  // ✅ ตรวจสอบ LIFF พร้อมใช้งาน
   useEffect(() => {
     (async () => {
       try {
@@ -77,43 +80,55 @@ export default function UploadSlip() {
     })();
   }, [nav]);
 
+  // ❌ ถ้าไม่มีข้อมูลห้อง
   if (!room) {
     return (
-      <div className="text-center py-5">
-        <h4 className="text-danger">ไม่พบข้อมูลห้อง</h4>
-        <button className="btn btn-primary mt-3" onClick={() => nav("/")}>
-          กลับหน้าแรก
-        </button>
-      </div>
+      <>
+        <LiffNav />
+        <div className="text-center py-5" style={{ paddingTop: "80px" }}>
+          <h4 className="text-danger">ไม่พบข้อมูลห้อง</h4>
+          <button className="btn btn-primary mt-3" onClick={() => nav("/")}>
+            กลับหน้าแรก
+          </button>
+        </div>
+      </>
     );
   }
 
+  // ⏳ ยังไม่พร้อม
   if (!ready) {
     return (
-      <div className="text-center py-5">
-        <div className="spinner-border text-success"></div>
-        <p className="mt-3">กำลังตรวจสอบการเข้าสู่ระบบกับเซิร์ฟเวอร์...</p>
-      </div>
+      <>
+        <LiffNav />
+        <div className="text-center py-5" style={{ paddingTop: "80px" }}>
+          <div className="spinner-border text-success"></div>
+          <p className="mt-3">กำลังตรวจสอบการเข้าสู่ระบบกับเซิร์ฟเวอร์...</p>
+        </div>
+      </>
     );
   }
 
+  // ✅ เมื่อพร้อม
   return (
-    <div className="container py-4">
-      <UploadSlipForm
-        room={room}
-        accessToken={accessToken!}
-        onSuccess={() => {
-          Swal.fire({
-            toast: true,
-            position: "top-end",
-            icon: "success",
-            title: "ส่งคำขอจองเรียบร้อยแล้วครับ",
-            showConfirmButton: false,
-            timer: 2500,
-          }).then(() => nav("/thankyou"));
-        }}
-      />
-    </div>
+    <>
+      <LiffNav />
+      <div className="container py-4" style={{ paddingTop: "70px" }}>
+        <UploadSlipForm
+          room={room}
+          accessToken={accessToken!}
+          onSuccess={() => {
+            Swal.fire({
+              toast: true,
+              position: "top-end",
+              icon: "success",
+              title: "ส่งคำขอจองเรียบร้อยแล้วครับ",
+              showConfirmButton: false,
+              timer: 2500,
+            }).then(() => nav("/thankyou"));
+          }}
+        />
+      </div>
+    </>
   );
 }
 
@@ -262,7 +277,7 @@ function UploadSlipForm({
         onSuccess();
         setTimeout(() => nav("/thankyou"), 1500);
       }
-    } catch (err) {
+    } catch {
       Swal.fire("❌ เกิดข้อผิดพลาด", "ไม่สามารถส่งคำขอจองได้", "error");
     }
   };
@@ -272,21 +287,37 @@ function UploadSlipForm({
       <div className="container-fluid liff-full px-3 px-sm-4 px-md-5 py-5">
         <div className="row justify-content-center">
           <div className="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
-            <div className="card shadow-lg border-0 rounded-4 mx-auto" style={{ maxWidth: "650px" }}>
+            <div
+              className="card shadow-lg border-0 rounded-4 mx-auto"
+              style={{ maxWidth: "650px" }}
+            >
               <div className="card-body p-4 p-md-5">
                 <form onSubmit={handleSubmit}>
                   <h3 className="text-center mb-3">📤 อัปโหลดสลิป</h3>
-                  <h5 className="text-center text-black mb-4">ห้อง {room.number}</h5>
+                  <h5 className="text-center text-black mb-4">
+                    ห้อง {room.number}
+                  </h5>
 
+                  {/* 🔹 LINE Username */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold">LINE ผู้ใช้</label>
-                    <input type="text" className="form-control" value={userName} readOnly />
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={userName}
+                      readOnly
+                    />
                   </div>
 
-                  {/* ข้อมูลลูกค้า */}
+                  {/* 🔹 คำนำหน้า */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold">คำนำหน้า</label>
-                    <select className="form-select" value={ctitle} onChange={(e) => setCtitle(e.target.value)} required>
+                    <select
+                      className="form-select"
+                      value={ctitle}
+                      onChange={(e) => setCtitle(e.target.value)}
+                      required
+                    >
                       <option value="">-- เลือก --</option>
                       <option value="นาย">นาย</option>
                       <option value="นาง">นาง</option>
@@ -294,43 +325,105 @@ function UploadSlipForm({
                     </select>
                   </div>
 
+                  {/* 🔹 ชื่อ */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold">ชื่อ</label>
-                    <input type="text" className="form-control" value={cname} onChange={(e) => setCname(e.target.value)} required />
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={cname}
+                      onChange={(e) => setCname(e.target.value)}
+                      required
+                    />
                   </div>
 
+                  {/* 🔹 นามสกุล */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold">นามสกุล</label>
-                    <input type="text" className="form-control" value={csurname} onChange={(e) => setCsurname(e.target.value)} required />
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={csurname}
+                      onChange={(e) => setCsurname(e.target.value)}
+                      required
+                    />
                   </div>
 
+                  {/* 🔹 เบอร์โทร */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold">เบอร์โทร</label>
-                    <input type="tel" className="form-control" maxLength={10} value={cphone} onChange={(e) => setCphone(e.target.value)} required />
+                    <input
+                      type="tel"
+                      className="form-control"
+                      maxLength={10}
+                      value={cphone}
+                      onChange={(e) => setCphone(e.target.value)}
+                      required
+                    />
                   </div>
 
+                  {/* 🔹 เลขบัตรประชาชน */}
                   <div className="mb-3">
-                    <label className="form-label fw-semibold">เลขบัตรประชาชน</label>
-                    <input type="text" className="form-control" maxLength={13} value={cmumId} onChange={(e) => setCmumId(e.target.value)} required />
+                    <label className="form-label fw-semibold">
+                      เลขบัตรประชาชน
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      maxLength={13}
+                      value={cmumId}
+                      onChange={(e) => setCmumId(e.target.value)}
+                      required
+                    />
                   </div>
 
+                  {/* 🔹 วันที่เข้าพัก */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold">วันที่เข้าพัก</label>
-                    <input type="date" className="form-control" value={checkin} onChange={(e) => setCheckin(e.target.value)} required />
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={checkin}
+                      onChange={(e) => setCheckin(e.target.value)}
+                      required
+                    />
                   </div>
 
+                  {/* 🔹 แนบสลิป */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold">แนบสลิป</label>
-                    <input type="file" className="form-control" accept="image/*" onChange={(e) => setSlip(e.target.files?.[0] || null)} required />
+                    <input
+                      type="file"
+                      className="form-control"
+                      accept="image/*"
+                      onChange={(e) => setSlip(e.target.files?.[0] || null)}
+                      required
+                    />
                   </div>
 
+                  {/* 🔹 Preview */}
                   <UploadSlipPreview slip={slip} />
 
+                  {/* 🔹 ปุ่ม */}
                   <div className="d-flex justify-content-between mt-4">
-                    <button type="button" className="btn w-50 me-2 fw-semibold text-white" style={{ background: "linear-gradient(90deg, #ff6a6a, #ff0000)" }} onClick={() => nav("/")}>
+                    <button
+                      type="button"
+                      className="btn w-50 me-2 fw-semibold text-white"
+                      style={{
+                        background: "linear-gradient(90deg, #ff6a6a, #ff0000)",
+                      }}
+                      onClick={() => nav("/")}
+                    >
                       ยกเลิก
                     </button>
-                    <button type="submit" className="btn w-50 fw-semibold text-white" style={{ background: "linear-gradient(90deg, #42e695, #3bb2b8)" }} disabled={loading}>
+                    <button
+                      type="submit"
+                      className="btn w-50 fw-semibold text-white"
+                      style={{
+                        background: "linear-gradient(90deg, #42e695, #3bb2b8)",
+                      }}
+                      disabled={loading}
+                    >
                       {loading ? "กำลังอัปโหลด..." : "ยืนยัน"}
                     </button>
                   </div>

@@ -62,10 +62,7 @@ export default function NavBar() {
             fontWeight: 700,
             letterSpacing: "0.5px",
           }}
-        >
-          
-🏫SmartDorm🎉
-        </h5>
+        ></h5>
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
           alt="SmartDorm Logo"

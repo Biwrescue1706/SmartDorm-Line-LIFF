@@ -1,10 +1,18 @@
 // src/pages/ThankYou.tsx
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ensureLiffReady, logoutLiff } from "../lib/liff";
-import LiffNav from "../components/Nav/LiffNav"; // ✅ เพิ่ม navbar
+import LiffNav from "../components/Nav/LiffNav"; // ✅ Navbar
 
 export default function ThankYou() {
+  const [countdown, setCountdown] = useState(10); // ✅ เริ่มที่ 10 วินาที
+
   useEffect(() => {
+    // 🕐 ตั้ง interval นับถอยหลังทุก 1 วินาที
+    const interval = setInterval(() => {
+      setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    // ⏳ ตั้ง timeout สำหรับ logout หลังครบ 10 วินาที
     const timer = setTimeout(async () => {
       const ready = await ensureLiffReady();
       if (ready) {
@@ -14,7 +22,11 @@ export default function ThankYou() {
       }
     }, 10000);
 
-    return () => clearTimeout(timer);
+    // ✅ ล้าง interval และ timeout เมื่อ component ถูก unmount
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timer);
+    };
   }, []);
 
   return (
@@ -35,7 +47,9 @@ export default function ThankYou() {
             ระบบได้รับข้อมูลของคุณเรียบร้อยแล้ว
           </p>
           <p className="text-secondary small">
-            หน้าต่างนี้จะปิดโดยอัตโนมัติภายใน 10 วินาที...
+            หน้าต่างนี้จะปิดโดยอัตโนมัติภายใน{" "}
+            <span className="fw-bold text-success">{countdown}</span>{" "}
+            วินาที...
           </p>
         </div>
       </div>

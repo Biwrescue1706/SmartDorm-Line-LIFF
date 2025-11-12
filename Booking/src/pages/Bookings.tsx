@@ -4,14 +4,14 @@ import { useState, useMemo } from "react";
 import RoomGrid from "../components/Bookings/RoomGrid";
 import { useRooms } from "../hooks/useRooms";
 import type { Room } from "../types/Room";
-import LiffNav from "../components/Nav/LiffNav"; // ✅ เพิ่ม navbar
+import LiffNav from "../components/Nav/LiffNav"; // ✅ Navbar ด้านบน
 
 export default function Bookings() {
   const { rooms, loading } = useRooms(true);
   const nav = useNavigate();
   const [floor, setFloor] = useState(1);
 
-  // ✅ กรองห้องตามชั้นแบบ memoized (ป้องกัน re-render ซ้ำ)
+  // ✅ กรองห้องตามชั้นแบบ memoized
   const roomsByFloor = useMemo(() => {
     const start = floor * 100 + 1;
     const end = floor * 100 + 100;
@@ -21,6 +21,7 @@ export default function Bookings() {
     });
   }, [rooms, floor]);
 
+  // ✅ เมื่อเลือกห้อง
   const handleSelect = (room: Room) => {
     if (room.status !== 0) return; // ป้องกันจองห้องเต็ม
     nav(`/bookings/${room.roomId}`, { state: room });
@@ -28,44 +29,49 @@ export default function Bookings() {
 
   return (
     <>
-      {/* ✅ Navbar ด้านบน */}
+      {/* 🔝 Navbar */}
       <LiffNav />
 
-      <div className="container my-4">
-        <div className="card shadow-sm border-0">
-          <div className="card-body">
-            <h2 className="text-center mb-4 fw-bold">เลือกห้องพัก</h2>
+      {/* ✅ เว้นระยะด้านบนจาก Navbar */}
+      <div style={{ paddingTop: "70px" }}>
+        <div className="container my-4">
+          <div className="card shadow-sm border-0">
+            <div className="card-body">
+              <h3 className="text-center fw-bold mb-4">
+                หน้ารายการห้องพัก / การจอง
+              </h3>
 
-            {/* 🔽 ตัวเลือกชั้นแบบ Dropdown */}
-            <div className="d-flex justify-content-center mb-4">
-              <div className="input-group" style={{ maxWidth: "300px" }}>
-                <label className="input-group-text"></label>
-                <select
-                  className="form-select fw-semibold"
-                  value={floor}
-                  onChange={(e) => setFloor(Number(e.target.value))}
-                >
-                  {[...Array(10)].map((_, i) => (
-                    <option key={i + 1} value={i + 1}>
-                      ชั้น {i + 1}
-                    </option>
-                  ))}
-                </select>
+              {/* 🔽 ตัวเลือกชั้น */}
+              <div className="d-flex justify-content-center mb-4">
+                <div className="input-group" style={{ maxWidth: "300px" }}>
+                  <label className="input-group-text fw-semibold">เลือกชั้น</label>
+                  <select
+                    className="form-select fw-semibold"
+                    value={floor}
+                    onChange={(e) => setFloor(Number(e.target.value))}
+                  >
+                    {[...Array(10)].map((_, i) => (
+                      <option key={i + 1} value={i + 1}>
+                        ชั้น {i + 1}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
+
+              {/* 🔹 แสดงสถานะการโหลด */}
+              {loading ? (
+                <div className="text-center text-muted py-4">
+                  ⏳ กำลังโหลดข้อมูลห้อง...
+                </div>
+              ) : roomsByFloor.length === 0 ? (
+                <div className="text-center text-muted py-4">
+                  ❌ ไม่มีห้องในชั้น {floor} ให้แสดง
+                </div>
+              ) : (
+                <RoomGrid rooms={roomsByFloor} onSelect={handleSelect} />
+              )}
             </div>
-
-            {/* 🔹 แสดงผลตามสถานะ */}
-            {loading ? (
-              <div className="text-center text-muted py-4">
-                ⏳ กำลังโหลดข้อมูลห้อง...
-              </div>
-            ) : roomsByFloor.length === 0 ? (
-              <div className="text-center text-muted py-4">
-                ❌ ไม่มีห้องในชั้น {floor} ให้แสดง
-              </div>
-            ) : (
-              <RoomGrid rooms={roomsByFloor} onSelect={handleSelect} />
-            )}
           </div>
         </div>
       </div>

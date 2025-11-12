@@ -7,12 +7,13 @@ import { useRoomDetail } from "../hooks/useRoomDetail";
 import RoomDetailCard from "../components/RoomDetail/RoomDetailCard";
 import { refreshLiffToken, logoutLiff } from "../lib/liff";
 import { API_BASE } from "../config";
-import LiffNav from "../components/Nav/LiffNav"; // ✅ เพิ่ม navbar
+import LiffNav from "../components/Nav/LiffNav"; // ✅ Navbar
 
 export default function RoomDetail() {
   const { room, roomId, loading, error } = useRoomDetail();
   const nav = useNavigate();
 
+  // ✅ ตรวจสอบสิทธิ์ LIFF
   useEffect(() => {
     (async () => {
       try {
@@ -39,31 +40,43 @@ export default function RoomDetail() {
     })();
   }, [nav]);
 
+  // 🌀 Loading state
   if (loading)
     return (
       <>
         <LiffNav />
-        <div className="container p-4 text-muted text-center">
+        <div
+          className="container text-center text-muted"
+          style={{ paddingTop: "80px" }}
+        >
           ⏳ กำลังโหลดข้อมูลห้อง...
         </div>
       </>
     );
 
+  // ❌ Error state
   if (error)
     return (
       <>
         <LiffNav />
-        <div className="container p-4 text-danger text-center">
+        <div
+          className="container text-center text-danger"
+          style={{ paddingTop: "80px" }}
+        >
           ❌ {error} (ID: {roomId})
         </div>
       </>
     );
 
+  // ⚠️ ไม่พบข้อมูลห้อง
   if (!room)
     return (
       <>
         <LiffNav />
-        <div className="container p-4 text-center">
+        <div
+          className="container text-center"
+          style={{ paddingTop: "80px" }}
+        >
           ❌ ไม่พบข้อมูลห้อง {roomId}
           <div>
             <button className="btn btn-primary mt-3" onClick={() => nav("/")}>
@@ -74,12 +87,11 @@ export default function RoomDetail() {
       </>
     );
 
+  // ✅ แสดงข้อมูลห้อง
   return (
     <>
-      {/* ✅ Navbar ด้านบน */}
       <LiffNav />
-
-      <div className="container my-4">
+      <div className="container my-4" style={{ paddingTop: "70px" }}>
         <RoomDetailCard room={room} />
       </div>
     </>

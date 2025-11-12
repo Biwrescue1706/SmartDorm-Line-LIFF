@@ -9,7 +9,7 @@ import { API_BASE } from "../config";
 import Swal from "sweetalert2";
 import { refreshLiffToken } from "../lib/liff";
 import axios from "axios";
-import LiffNav from "../components/Nav/LiffNav"; // ✅ เพิ่ม Navbar
+import LiffNav from "../components/Nav/LiffNav"; // ✅ Navbar
 
 export default function PaymentChoice() {
   const { state } = useLocation();
@@ -39,7 +39,7 @@ export default function PaymentChoice() {
     })();
   }, [nav]);
 
-  // ถ้าเข้ามาโดยไม่มีข้อมูลห้อง
+  // ❌ ถ้าเข้ามาโดยไม่มีข้อมูลห้อง
   if (!room)
     return (
       <div className="text-center p-5">
@@ -54,6 +54,7 @@ export default function PaymentChoice() {
   const total = room.rent + room.deposit + room.bookingFee;
   const qrUrl = `${API_BASE}/qr/${total}`;
 
+  // ⏳ รอ LIFF ตรวจสอบ token เสร็จก่อน
   if (!ready)
     return (
       <div className="text-center py-5">
@@ -64,60 +65,66 @@ export default function PaymentChoice() {
 
   return (
     <>
-      {/* ✅ แถบ Nav ด้านบน */}
+      {/* 🔝 Navbar */}
       <LiffNav />
 
-      <div className="container my-4">
-        <div className="card shadow-sm p-3 border-0">
-          <h3 className="fw-bold text-center mb-3">💳 วิธีการชำระเงิน</h3>
+      {/* ✅ เว้นระยะให้พ้น Navbar fixed */}
+      <div style={{ paddingTop: "70px" }}>
+        <div className="container my-4">
+          <div className="card shadow-sm p-3 border-0">
+            <h3 className="fw-bold text-center mb-4">💳 วิธีการชำระเงิน</h3>
 
-          {/* ปุ่มสลับวิธีการ */}
-          <div className="btn-group w-100 mb-4">
-            <button
-              className={`btn ${
-                method === "account" ? "btn-success" : "btn-outline-success"
-              }`}
-              onClick={() => setMethod("account")}
-            >
-              🏦 โอนเข้าบัญชีธนาคาร
-            </button>
+            {/* 🔘 ปุ่มสลับวิธีการ */}
+            <div className="btn-group w-100 mb-4">
+              <button
+                className={`btn ${
+                  method === "account" ? "btn-success" : "btn-outline-success"
+                }`}
+                onClick={() => setMethod("account")}
+              >
+                🏦 โอนเข้าบัญชีธนาคาร
+              </button>
 
+              <button
+                className={`btn ${
+                  method === "qr" ? "btn-primary" : "btn-outline-primary"
+                }`}
+                onClick={() => setMethod("qr")}
+              >
+                📲 สแกน QR PromptPay
+              </button>
+            </div>
+
+            {/* 💰 สรุปยอด */}
+            <PaymentSummary total={total} />
+
+            {/* 🔄 แสดง Section ตามวิธีที่เลือก */}
+            {method === "qr" ? (
+              <QRSection qrUrl={qrUrl} total={total} />
+            ) : (
+              <AccountCard />
+            )}
+
+            {/* 🔜 ปุ่มดำเนินการต่อ */}
             <button
-              className={`btn ${
-                method === "qr" ? "btn-primary" : "btn-outline-primary"
-              }`}
-              onClick={() => setMethod("qr")}
+              className="btn w-100 fw-semibold mt-3 text-white"
+              style={{
+                background: "linear-gradient(90deg, #42e695, #3bb2b8)",
+                transition: "0.3s",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.background =
+                  "linear-gradient(90deg, #a8edea, #fed6e3)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background =
+                  "linear-gradient(90deg, #42e695, #3bb2b8)")
+              }
+              onClick={() => nav("/upload-slip", { state: room })}
             >
-              📲 สแกน QR PromptPay
+              ➡️ ดำเนินการต่อ
             </button>
           </div>
-
-          <PaymentSummary total={total} />
-
-          {method === "qr" ? (
-            <QRSection qrUrl={qrUrl} total={total} />
-          ) : (
-            <AccountCard />
-          )}
-
-          <button
-            className="btn w-100 fw-semibold mt-3 text-white"
-            style={{
-              background: "linear-gradient(90deg, #42e695, #3bb2b8)",
-              transition: "0.3s",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.background =
-                "linear-gradient(90deg, #a8edea, #fed6e3)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.background =
-                "linear-gradient(90deg, #42e695, #3bb2b8)")
-            }
-            onClick={() => nav("/upload-slip", { state: room })}
-          >
-            ➡️ ดำเนินการต่อ
-          </button>
         </div>
       </div>
     </>

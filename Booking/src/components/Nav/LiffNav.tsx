@@ -1,56 +1,105 @@
+// src/components/LiffNav.tsx
 import { useNavigate, useLocation } from "react-router-dom";
 
 export default function LiffNav() {
   const nav = useNavigate();
   const location = useLocation();
 
-  // กำหนด path ที่จะกลับ
+  // ✅ แสดงปุ่มย้อนกลับเฉพาะบางหน้า
+  const showBack =
+    location.pathname === "/bookings" ||
+    location.pathname === "/payment" ||
+    location.pathname === "/upload-slip";
+
+  // ✅ ฟังก์ชันย้อนกลับ
   const handleBack = () => {
-    if (location.pathname.startsWith("/payment")) {
-      nav("/bookings"); // ถ้าอยู่ในหน้า payment กลับ bookings
-    } else if (location.pathname.startsWith("/upload-slip")) {
+    if (location.pathname.startsWith("/upload-slip")) {
       nav("/payment");
-    } else {
-      location.pathname.startsWith("/bookings/");
+    } else if (location.pathname.startsWith("/payment")) {
       nav("/bookings");
+    } else {
+      nav(-1);
     }
   };
 
   return (
     <nav
-      className="navbar navbar-light bg-white shadow-sm sticky-top"
       style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
         height: "60px",
+        background: "linear-gradient(90deg, #43cea2, #185a9d)",
+        color: "white",
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
-        background: "linear-gradient(90deg, #43cea2, #185a9d)",
-        padding: "0 1rem",
-        zIndex: 10,
+        justifyContent: showBack ? "space-between" : "center",
+        padding:
+          "0 16px env(safe-area-inset-left) 0 env(safe-area-inset-right)",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+        zIndex: 1000,
       }}
     >
       {/* 🔙 ปุ่มย้อนกลับ */}
-      <button
-        className="btn btn-outline-secondary d-flex align-items-center fw-semibold"
-        style={{ borderRadius: "10px" }}
-        onClick={handleBack}
-      >
-        ←
-      </button>
+      {showBack && (
+        <button
+          onClick={handleBack}
+          style={{
+            background: "none",
+            border: "none",
+            color: "white",
+            fontSize: "1.5rem",
+            fontWeight: "bold",
+            cursor: "pointer",
+            transition: "transform 0.2s",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.transform = "translateX(-2px)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.transform = "translateX(0)")
+          }
+        >
+          ←
+        </button>
+      )}
 
-      {/* 🏢 ชื่อ SmartDorm */}
-      <h5
-        className="fw-bold m-0 text-success"
+      {/* 🏫 โลโก้ SmartDorm กลาง */}
+      <div
         style={{
-          fontFamily: "Segoe UI, Prompt, sans-serif",
-          letterSpacing: "0.5px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "8px",
+          flexGrow: 1,
         }}
       >
-        SmartDorm
-      </h5>
+        <h5
+          style={{
+            margin: 0,
+            fontWeight: 700,
+            letterSpacing: "0.5px",
+            fontFamily: "Segoe UI, Prompt, sans-serif",
+          }}
+        >
+          SmartDorm
+        </h5>
+        <img
+          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
+          alt="SmartDorm Logo"
+          style={{
+            width: "32px",
+            height: "32px",
+            borderRadius: "6px",
+            background: "white",
+            padding: "2px",
+          }}
+        />
+      </div>
 
-      {/* เว้นขนาดเท่าปุ่ม เพื่อให้ชื่ออยู่กลาง */}
-      <div style={{ width: "90px" }}></div>
+      {/* ช่องว่างขวาให้สมดุลกับปุ่มย้อนกลับ */}
+      {showBack && <div style={{ width: "30px" }}></div>}
     </nav>
   );
 }
