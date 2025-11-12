@@ -67,11 +67,6 @@ export default function UploadSlip() {
 
       {/* 🔹 โลโก้ SmartDorm */}
       <div className="text-center mb-3">
-        <img
-          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
-          alt="SmartDorm Logo"
-          className="smartdorm-logo"
-        />
         <h4 className="fw-bold text-success mb-0">📸 อัปโหลดสลิป SmartDorm</h4>
         <p className="text-muted small mt-1">
           แนบหลักฐานการโอนเงินเพื่อยืนยันการชำระ
