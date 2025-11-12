@@ -1,26 +1,27 @@
-// src/components/LiffNav.tsx
 import { useNavigate, useLocation } from "react-router-dom";
 
 export default function LiffNav() {
   const nav = useNavigate();
   const location = useLocation();
 
-  // ✅ แสดงปุ่มย้อนกลับเฉพาะบางหน้า
+  // ✅ แสดงปุ่มย้อนกลับในบางหน้า เช่น /bookings/:id, /payment, /upload-slip
   const showBack =
-    location.pathname === "/bookings/" ||
-    location.pathname === "/payment" ||
-    location.pathname === "/upload-slip";
+    location.pathname.startsWith("/bookings/") ||
+    location.pathname.startsWith("/payment") ||
+    location.pathname.startsWith("/upload-slip");
 
   // ✅ ฟังก์ชันย้อนกลับ
-  const handleBack = () => {
-    if (location.pathname.startsWith("/upload-slip")) {
-      nav("/payment");
-    } else if (location.pathname.startsWith("/payment")) {
-      nav("/bookings/");
-    } else if (location.pathname.startsWith("/bookings/")) {
-      nav(-1);
-    }
-  };
+const handleBack = () => {
+  if (location.pathname.startsWith("/upload-slip")) {
+    nav("/payment");
+  } else if (location.pathname.startsWith("/payment")) {
+    nav("/bookings/");
+  } else if (location.pathname.startsWith("/bookings/")) {
+    nav(-1);
+  } else {
+    nav("/");
+  }
+};
 
   return (
     <nav
