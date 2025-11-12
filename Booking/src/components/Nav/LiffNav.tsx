@@ -7,7 +7,7 @@ export default function LiffNav() {
 
   // ✅ แสดงปุ่มย้อนกลับเฉพาะบางหน้า
   const showBack =
-    location.pathname === "/bookings" ||
+    location.pathname === "/bookings/" ||
     location.pathname === "/payment" ||
     location.pathname === "/upload-slip";
 
@@ -16,8 +16,8 @@ export default function LiffNav() {
     if (location.pathname.startsWith("/upload-slip")) {
       nav("/payment");
     } else if (location.pathname.startsWith("/payment")) {
-      nav("/bookings");
-    } else {
+      nav("/bookings/");
+    } else if (location.pathname.startsWith("/bookings/")) {
       nav(-1);
     }
   };
