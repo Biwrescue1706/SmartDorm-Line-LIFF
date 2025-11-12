@@ -13,9 +13,9 @@ export default function LiffNav() {
   // ✅ ฟังก์ชันย้อนกลับ
 const handleBack = () => {
   if (location.pathname.startsWith("/upload-slip")) {
-    nav("/payment");
+    nav(-1);
   } else if (location.pathname.startsWith("/payment")) {
-    nav("/bookings/");
+    nav(-1);
   } else if (location.pathname.startsWith("/bookings/")) {
     nav(-1);
   } else {

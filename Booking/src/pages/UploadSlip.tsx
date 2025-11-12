@@ -29,11 +29,14 @@ export default function UploadSlip() {
         if (!ready) return;
 
         const token = getAccessToken();
-        if (!token) return console.warn("⚠️ token หาย — login ใหม่");
+        if (!token) {
+          console.warn("⚠️ token หาย — login ใหม่");
+          return;
+        }
 
         const profile = await getUserProfile();
-        if (!profile)
-          return Swal.fire({
+        if (!profile) {
+          Swal.fire({
             toast: true,
             position: "top-end",
             icon: "warning",
@@ -41,6 +44,8 @@ export default function UploadSlip() {
             showConfirmButton: false,
             timer: 2500,
           });
+          return;
+        }
 
         await axios.post(`${API_BASE}/user/me`, { accessToken: token });
         setAccessToken(token);
@@ -73,7 +78,7 @@ export default function UploadSlip() {
   }, [nav]);
 
   // ❌ ถ้าไม่มีข้อมูลห้อง
-  if (!room)
+  if (!room) {
     return (
       <>
         <LiffNav />
@@ -85,9 +90,10 @@ export default function UploadSlip() {
         </div>
       </>
     );
+  }
 
   // ⏳ ยังไม่พร้อม
-  if (!ready)
+  if (!ready) {
     return (
       <>
         <LiffNav />
@@ -97,6 +103,7 @@ export default function UploadSlip() {
         </div>
       </>
     );
+  }
 
   // ✅ เมื่อพร้อม
   return (
@@ -155,6 +162,19 @@ function UploadSlipForm({
       .catch((err) => console.error("❌ ดึงชื่อ LINE ไม่สำเร็จ:", err));
   }, [accessToken]);
 
+  // ✅ helper function
+  const showAlert = (text: string, icon: any) => {
+    Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon,
+      title: text,
+      showConfirmButton: false,
+      timer: 2000,
+    });
+    return false;
+  };
+
   // ✅ ตรวจสอบข้อมูลก่อนส่ง
   const validateForm = (): boolean => {
     const nameRegex = /^[ก-๙a-zA-Z]+$/;
@@ -176,23 +196,17 @@ function UploadSlipForm({
     return true;
   };
 
-  const showAlert = (text: string, icon: any) => {
-    Swal.fire({
-      toast: true,
-      position: "top-end",
-      icon,
-      title: text,
-      showConfirmButton: false,
-      timer: 2000,
-    });
-    return false;
-  };
-
   // 📤 ส่งข้อมูล
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm() || !slip)
-      return showAlert("กรุณาแนบสลิปก่อนยืนยัน", "warning");
+
+    // 🟡 เช็กแนบสลิปก่อน validate
+    if (!slip) {
+      showAlert("กรุณาแนบสลิปก่อนยืนยัน", "warning");
+      return;
+    }
+
+    if (!validateForm()) return;
 
     try {
       await axios.post(`${API_BASE}/user/register`, {
@@ -249,30 +263,58 @@ function UploadSlipForm({
                     ห้อง {room.number}
                   </h5>
 
+                  {/* 🔹 LINE Username */}
                   <FormInput label="LINE ผู้ใช้" value={userName} readOnly />
+
+                  {/* 🔹 คำนำหน้า */}
                   <FormSelect
                     label="คำนำหน้า"
                     value={ctitle}
                     onChange={setCtitle}
                     options={["นาย", "นาง", "นางสาว"]}
                   />
+
                   <FormInput label="ชื่อ" value={cname} onChange={setCname} />
                   <FormInput
                     label="นามสกุล"
                     value={csurname}
                     onChange={setCsurname}
                   />
-                  <FormInput
-                    label="เบอร์โทร"
-                    type="tel"
-                    value={cphone}
-                    onChange={setCphone}
-                  />
-                  <FormInput
-                    label="เลขบัตรประชาชน"
-                    value={cmumId}
-                    onChange={setCmumId}
-                  />
+
+                  {/* 🔹 เบอร์โทร */}
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">เบอร์โทร</label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      className="form-control"
+                      value={cphone}
+                      onChange={(e) => {
+                        const v = e.target.value.replace(/\D/g, "");
+                        setCphone(v.slice(0, 10));
+                      }}
+                      required
+                    />
+                  </div>
+
+                  {/* 🔹 เลขบัตรประชาชน */}
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">
+                      เลขบัตรประชาชน
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      className="form-control"
+                      value={cmumId}
+                      onChange={(e) => {
+                        const v = e.target.value.replace(/\D/g, "");
+                        setCmumId(v.slice(0, 13));
+                      }}
+                      required
+                    />
+                  </div>
+
                   <FormInput
                     label="วันที่เข้าพัก"
                     type="date"
@@ -280,9 +322,9 @@ function UploadSlipForm({
                     onChange={setCheckin}
                   />
                   <FormFile onChange={setSlip} />
-
                   <UploadSlipPreview slip={slip} />
 
+                  {/* 🔹 ปุ่ม */}
                   <div className="d-flex justify-content-between mt-4">
                     <button
                       type="button"
@@ -315,7 +357,7 @@ function UploadSlipForm({
   );
 }
 
-// 📦 ========== Components ย่อยเล็กในไฟล์เดียว ========== //
+// 📦 ========== Components ย่อยในไฟล์เดียว ========== //
 function FormInput({
   label,
   value,
