@@ -34,7 +34,6 @@ export default function MyBills() {
     (async () => {
       try {
         const token = await refreshLiffToken();
-        console.log("🔑 LINE Token:", token);
         if (!token) throw new Error("ไม่พบ token (ต้องเปิดผ่าน LIFF)");
 
         // ดึงข้อมูลจาก backend
