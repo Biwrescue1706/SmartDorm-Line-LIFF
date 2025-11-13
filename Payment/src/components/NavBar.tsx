@@ -56,13 +56,15 @@ export default function NavBar() {
           flexGrow: 1,
         }}
       >
-        <h5
+        <h3
           style={{
             margin: 0,
             fontWeight: 700,
             letterSpacing: "0.5px",
           }}
-        ></h5>
+        >
+🏫SmartDorm🎉
+</h3>
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
           alt="SmartDorm Logo"
