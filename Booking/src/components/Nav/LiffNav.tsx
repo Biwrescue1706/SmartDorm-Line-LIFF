@@ -84,7 +84,7 @@ const handleBack = () => {
             fontFamily: "Segoe UI, Prompt, sans-serif",
           }}
         >
-          SmartDorm
+          🏫SmartDorm🎉
         </h5>
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
