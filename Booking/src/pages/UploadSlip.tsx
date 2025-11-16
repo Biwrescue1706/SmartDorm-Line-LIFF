@@ -271,7 +271,7 @@ function UploadSlipForm({
                     label="คำนำหน้า"
                     value={ctitle}
                     onChange={setCtitle}
-                    options={["นาย", "นาง", "นางสาว"]}
+                    options={["นาย", "นาง", "น.ส."]}
                   />
 
                   <FormInput label="ชื่อ" value={cname} onChange={setCname} />
