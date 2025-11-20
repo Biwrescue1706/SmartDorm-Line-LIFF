@@ -1,4 +1,5 @@
 // src/types/Room.ts
+
 export interface Room {
   roomId: string;
   number: string;
@@ -6,5 +7,12 @@ export interface Room {
   rent: number;
   deposit: number;
   bookingFee: number;
-  status: number; // 0=ว่าง, 1=จองแล้ว, 2=ไม่ว่าง
+  status: number;
+
+  // 🔥 เพิ่มตรงนี้
+  lockedUntil?: string | null;
+  lockedBy?: string | null;
+
+  // ถ้ามีฟิลด์อื่นก็ตามของเดิมต่อได้เลย
+  [key: string]: any; // ถ้าอยากกัน error ฟิลด์อื่น ๆ
 }
