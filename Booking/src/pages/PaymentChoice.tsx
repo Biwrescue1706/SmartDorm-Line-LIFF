@@ -15,28 +15,61 @@ export default function PaymentChoice() {
   const room = state as Room | null;
 
   const [ready, setReady] = useState(false);
+  const [seconds, setSeconds] = useState(300); // ⏳ 5 นาที
+  const [qrSrc, setQrSrc] = useState(""); // 🆕 QR สดที่ regenerate ได้
 
-  // ตรวจสอบ token
+  const total = room ? room.rent + room.deposit + room.bookingFee : 0;
+
+  // 🆕 ฟังก์ชันสร้าง QR ใหม่
+  const generateQR = () => {
+    const newQR = `${API_BASE}/qr/${total}?t=${Date.now()}`; 
+    setQrSrc(newQR);
+    setSeconds(300);       // รีเซ็ตเวลา
+  };
+
+  // ตรวจสอบสิทธิ์ก่อน
   useEffect(() => {
     (async () => {
       try {
         const token = await refreshLiffToken();
         if (!token) return;
-
         await axios.post(`${API_BASE}/user/me`, { accessToken: token });
         setReady(true);
-      } catch (err) {
-        await Swal.fire(
-          "ไม่สามารถตรวจสอบสิทธิ์ได้",
-          "กรุณาเข้าสู่ระบบใหม่อีกครั้ง",
-          "error"
-        );
+
+        // 🆕 สร้าง QR ทันทีเมื่อเข้าหน้า
+        generateQR();
+      } catch {
+        Swal.fire("ไม่สามารถตรวจสอบสิทธิ์ได้", "กรุณาเข้าสู่ระบบใหม่", "error");
         nav("/");
       }
     })();
   }, [nav]);
 
-  // ถ้าไม่มีข้อมูลห้อง
+  // 🕒 ตัวนับถอยหลัง
+  useEffect(() => {
+    if (!ready) return;
+
+    const timer = setInterval(() => {
+      setSeconds((prev) => {
+        if (prev <= 1) {
+          // 🆕 หมดเวลา → regenerate QR อัตโนมัติ
+          generateQR();
+          return 300; // รีเซ็ตเวลาใหม่
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [ready]);
+
+  // format รายงานเวลา
+  const formatTime = (sec: number) => {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m}:${s < 10 ? "0" + s : s}`;
+  };
+
   if (!room)
     return (
       <div className="text-center p-5">
@@ -47,11 +80,8 @@ export default function PaymentChoice() {
       </div>
     );
 
-  // คำนวณยอดรวมทั้งหมด
-  const total = room.rent + room.deposit + room.bookingFee;
-  const qrUrl = `${API_BASE}/qr/${total}`;
+  const isInLine = liff.isInClient();
 
-  // Loading
   if (!ready)
     return (
       <div className="text-center py-5">
@@ -60,132 +90,80 @@ export default function PaymentChoice() {
       </div>
     );
 
-  // ฟังก์ชันดาวน์โหลด QR
-  const handleDownloadQR = async () => {
-    try {
-      const res = await fetch(qrUrl);
-      if (!res.ok) throw new Error("โหลด QR ล้มเหลว");
-
-      const blob = await res.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = `QR-${total}.png`;
-      link.click();
-
-      window.URL.revokeObjectURL(blobUrl);
-
-      Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "success",
-        title: "บันทึก QR สำเร็จ",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-    } catch {
-      Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "error",
-        title: "เกิดข้อผิดพลาด",
-        text: "ไม่สามารถบันทึก QR ได้",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-    }
-  };
-
-  const isInLine = liff.isInClient();
-
   return (
     <>
       <LiffNav />
-
       <div style={{ paddingTop: "70px" }}>
         <div className="container my-4">
           <div className="card shadow-sm p-3 border-0">
 
-            <h3 className="fw-bold text-center mb-4">
-              📲 การชำระเงินผ่าน QR PromptPay
-            </h3>
+            <h3 className="fw-bold text-center mb-4">การชำระเงินผ่าน PromptPay</h3>
 
-            {/* 💰 สรุปยอดรวม */}
+            {/* สรุปยอด */}
             <div
               className="p-3 mb-3 rounded shadow-sm text-center"
-              style={{
-                background: "linear-gradient(135deg, #b1f370, #b3efea)",
-              }}
+              style={{ background: "linear-gradient(135deg, #b1f370, #b3efea)" }}
             >
               <h5 className="fw-bold mb-1">
-                💰 ยอดรวมที่ต้องชำระ {total.toLocaleString("th-TH")} บาท
+                ยอดรวม {total.toLocaleString("th-TH")} บาท
               </h5>
-
-              <p className="m-0 text-muted small">
-                (ค่าห้อง {room.rent.toLocaleString("th-TH")} + มัดจำ{" "}
-                {room.deposit.toLocaleString("th-TH")} + ค่าจอง{" "}
-                {room.bookingFee.toLocaleString("th-TH")})
-              </p>
             </div>
 
-            {/* 🔳 QR PromptPay */}
+            {/* QR PromptPay */}
             <div
               className="p-3 mb-3 rounded shadow-sm text-center"
-              style={{
-                background: "linear-gradient(135deg, #f8f9fa, #e9ecef)",
-              }}
+              style={{ background: "linear-gradient(135deg, #f8f9fa, #e9ecef)" }}
             >
-              <h6 className="fw-semibold mb-2">
-                📲 สแกนเพื่อชำระผ่าน PromptPay
-              </h6>
+              <h6 className="fw-semibold mb-2">📲 สแกนเพื่อชำระเงิน</h6>
+
+              {/* ตัวนับถอยหลัง */}
+              <p className="fw-bold text-danger mb-2">
+                QR หมดอายุใน {formatTime(seconds)}
+              </p>
 
               <img
-                src={qrUrl}
+                src={qrSrc}
                 width="240"
                 alt="QR PromptPay"
                 className="border rounded shadow-sm my-2"
               />
 
-              {isInLine ? (
-                <p className="small text-danger fw-semibold mt-2">
-                  กดค้างที่ QR แล้วเลือก “บันทึกภาพ” เพื่อดาวน์โหลด
-                </p>
+              {!isInLine ? (
+                <button
+                  className="btn w-100 fw-semibold text-dark"
+                  style={{
+                    background: "linear-gradient(90deg, #42e695, #3bb2b8)",
+                    border: "none",
+                  }}
+                  onClick={async () => {
+                    const res = await fetch(qrSrc);
+                    const blob = await res.blob();
+                    const blobUrl = URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.href = blobUrl;
+                    link.download = `QR-${total}.png`;
+                    link.click();
+                    URL.revokeObjectURL(blobUrl);
+                  }}
+                >
+                  ดาวน์โหลด QR
+                </button>
               ) : (
-                <>
-                  <p className="small text-muted">กดปุ่มด้านล่างเพื่อบันทึก QR</p>
-                  <button
-                    className="btn w-100 fw-semibold text-dark"
-                    style={{
-                      background: "linear-gradient(90deg, #42e695, #3bb2b8)",
-                      border: "none",
-                    }}
-                    onClick={handleDownloadQR}
-                  >
-                    บันทึก QR PromptPay
-                  </button>
-                </>
+                <p className="small text-danger fw-semibold">
+                  กดค้างที่ QR แล้วเลือก “บันทึกภาพ”
+                </p>
               )}
             </div>
 
-            {/* ปุ่มดำเนินการต่อ */}
+            {/* ปุ่มไปหน้าอัปโหลดสลิป */}
             <button
               className="btn w-100 fw-semibold mt-3 text-white"
               style={{
                 background: "linear-gradient(90deg, #42e695, #3bb2b8)",
-                transition: "0.3s",
               }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background =
-                  "linear-gradient(90deg, #a8edea, #fed6e3)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background =
-                  "linear-gradient(90deg, #42e695, #3bb2b8)")
-              }
               onClick={() => nav("/upload-slip", { state: room })}
             >
-              ➡️ อัปโหลดสลิปเพื่อยืนยันการชำระเงิน
+              อัปโหลดสลิป
             </button>
           </div>
         </div>
