@@ -2,47 +2,14 @@ import { useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { useRooms } from "../hooks/useRooms";
 import type { Room } from "../types/Room";
-import LiffNav from "../components/Nav/LiffNav";
-import { API_BASE } from "../config";
+import LiffNav from "../components/Nav/LiffNav"; //  Navbar ด้านบน
 
 export default function Bookings() {
   const { rooms, loading } = useRooms(true);
   const nav = useNavigate();
   const [floor, setFloor] = useState(1);
 
-  /* ===========================================================
-     🔐 LOCK ROOM API
-     =========================================================== */
-  const lockRoom = async (roomId: string) => {
-    try {
-      const accessToken = localStorage.getItem("liffAccessToken") ?? "";
-
-      const res = await fetch(`${API_BASE}/booking/lock`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          roomId,
-          userId: "liff-" + accessToken, // ใช้ accessToken เป็น identity
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.error || "ไม่สามารถล็อคห้องได้");
-        return null;
-      }
-
-      return data.lockedUntil;
-    } catch (err) {
-      console.error("Lock room error:", err);
-      return null;
-    }
-  };
-
-  /* ===========================================================
-     🔽 กรองห้องตามชั้น
-     =========================================================== */
+  //  กรองห้องตามชั้น
   const roomsByFloor = useMemo(() => {
     const start = floor * 100 + 1;
     const end = floor * 100 + 100;
@@ -52,9 +19,7 @@ export default function Bookings() {
     });
   }, [rooms, floor]);
 
-  /* ===========================================================
-     📌 เรียงห้อง: ว่างก่อน + ตามเลขห้อง
-     =========================================================== */
+  //  เรียงห้อง: ห้องว่างก่อน แล้วเรียงตามเลขห้อง
   const sortedRooms = useMemo(() => {
     return [...roomsByFloor].sort((a, b) => {
       if (a.status === 0 && b.status !== 0) return -1;
@@ -63,29 +28,18 @@ export default function Bookings() {
     });
   }, [roomsByFloor]);
 
-  /* ===========================================================
-     👉 เมื่อเลือกห้อง (ล็อคก่อน)
-     =========================================================== */
-  const handleSelect = async (room: Room) => {
-    if (room.status !== 0) return;
-
-    // 1) ล็อคห้องก่อน
-    const lockedUntil = await lockRoom(room.roomId);
-
-    if (!lockedUntil) {
-      alert("❌ ห้องนี้กำลังถูกเลือกโดยผู้อื่นอยู่ กรุณาลองใหม่");
-      return;
-    }
-
-    // 2) ไปหน้าจอง พร้อมส่งข้อมูลห้อง + เวลา lock
-    nav(`/bookings/${room.roomId}`, {
-      state: { ...room, lockedUntil },
-    });
+  //  เมื่อเลือกห้อง
+  const handleSelect = (room: Room) => {
+    if (room.status !== 0) return; // ป้องกันจองห้องเต็ม
+    nav(`/bookings/${room.roomId}`, { state: room });
   };
 
   return (
     <>
+      {/* 🔝 Navbar */}
       <LiffNav />
+
+      {/*  เว้นระยะด้านบนจาก Navbar */}
       <div style={{ paddingTop: "70px" }}>
         <div className="container my-4">
           <div className="card shadow-sm border-0">
@@ -94,7 +48,7 @@ export default function Bookings() {
                 หน้ารายการห้องพัก / การจอง
               </h3>
 
-              {/* เลือกชั้น */}
+              {/* 🔽 ตัวเลือกชั้น */}
               <div className="d-flex justify-content-center mb-4">
                 <div className="input-group" style={{ maxWidth: "300px" }}>
                   <label className="input-group-text fw-semibold">
@@ -114,14 +68,14 @@ export default function Bookings() {
                 </div>
               </div>
 
-              {/* Loading */}
+              {/* 🔹 สถานะโหลด */}
               {loading ? (
                 <div className="text-center text-muted py-4">
                   ⏳ กำลังโหลดข้อมูลห้อง...
                 </div>
               ) : sortedRooms.length === 0 ? (
                 <div className="text-center text-muted py-4">
-                  ไม่มีห้องในชั้น {floor} ให้แสดง
+                   ไม่มีห้องในชั้น {floor} ให้แสดง
                 </div>
               ) : (
                 <div className="row row-cols-2 row-cols-sm-2 row-cols-md-4 row-cols-lg-6 g-3">
@@ -150,22 +104,18 @@ export default function Bookings() {
                               </small>
                             </div>
 
-                            {/* สถานะห้อง */}
+                            {/* 🏷️ สถานะ */}
                             <div className="mb-3">
                               {room.status === 0 ? (
                                 <span className="badge bg-success">ว่าง</span>
                               ) : room.status === 1 ? (
-                                <span className="badge bg-danger">
-                                  ห้องเต็ม
-                                </span>
+                                <span className="badge bg-danger">ห้องเต็ม</span>
                               ) : (
-                                <span className="badge bg-secondary">
-                                  ไม่ทราบ
-                                </span>
+                                <span className="badge bg-secondary">ไม่ทราบ</span>
                               )}
                             </div>
 
-                            {/* ปุ่มเฉพาะห้องว่าง */}
+                            {/*  ปุ่มเฉพาะห้องว่าง */}
                             {isAvailable && (
                               <button
                                 className="btn fw-semibold w-100 text-dark"
@@ -173,7 +123,16 @@ export default function Bookings() {
                                   background:
                                     "linear-gradient(90deg, #FFD43B, #00FF66)",
                                   border: "none",
+                                  transition: "0.3s",
                                 }}
+                                onMouseEnter={(e) =>
+                                  (e.currentTarget.style.background =
+                                    "linear-gradient(90deg, #FFC107, #00FF66)")
+                                }
+                                onMouseLeave={(e) =>
+                                  (e.currentTarget.style.background =
+                                    "linear-gradient(90deg, #FFD43B, #00FF66)")
+                                }
                                 onClick={() => handleSelect(room)}
                               >
                                 เลือกห้องนี้
