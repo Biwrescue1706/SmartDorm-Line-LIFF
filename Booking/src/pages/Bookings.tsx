@@ -11,14 +11,14 @@ import { getAccessToken } from "../lib/liff";
 import type { Room } from "../types/Room";
 
 export default function Booking() {
-  const { rooms, loading, fetchRooms } = useRooms(true);
+  const { rooms, loading, reload } = useRooms(true);
   const nav = useNavigate();
 
   const [floor, setFloor] = useState(1);
   const [userId, setUserId] = useState<string | null>(null);
 
   /* ===========================================================
-     ✔ ดึง userId จาก LINE (เพื่อใช้ล๊อคห้อง)
+     ✔ ดึง userId จาก LINE
   =========================================================== */
   useEffect(() => {
     const token = getAccessToken();
@@ -33,31 +33,31 @@ export default function Booking() {
   }, []);
 
   /* ===========================================================
-     ✔ คำนวณ "ชั้นสูงสุด" จากเลขห้องจริง
-        เช่น มีห้องถึง 820 → maxFloor = 8
+     ✔ คำนวณชั้นสูงสุด
+     เช่น มีถึงห้อง 825 → 825/100 = 8.25 → floor = 8
   =========================================================== */
   const maxFloor = useMemo(() => {
     if (rooms.length === 0) return 1;
 
-    const maxRoomNum = Math.max(...rooms.map((r) => Number(r.number)));
-    return Math.floor(maxRoomNum / 100) || 1;
+    const maxNum = Math.max(...rooms.map((r) => Number(r.number)));
+    return Math.floor(maxNum / 100) || 1;
   }, [rooms]);
 
   /* ===========================================================
-     ✔ คัดห้องตามชั้น
+     ✔ ฟิลเตอร์ห้องตามชั้น
   =========================================================== */
   const roomsByFloor = useMemo(() => {
     const start = floor * 100 + 1;
     const end = floor * 100 + 100;
 
     return rooms.filter((r) => {
-      const num = Number(r.number);
-      return num >= start && num <= end;
+      const n = Number(r.number);
+      return n >= start && n <= end;
     });
   }, [rooms, floor]);
 
   /* ===========================================================
-     ✔ เรียงห้อง: ว่างก่อน → เลขน้อยก่อน
+     ✔ เรียงห้อง: ว่างก่อน → เลขห้องน้อยก่อน
   =========================================================== */
   const sortedRooms = useMemo(() => {
     return [...roomsByFloor].sort((a, b) => {
@@ -68,21 +68,21 @@ export default function Booking() {
   }, [roomsByFloor]);
 
   /* ===========================================================
-     ⭐ เลือกห้อง = ล็อคห้องใน backend (15 นาที)
+     ⭐ เลือกห้อง = ล๊อคห้อง 15 นาที
   =========================================================== */
   const handleSelectRoom = async (room: Room) => {
     if (!userId) {
-      Swal.fire("ไม่พบข้อมูลผู้ใช้งาน", "กรุณาล็อกอินใหม่", "error");
+      Swal.fire("ไม่พบผู้ใช้", "กรุณาล็อกอินใหม่", "error");
       return;
     }
 
     if (room.status !== 0) {
-      Swal.fire("ห้องไม่ว่าง", "ห้องนี้กำลังถูกเลือกโดยคนอื่น", "warning");
+      Swal.fire("ห้องไม่ว่าง", "ห้องนี้กำลังถูกเลือก", "warning");
       return;
     }
 
     try {
-      const res = await axios.post(`${API_BASE}/booking/lock`, {
+      await axios.post(`${API_BASE}/booking/lock`, {
         roomId: room.roomId,
         userId,
       });
@@ -97,10 +97,9 @@ export default function Booking() {
       });
 
       nav("/upload-slip", { state: room });
-
-    } catch (err: any) {
+    } catch {
       Swal.fire("มีคนกำลังเลือกห้องนี้อยู่", "", "warning");
-      fetchRooms(); // refresh ข้อมูล
+      reload(); // refresh room list
     }
   };
 
@@ -110,7 +109,6 @@ export default function Booking() {
 
       <div style={{ paddingTop: "70px" }}>
         <div className="container my-4">
-
           <div className="card shadow border-0">
             <div className="card-body">
 
@@ -118,7 +116,7 @@ export default function Booking() {
 
               {/* ================= ชั้น ================= */}
               <div className="d-flex justify-content-center mb-4">
-                <div className="input-group" style={{ maxWidth: 280 }}>
+                <div className="input-group" style={{ maxWidth: 260 }}>
                   <span className="input-group-text fw-semibold">ชั้น</span>
 
                   <select
@@ -137,19 +135,20 @@ export default function Booking() {
                 </div>
               </div>
 
-              {/* ================= ห้อง ================= */}
+              {/* ================= แสดงห้อง ================= */}
               {loading ? (
                 <div className="text-center py-5 text-muted">
-                  ⏳ กำลังโหลด...
+                  ⏳ กำลังโหลดข้อมูล...
                 </div>
               ) : (
                 <div className="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
-
                   {sortedRooms.map((room) => {
                     const available = room.status === 0;
+
                     const isLocked =
                       room.lockedUntil &&
                       new Date(room.lockedUntil) > new Date();
+
                     const lockedByOther =
                       isLocked && room.lockedBy !== userId;
 
@@ -168,8 +167,7 @@ export default function Booking() {
                               ขนาด: {room.size}
                             </small>
                             <small className="text-muted">
-                              ค่าเช่า:{" "}
-                              {room.rent.toLocaleString("th-TH")} บาท
+                              ค่าเช่า: {room.rent.toLocaleString("th-TH")} บาท
                             </small>
 
                             <div className="my-2">
@@ -209,12 +207,11 @@ export default function Booking() {
                       </div>
                     );
                   })}
-
                 </div>
               )}
+
             </div>
           </div>
-
         </div>
       </div>
     </>
