@@ -1,25 +1,22 @@
 // src/pages/PaymentChoice.tsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import AccountCard from "../components/Payment/AccountCard";
-import QRSection from "../components/Payment/QRSection";
-import PaymentSummary from "../components/Payment/PaymentSummary";
 import type { Room } from "../types/Room";
 import { API_BASE } from "../config";
 import Swal from "sweetalert2";
 import { refreshLiffToken } from "../lib/liff";
 import axios from "axios";
-import LiffNav from "../components/Nav/LiffNav"; //  Navbar
+import LiffNav from "../components/Nav/LiffNav";
+import liff from "@line/liff";
 
 export default function PaymentChoice() {
   const { state } = useLocation();
   const nav = useNavigate();
-  const room = state as Room;
+  const room = state as Room | null;
 
-  const [method, setMethod] = useState<"qr" | "account">("qr");
   const [ready, setReady] = useState(false);
 
-  //  ตรวจสอบ token กับ backend
+  // ตรวจสอบ token
   useEffect(() => {
     (async () => {
       try {
@@ -30,7 +27,7 @@ export default function PaymentChoice() {
         setReady(true);
       } catch (err) {
         await Swal.fire(
-          " ไม่สามารถตรวจสอบสิทธิ์ได้",
+          "ไม่สามารถตรวจสอบสิทธิ์ได้",
           "กรุณาเข้าสู่ระบบใหม่อีกครั้ง",
           "error"
         );
@@ -39,22 +36,22 @@ export default function PaymentChoice() {
     })();
   }, [nav]);
 
-  //  ถ้าเข้ามาโดยไม่มีข้อมูลห้อง
+  // ถ้าไม่มีข้อมูลห้อง
   if (!room)
     return (
       <div className="text-center p-5">
-        <h5 className="text-danger mb-3"> ไม่พบข้อมูลห้อง</h5>
+        <h5 className="text-danger mb-3">ไม่พบข้อมูลห้อง</h5>
         <button className="btn btn-primary" onClick={() => nav("/")}>
           กลับหน้าแรก
         </button>
       </div>
     );
 
-  //  คำนวณยอดรวม
+  // คำนวณยอดรวมทั้งหมด
   const total = room.rent + room.deposit + room.bookingFee;
   const qrUrl = `${API_BASE}/qr/${total}`;
 
-  // ⏳ รอ LIFF ตรวจสอบ token เสร็จก่อน
+  // Loading
   if (!ready)
     return (
       <div className="text-center py-5">
@@ -63,49 +60,115 @@ export default function PaymentChoice() {
       </div>
     );
 
+  // ฟังก์ชันดาวน์โหลด QR
+  const handleDownloadQR = async () => {
+    try {
+      const res = await fetch(qrUrl);
+      if (!res.ok) throw new Error("โหลด QR ล้มเหลว");
+
+      const blob = await res.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `QR-${total}.png`;
+      link.click();
+
+      window.URL.revokeObjectURL(blobUrl);
+
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: "บันทึก QR สำเร็จ",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    } catch {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "เกิดข้อผิดพลาด",
+        text: "ไม่สามารถบันทึก QR ได้",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    }
+  };
+
+  const isInLine = liff.isInClient();
+
   return (
     <>
-      {/* 🔝 Navbar */}
       <LiffNav />
 
-      {/*  เว้นระยะให้พ้น Navbar fixed */}
       <div style={{ paddingTop: "70px" }}>
         <div className="container my-4">
           <div className="card shadow-sm p-3 border-0">
-            <h3 className="fw-bold text-center mb-4">💳 วิธีการชำระเงิน</h3>
 
-            {/* 🔘 ปุ่มสลับวิธีการ */}
-            <div className="btn-group w-100 mb-4">
-              <button
-                className={`btn ${
-                  method === "account" ? "btn-success" : "btn-outline-success"
-                }`}
-                onClick={() => setMethod("account")}
-              >
-                🏦 โอนเข้าบัญชีธนาคาร
-              </button>
+            <h3 className="fw-bold text-center mb-4">
+              📲 การชำระเงินผ่าน QR PromptPay
+            </h3>
 
-              <button
-                className={`btn ${
-                  method === "qr" ? "btn-primary" : "btn-outline-primary"
-                }`}
-                onClick={() => setMethod("qr")}
-              >
-                📲 สแกน QR PromptPay
-              </button>
+            {/* 💰 สรุปยอดรวม */}
+            <div
+              className="p-3 mb-3 rounded shadow-sm text-center"
+              style={{
+                background: "linear-gradient(135deg, #b1f370, #b3efea)",
+              }}
+            >
+              <h5 className="fw-bold mb-1">
+                💰 ยอดรวมที่ต้องชำระ {total.toLocaleString("th-TH")} บาท
+              </h5>
+
+              <p className="m-0 text-muted small">
+                (ค่าห้อง {room.rent.toLocaleString("th-TH")} + มัดจำ{" "}
+                {room.deposit.toLocaleString("th-TH")} + ค่าจอง{" "}
+                {room.bookingFee.toLocaleString("th-TH")})
+              </p>
             </div>
 
-            {/* 💰 สรุปยอด */}
-            <PaymentSummary total={total} />
+            {/* 🔳 QR PromptPay */}
+            <div
+              className="p-3 mb-3 rounded shadow-sm text-center"
+              style={{
+                background: "linear-gradient(135deg, #f8f9fa, #e9ecef)",
+              }}
+            >
+              <h6 className="fw-semibold mb-2">
+                📲 สแกนเพื่อชำระผ่าน PromptPay
+              </h6>
 
-            {/* 🔄 แสดง Section ตามวิธีที่เลือก */}
-            {method === "qr" ? (
-              <QRSection qrUrl={qrUrl} total={total} />
-            ) : (
-              <AccountCard />
-            )}
+              <img
+                src={qrUrl}
+                width="240"
+                alt="QR PromptPay"
+                className="border rounded shadow-sm my-2"
+              />
 
-            {/* 🔜 ปุ่มดำเนินการต่อ */}
+              {isInLine ? (
+                <p className="small text-danger fw-semibold mt-2">
+                  กดค้างที่ QR แล้วเลือก “บันทึกภาพ” เพื่อดาวน์โหลด
+                </p>
+              ) : (
+                <>
+                  <p className="small text-muted">กดปุ่มด้านล่างเพื่อบันทึก QR</p>
+                  <button
+                    className="btn w-100 fw-semibold text-dark"
+                    style={{
+                      background: "linear-gradient(90deg, #42e695, #3bb2b8)",
+                      border: "none",
+                    }}
+                    onClick={handleDownloadQR}
+                  >
+                    บันทึก QR PromptPay
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* ปุ่มดำเนินการต่อ */}
             <button
               className="btn w-100 fw-semibold mt-3 text-white"
               style={{
@@ -122,7 +185,7 @@ export default function PaymentChoice() {
               }
               onClick={() => nav("/upload-slip", { state: room })}
             >
-              ➡️ ดำเนินการต่อ
+              ➡️ อัปโหลดสลิปเพื่อยืนยันการชำระเงิน
             </button>
           </div>
         </div>
