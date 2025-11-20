@@ -18,23 +18,33 @@ export default function Booking() {
   const [userId, setUserId] = useState<string | null>(null);
 
   /* ===========================================================
-     ✔ ดึง userId จาก LINE
+     ✔ ดึง userId จาก API: /user/me
   =========================================================== */
   useEffect(() => {
-    const token = getAccessToken();
-    if (!token) return;
+    const fetchUser = async () => {
+      try {
+        const accessToken = getAccessToken();
+        if (!accessToken) return;
 
-    fetch("https://api.line.me/v2/profile", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((r) => r.json())
-      .then((d) => setUserId(d.userId || null))
-      .catch(() => {});
+        const res = await axios.post(`${API_BASE}/user/me`, {
+          accessToken,
+        });
+
+        if (res.data?.profile?.userId) {
+          setUserId(res.data.profile.userId);
+        } else {
+          Swal.fire("เกิดข้อผิดพลาด", "ไม่พบข้อมูลผู้ใช้", "error");
+        }
+      } catch {
+        Swal.fire("กรุณาเข้าสู่ระบบใหม่", "", "warning");
+      }
+    };
+
+    fetchUser();
   }, []);
 
   /* ===========================================================
-     ✔ คำนวณชั้นสูงสุด
-     เช่น มีถึงห้อง 825 → 825/100 = 8.25 → floor = 8
+     ✔ คำนวณชั้นสูงสุดจากเลขห้อง
   =========================================================== */
   const maxFloor = useMemo(() => {
     if (rooms.length === 0) return 1;
@@ -44,7 +54,7 @@ export default function Booking() {
   }, [rooms]);
 
   /* ===========================================================
-     ✔ ฟิลเตอร์ห้องตามชั้น
+     ✔ ห้องตามชั้น
   =========================================================== */
   const roomsByFloor = useMemo(() => {
     const start = floor * 100 + 1;
@@ -57,7 +67,7 @@ export default function Booking() {
   }, [rooms, floor]);
 
   /* ===========================================================
-     ✔ เรียงห้อง: ว่างก่อน → เลขห้องน้อยก่อน
+     ✔ เรียงห้อง
   =========================================================== */
   const sortedRooms = useMemo(() => {
     return [...roomsByFloor].sort((a, b) => {
@@ -68,16 +78,16 @@ export default function Booking() {
   }, [roomsByFloor]);
 
   /* ===========================================================
-     ⭐ เลือกห้อง = ล๊อคห้อง 15 นาที
+     ⭐ ล็อคห้อง
   =========================================================== */
   const handleSelectRoom = async (room: Room) => {
     if (!userId) {
-      Swal.fire("ไม่พบผู้ใช้", "กรุณาล็อกอินใหม่", "error");
+      Swal.fire("กรุณาเข้าสู่ระบบใหม่", "", "error");
       return;
     }
 
     if (room.status !== 0) {
-      Swal.fire("ห้องไม่ว่าง", "ห้องนี้กำลังถูกเลือก", "warning");
+      Swal.fire("ห้องไม่ว่าง", "", "warning");
       return;
     }
 
@@ -92,14 +102,14 @@ export default function Booking() {
         position: "top-end",
         icon: "success",
         title: "ล็อคห้องสำเร็จ (15 นาที)",
-        timer: 2000,
+        timer: 1800,
         showConfirmButton: false,
       });
 
       nav("/upload-slip", { state: room });
     } catch {
       Swal.fire("มีคนกำลังเลือกห้องนี้อยู่", "", "warning");
-      reload(); // refresh room list
+      reload();
     }
   };
 
@@ -135,11 +145,9 @@ export default function Booking() {
                 </div>
               </div>
 
-              {/* ================= แสดงห้อง ================= */}
+              {/* ================= ห้อง ================= */}
               {loading ? (
-                <div className="text-center py-5 text-muted">
-                  ⏳ กำลังโหลดข้อมูล...
-                </div>
+                <div className="text-center py-5 text-muted">⏳ กำลังโหลด...</div>
               ) : (
                 <div className="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
                   {sortedRooms.map((room) => {
@@ -194,10 +202,7 @@ export default function Booking() {
                                 เลือกห้องนี้
                               </button>
                             ) : (
-                              <button
-                                disabled
-                                className="btn w-100 fw-semibold btn-secondary"
-                              >
+                              <button disabled className="btn w-100 btn-secondary">
                                 ไม่สามารถเลือกได้
                               </button>
                             )}
