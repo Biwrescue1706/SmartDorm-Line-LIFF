@@ -19,13 +19,13 @@ export default function PaymentChoice() {
 
   const total = room ? room.rent + room.deposit + room.bookingFee : 0;
 
-  // 🆕 สร้าง QR ใหม่
-  const generateQR = () => {
-    const newQR = `${API_BASE}/qr/${total}?t=${Date.now()}`;
-    setQrSrc(newQR);
+  // 🆕 สร้าง QR หนึ่งครั้งเมื่อผู้ใช้เข้า
+  const makeQR = () => {
+    const qr = `${API_BASE}/qr/${total}?t=${Date.now()}`;
+    setQrSrc(qr);
   };
 
-  // ตรวจสอบสิทธิ์ก่อนโหลดหน้า
+  // ตรวจสอบสิทธิ์และโหลด QR
   useEffect(() => {
     (async () => {
       try {
@@ -35,7 +35,7 @@ export default function PaymentChoice() {
         await axios.post(`${API_BASE}/user/me`, { accessToken: token });
 
         setReady(true);
-        generateQR(); // สร้าง QR ทันที
+        makeQR(); // สร้าง QR ครั้งเดียว
       } catch {
         Swal.fire("ไม่สามารถตรวจสอบสิทธิ์ได้", "กรุณาเข้าสู่ระบบใหม่", "error");
         nav("/");
@@ -72,7 +72,7 @@ export default function PaymentChoice() {
           <div className="card shadow-sm p-3 border-0">
             <h3 className="fw-bold text-center mb-4">การชำระเงินผ่าน PromptPay</h3>
 
-            {/* สรุปยอด */}
+            {/* ⭐ สรุปยอดเงิน */}
             <div
               className="p-3 mb-3 rounded shadow-sm text-center"
               style={{ background: "linear-gradient(135deg, #b1f370, #b3efea)" }}
@@ -82,7 +82,7 @@ export default function PaymentChoice() {
               </h5>
             </div>
 
-            {/* QR PromptPay */}
+            {/* ⭐ QR PromptPay */}
             <div
               className="p-3 mb-3 rounded shadow-sm text-center"
               style={{ background: "linear-gradient(135deg, #f8f9fa, #e9ecef)" }}
@@ -96,19 +96,7 @@ export default function PaymentChoice() {
                 className="border rounded shadow-sm my-2"
               />
 
-              {/* ปุ่มสร้าง QR ใหม่ */}
-              <button
-                className="btn btn-sm w-100 fw-semibold mb-2"
-                style={{
-                  background: "linear-gradient(90deg, #ffe259, #ffa751)",
-                  border: "none",
-                }}
-                onClick={generateQR}
-              >
-                🔄 สร้าง QR ใหม่
-              </button>
-
-              {/* ดาวน์โหลด QR */}
+              {/* ดาวน์โหลดเฉพาะบราวเซอร์ */}
               {!isInLine ? (
                 <button
                   className="btn w-100 fw-semibold text-dark"
@@ -136,7 +124,7 @@ export default function PaymentChoice() {
               )}
             </div>
 
-            {/* ปุ่มไปหน้าอัปโหลดสลิป */}
+            {/* ⭐ ไปอัปโหลดสลิป */}
             <button
               className="btn w-100 fw-semibold mt-3 text-white"
               style={{
