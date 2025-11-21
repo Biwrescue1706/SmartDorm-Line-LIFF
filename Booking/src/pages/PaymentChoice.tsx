@@ -15,60 +15,33 @@ export default function PaymentChoice() {
   const room = state as Room | null;
 
   const [ready, setReady] = useState(false);
-  const [seconds, setSeconds] = useState(300); // ⏳ 5 นาที
-  const [qrSrc, setQrSrc] = useState(""); // 🆕 QR สดที่ regenerate ได้
+  const [qrSrc, setQrSrc] = useState("");
 
   const total = room ? room.rent + room.deposit + room.bookingFee : 0;
 
-  // 🆕 ฟังก์ชันสร้าง QR ใหม่
+  // 🆕 สร้าง QR ใหม่
   const generateQR = () => {
-    const newQR = `${API_BASE}/qr/${total}?t=${Date.now()}`; 
+    const newQR = `${API_BASE}/qr/${total}?t=${Date.now()}`;
     setQrSrc(newQR);
-    setSeconds(300);       // รีเซ็ตเวลา
   };
 
-  // ตรวจสอบสิทธิ์ก่อน
+  // ตรวจสอบสิทธิ์ก่อนโหลดหน้า
   useEffect(() => {
     (async () => {
       try {
         const token = await refreshLiffToken();
         if (!token) return;
-        await axios.post(`${API_BASE}/user/me`, { accessToken: token });
-        setReady(true);
 
-        // 🆕 สร้าง QR ทันทีเมื่อเข้าหน้า
-        generateQR();
+        await axios.post(`${API_BASE}/user/me`, { accessToken: token });
+
+        setReady(true);
+        generateQR(); // สร้าง QR ทันที
       } catch {
         Swal.fire("ไม่สามารถตรวจสอบสิทธิ์ได้", "กรุณาเข้าสู่ระบบใหม่", "error");
         nav("/");
       }
     })();
   }, [nav]);
-
-  // 🕒 ตัวนับถอยหลัง
-  useEffect(() => {
-    if (!ready) return;
-
-    const timer = setInterval(() => {
-      setSeconds((prev) => {
-        if (prev <= 1) {
-          // 🆕 หมดเวลา → regenerate QR อัตโนมัติ
-          generateQR();
-          return 300; // รีเซ็ตเวลาใหม่
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [ready]);
-
-  // format รายงานเวลา
-  const formatTime = (sec: number) => {
-    const m = Math.floor(sec / 60);
-    const s = sec % 60;
-    return `${m}:${s < 10 ? "0" + s : s}`;
-  };
 
   if (!room)
     return (
@@ -80,8 +53,6 @@ export default function PaymentChoice() {
       </div>
     );
 
-  const isInLine = liff.isInClient();
-
   if (!ready)
     return (
       <div className="text-center py-5">
@@ -90,13 +61,15 @@ export default function PaymentChoice() {
       </div>
     );
 
+  const isInLine = liff.isInClient();
+
   return (
     <>
       <LiffNav />
+
       <div style={{ paddingTop: "70px" }}>
         <div className="container my-4">
           <div className="card shadow-sm p-3 border-0">
-
             <h3 className="fw-bold text-center mb-4">การชำระเงินผ่าน PromptPay</h3>
 
             {/* สรุปยอด */}
@@ -116,11 +89,6 @@ export default function PaymentChoice() {
             >
               <h6 className="fw-semibold mb-2">📲 สแกนเพื่อชำระเงิน</h6>
 
-              {/* ตัวนับถอยหลัง */}
-              <p className="fw-bold text-danger mb-2">
-                QR หมดอายุใน {formatTime(seconds)}
-              </p>
-
               <img
                 src={qrSrc}
                 width="240"
@@ -128,6 +96,19 @@ export default function PaymentChoice() {
                 className="border rounded shadow-sm my-2"
               />
 
+              {/* ปุ่มสร้าง QR ใหม่ */}
+              <button
+                className="btn btn-sm w-100 fw-semibold mb-2"
+                style={{
+                  background: "linear-gradient(90deg, #ffe259, #ffa751)",
+                  border: "none",
+                }}
+                onClick={generateQR}
+              >
+                🔄 สร้าง QR ใหม่
+              </button>
+
+              {/* ดาวน์โหลด QR */}
               {!isInLine ? (
                 <button
                   className="btn w-100 fw-semibold text-dark"
