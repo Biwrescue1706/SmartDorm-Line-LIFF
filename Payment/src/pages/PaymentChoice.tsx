@@ -5,49 +5,46 @@ import { API_BASE } from "../config";
 import Swal from "sweetalert2";
 import { refreshLiffToken } from "../lib/liff";
 import axios from "axios";
-import Nav from "../components/NavBar"; // ✅ เปลี่ยนมาใช้อันนี้
+import Nav from "../components/NavBar";
 import liff from "@line/liff";
 
 export default function PaymentChoice() {
   const { state } = useLocation();
   const nav = useNavigate();
-  const room: any = state;
+
+  const bill: any = state;   // ✅ รับค่าบิลจากหน้า BillDetail
+  const total = bill?.total ?? 0;   // ✅ ปลอดภัย ไม่เป็น NaN
 
   const [ready, setReady] = useState(false);
   const [qrSrc, setQrSrc] = useState("");
 
-  const total = room ? room.rent + room.deposit + room.bookingFee : 0;
-
-  // สร้าง QR ครั้งเดียว
+  // สร้าง QR ตามยอดบิล
   const makeQR = () => {
-    const qr = `${API_BASE}/qr/${total}?t=${Date.now()}`;
+    const qr = `${API_BASE}/qr/${total}}`;
     setQrSrc(qr);
   };
 
-  // ตรวจสอบสิทธิ์
   useEffect(() => {
     (async () => {
       try {
         const token = await refreshLiffToken();
         if (!token) return;
-
         await axios.post(`${API_BASE}/user/me`, { accessToken: token });
-
         setReady(true);
         makeQR();
       } catch {
-        Swal.fire("ไม่สามารถตรวจสอบสิทธิ์ได้", "กรุณาเข้าสู่ระบบใหม่", "error");
+        Swal.fire("ตรวจสอบสิทธิ์ล้มเหลว", "", "error");
         nav("/");
       }
     })();
   }, [nav]);
 
-  if (!room)
+  if (!bill)
     return (
       <div className="text-center p-5">
-        <h5 className="text-danger mb-3">ไม่พบข้อมูลห้อง</h5>
-        <button className="btn btn-primary" onClick={() => nav("/")}>
-          กลับหน้าแรก
+        <h5 className="text-danger">ไม่พบข้อมูลบิล</h5>
+        <button className="btn btn-primary" onClick={() => nav(-1)}>
+          กลับก่อนหน้า
         </button>
       </div>
     );
@@ -56,7 +53,7 @@ export default function PaymentChoice() {
     return (
       <div className="text-center py-5">
         <div className="spinner-border text-success" />
-        <p className="mt-3">กำลังตรวจสอบสิทธิ์ผู้ใช้งาน...</p>
+        <p>กำลังตรวจสอบสิทธิ์...</p>
       </div>
     );
 
@@ -64,15 +61,11 @@ export default function PaymentChoice() {
 
   return (
     <>
-      <Nav /> {/* ✅ ใช้ NavBar */}
+      <Nav />
 
       <div style={{ paddingTop: "70px" }}>
         <div className="container my-4">
-          <div
-            className="card shadow-sm p-3 border-0"
-            style={{ borderRadius: "16px" }}
-          >
-            {/* หัวข้อแบบในรูป */}
+          <div className="card shadow-sm p-3 border-0" style={{ borderRadius: "16px" }}>
             <h3 className="fw-bold mb-3" style={{ textAlign: "left" }}>
               การชำระเงินผ่าน PromptPay
             </h3>
@@ -90,20 +83,11 @@ export default function PaymentChoice() {
               </h4>
             </div>
 
-            {/* หัวข้อ QR */}
-            <h6
-              className="fw-semibold mb-2"
-              style={{
-                textAlign: "left",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
-            >
+            {/* QR */}
+            <h6 className="fw-semibold mb-2" style={{ textAlign: "left" }}>
               📱 สแกนเพื่อชำระเงิน
             </h6>
 
-            {/* กล่อง QR */}
             <div
               className="p-3 mb-3 rounded text-center shadow-sm"
               style={{
@@ -118,12 +102,8 @@ export default function PaymentChoice() {
                 alt="QR PromptPay"
               />
 
-              {/* ข้อความเตือน */}
               {isInLine ? (
-                <p
-                  className="small fw-semibold"
-                  style={{ color: "red", fontSize: "14px" }}
-                >
+                <p className="small fw-semibold" style={{ color: "red" }}>
                   กดค้างที่ QR แล้วเลือก “บันทึกภาพ”
                 </p>
               ) : (
@@ -136,12 +116,12 @@ export default function PaymentChoice() {
                   onClick={async () => {
                     const res = await fetch(qrSrc);
                     const blob = await res.blob();
-                    const blobUrl = URL.createObjectURL(blob);
-                    const link = document.createElement("a");
-                    link.href = blobUrl;
-                    link.download = `QR-${total}.png`;
-                    link.click();
-                    URL.revokeObjectURL(blobUrl);
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `QR-${total}.png`;
+                    a.click();
+                    URL.revokeObjectURL(url);
                   }}
                 >
                   ดาวน์โหลด QR
@@ -149,7 +129,6 @@ export default function PaymentChoice() {
               )}
             </div>
 
-            {/* ปุ่มอัปโหลดสลิป */}
             <button
               className="btn w-100 fw-semibold mt-3 text-white"
               style={{
@@ -157,7 +136,7 @@ export default function PaymentChoice() {
                 borderRadius: "12px",
                 fontSize: "18px",
               }}
-              onClick={() => nav("/upload-slip", { state: room })}
+              onClick={() => nav("/upload-slip", { state: bill })}
             >
               อัปโหลดสลิป
             </button>
