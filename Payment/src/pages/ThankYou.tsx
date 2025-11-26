@@ -17,7 +17,7 @@ export default function ThankYou() {
           }
           return prev - 1;
         });
-      }, 1000);
+      }, 5000);
     };
 
     startCountdown();
@@ -25,7 +25,7 @@ export default function ThankYou() {
     const timer = setTimeout(async () => {
       const ready = await ensureLiffReady();
       if (ready) await logoutLiff();
-    }, 10000); // ✅ ออกจากระบบอัตโนมัติหลัง 10 วิ
+    }, 5000); // ✅ ออกจากระบบอัตโนมัติหลัง 5 วินาที
 
     return () => {
       clearTimeout(timer);
@@ -36,16 +36,7 @@ export default function ThankYou() {
   return (
     <div className="smartdorm-page justify-content-center text-center">
       <NavBar /> {/* ✅ Navbar ด้านบน */}
-      <div className="mt-5"></div> {/* เผื่อพื้นที่ Navbar */}
-
-      {/* 🔹 โลโก้ SmartDorm */}
-      <div className="text-center mb-3">
-        <img
-          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
-          alt="SmartDorm Logo"
-          className="smartdorm-logo"
-        />
-      </div>
+      <div className="mt-3"></div> {/* เผื่อพื้นที่ Navbar */}
 
       {/* 🔹 การ์ดขอบคุณ */}
       <div className="smartdorm-card text-center shadow-sm animate__animated animate__fadeIn">
