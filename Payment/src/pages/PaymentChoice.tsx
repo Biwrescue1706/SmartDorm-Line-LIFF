@@ -57,86 +57,95 @@ export default function PaymentChoice() {
       </div>
     );
 
-  const handleDownload = async (url: string) => {
+  const handleDownload = async () => {
     try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("โหลด QR ล้มเหลว");
+      const res = await fetch(qrUrl);
       const blob = await res.blob();
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = "SmartDorm_QR.png";
       link.click();
     } catch {
-      Swal.fire("❌ ไม่สามารถบันทึก QR ได้", "", "error");
+      Swal.fire("❌ บันทึก QR ไม่สำเร็จ", "", "error");
     }
   };
 
   return (
     <div className="smartdorm-page">
       <NavBar />
+
       <div className="mt-3"></div>
 
-      <div className="smartdorm-card">
+      {/* การ์ดหน้าหลัก */}
+      <div className="smartdorm-card" style={{ padding: "15px" }}>
+
+        {/* 🔹 หัวข้อที่คุณต้องการเพิ่ม */}
         <div className="text-center mb-3">
-          <h2 className="fw-bold text-success mb-2">ชำระค่าเช่า</h2>
-          <h3 className="text-black mt-1 mb-2">เลขที่บิล : {bill.billId}</h3>
-          <h3 className="text-black mt-1 mb-2">ห้อง {bill.room.number}</h3>
+          <h2 className="fw-bold text-success text-center mb-2">ชำระค่าเช่า</h2>
+          <h3 className="text-center text-black mt-1 mb-2">
+            เลขที่บิล : {bill.billId}
+          </h3>
+          <h3 className="text-center text-black mt-1 mb-2">
+            ห้อง {bill.room.number}
+          </h3>
         </div>
 
-        {/* 💰 ยอดรวม */}
+        {/* กล่องยอดรวม */}
         <div
-          className="p-3 mb-3 rounded shadow-sm text-center"
+          className="p-3 mb-4 text-center rounded"
           style={{
-            background: "linear-gradient(135deg, #b1f370, #b3efea)",
+            background: "linear-gradient(135deg, #a8f0c6, #b1f3e0)",
+            border: "1px solid #d7fbe8",
           }}
         >
-          <h4 className="fw-bold text-dark mb-0">
-            💰 ยอดรวมที่ต้องชำระ {bill.total.toLocaleString("th-TH")} บาท
+          <h4 className="fw-bold">
+            ยอดรวม {bill.total.toLocaleString("th-TH")} บาท
           </h4>
         </div>
 
-        {/* 🔹 QR PromptPay อย่างเดียว */}
+        {/* กล่อง QR */}
         <div
-          className="p-3 mb-3 rounded shadow-sm text-center"
+          className="p-3 rounded text-center shadow-sm"
           style={{
-            background: "linear-gradient(135deg, #f8f9fa, #e9ecef)",
+            background: "linear-gradient(135deg, #f8f9fa, #eef1f4)",
+            border: "1px solid #e2e6ea",
           }}
         >
-          <h3 className="fw-semibold mb-2 text-black">
-            📲 สแกนเพื่อชำระผ่าน PromptPay
-          </h3>
+          <h5 className="fw-semibold mb-3">📱 สแกนเพื่อชำระเงิน</h5>
 
           <img
             src={qrUrl}
+            width="250"
+            className="shadow rounded"
             alt="QR PromptPay"
-            width="230"
-            className="border rounded shadow-sm my-2"
           />
 
-          {isInLine ? (
-            <p className="small text-danger fw-semibold mt-2">
-              กดค้างที่ QR แล้วเลือก “บันทึก QR Code” เพื่อบันทึกลงเครื่อง
-            </p>
-          ) : (
+          {/* ข้อความแนะนำ */}
+          <p className="mt-3 text-danger fw-semibold" style={{ fontSize: "14px" }}>
+            กดค้างที่ QR แล้วเลือก “บันทึกภาพ”
+          </p>
+
+          {!isInLine && (
             <button
-              className="btn btn-outline-success w-100 fw-semibold"
-              onClick={() => handleDownload(qrUrl)}
+              className="btn btn-outline-success w-100 fw-semibold mt-2"
+              onClick={handleDownload}
             >
-             ดาวน์โหลด QR Code
+              📥 ดาวน์โหลด QR
             </button>
           )}
         </div>
 
-        {/* ปุ่มต่อไป */}
+        {/* ปุ่มอัปโหลดสลิป */}
         <button
-          className="btn w-100 mt-2 fw-semibold text-white py-2"
+          className="btn fw-semibold w-100 mt-4 py-2 text-white"
           style={{
             background: "linear-gradient(90deg, #43cea2, #185a9d)",
             borderRadius: "10px",
+            fontSize: "18px",
           }}
           onClick={() => nav("/upload-slip", { state: bill })}
         >
-         แนบสลิปการโอน
+          อัปโหลดสลิป
         </button>
       </div>
     </div>
