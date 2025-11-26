@@ -5,25 +5,26 @@ import { API_BASE } from "../config";
 import Swal from "sweetalert2";
 import { refreshLiffToken } from "../lib/liff";
 import axios from "axios";
-import LiffNav from "../components/Nav/LiffNav";
+import Nav from "../components/NavBar"; // ✅ เปลี่ยนมาใช้อันนี้
 import liff from "@line/liff";
 
 export default function PaymentChoice() {
   const { state } = useLocation();
   const nav = useNavigate();
+  const room: any = state;
 
   const [ready, setReady] = useState(false);
   const [qrSrc, setQrSrc] = useState("");
 
   const total = room ? room.rent + room.deposit + room.bookingFee : 0;
 
-  // 🔹 สร้าง QR ครั้งเดียว
+  // สร้าง QR ครั้งเดียว
   const makeQR = () => {
     const qr = `${API_BASE}/qr/${total}?t=${Date.now()}`;
     setQrSrc(qr);
   };
 
-  // 🔹 ตรวจสอบสิทธิ์
+  // ตรวจสอบสิทธิ์
   useEffect(() => {
     (async () => {
       try {
@@ -63,7 +64,7 @@ export default function PaymentChoice() {
 
   return (
     <>
-      <LiffNav />
+      <Nav /> {/* ✅ ใช้ NavBar */}
 
       <div style={{ paddingTop: "70px" }}>
         <div className="container my-4">
@@ -71,12 +72,12 @@ export default function PaymentChoice() {
             className="card shadow-sm p-3 border-0"
             style={{ borderRadius: "16px" }}
           >
-            {/* 🎯 หัวข้อแบบในรูป */}
+            {/* หัวข้อแบบในรูป */}
             <h3 className="fw-bold mb-3" style={{ textAlign: "left" }}>
               การชำระเงินผ่าน PromptPay
             </h3>
 
-            {/* 🎯 กล่องยอดรวมแบบในรูป */}
+            {/* กล่องยอดรวม */}
             <div
               className="p-3 mb-3 rounded text-center shadow-sm"
               style={{
@@ -89,7 +90,7 @@ export default function PaymentChoice() {
               </h4>
             </div>
 
-            {/* 🎯 หัวข้อ QR */}
+            {/* หัวข้อ QR */}
             <h6
               className="fw-semibold mb-2"
               style={{
@@ -102,7 +103,7 @@ export default function PaymentChoice() {
               📱 สแกนเพื่อชำระเงิน
             </h6>
 
-            {/* 🎯 กล่อง QR แบบในรูปจริง */}
+            {/* กล่อง QR */}
             <div
               className="p-3 mb-3 rounded text-center shadow-sm"
               style={{
@@ -117,7 +118,7 @@ export default function PaymentChoice() {
                 alt="QR PromptPay"
               />
 
-              {/* 🎯 ข้อความเตือน */}
+              {/* ข้อความเตือน */}
               {isInLine ? (
                 <p
                   className="small fw-semibold"
@@ -148,7 +149,7 @@ export default function PaymentChoice() {
               )}
             </div>
 
-            {/* 🎯 ปุ่มอัปโหลดสลิปแบบในรูป */}
+            {/* ปุ่มอัปโหลดสลิป */}
             <button
               className="btn w-100 fw-semibold mt-3 text-white"
               style={{
