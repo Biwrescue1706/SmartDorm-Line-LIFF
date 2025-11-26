@@ -18,9 +18,8 @@ interface Bill {
 export default function PaymentChoice() {
   const { state } = useLocation();
   const nav = useNavigate();
-  const bill = state as Bill; // ✅ รับข้อมูลบิลจากหน้า BillDetail
+  const bill = state as Bill;
 
-  const [method, setMethod] = useState<"qr" | "account">("qr");
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -37,7 +36,6 @@ export default function PaymentChoice() {
     })();
   }, [nav]);
 
-  // ✅ ถ้าไม่มีบิล ให้กลับหน้าก่อนหน้า
   if (!bill)
     return (
       <div className="text-center p-5">
@@ -59,18 +57,6 @@ export default function PaymentChoice() {
       </div>
     );
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText("5052997156");
-    Swal.fire({
-      toast: true,
-      position: "top-end",
-      icon: "success",
-      title: "คัดลอกเลขบัญชีแล้ว",
-      timer: 2000,
-      showConfirmButton: false,
-    });
-  };
-
   const handleDownload = async (url: string) => {
     try {
       const res = await fetch(url);
@@ -89,44 +75,15 @@ export default function PaymentChoice() {
     <div className="smartdorm-page">
       <NavBar />
       <div className="mt-3"></div>
-      {/* 🔹 การ์ดหลัก */}
-      <div className="smartdorm-card">
-<div className="text-center mb-3">
-        <h2 className="fw-bold text-success mb-2">ชำระค่าเช่า</h2>
-        <h3 className="text-black mt-1 mb-2">
-          เลขที่บิล : {bill.billId}
-        </h2>
-<h3 className="text-black mt-1 mb-2">
-          ห้อง {bill.room.number}
-        </h2>
-      </div>
-        <h2 className="fw-bold text-center mb-3 text-primary">
-          💳 วิธีการชำระเงิน
-        </h2>
 
-        {/* 🔘 ปุ่มเลือกวิธี */}
-        <div className="btn-group w-100 mb-4">
-          <button
-            className={`btn fw-semibold ${
-              method === "account" ? "btn-success" : "btn-outline-success"
-            }`}
-            style={{ borderRadius: "8px 0 0 8px" }}
-            onClick={() => setMethod("account")}
-          >
-            🏦 โอนบัญชีธนาคาร
-          </button>
-          <button
-            className={`btn fw-semibold ${
-              method === "qr" ? "btn-primary" : "btn-outline-primary"
-            }`}
-            style={{ borderRadius: "0 8px 8px 0" }}
-            onClick={() => setMethod("qr")}
-          >
-            📲 QR พร้อมเพย์
-          </button>
+      <div className="smartdorm-card">
+        <div className="text-center mb-3">
+          <h2 className="fw-bold text-success mb-2">ชำระค่าเช่า</h2>
+          <h3 className="text-black mt-1 mb-2">เลขที่บิล : {bill.billId}</h3>
+          <h3 className="text-black mt-1 mb-2">ห้อง {bill.room.number}</h3>
         </div>
 
-        {/* 💰 สรุปยอด */}
+        {/* 💰 ยอดรวม */}
         <div
           className="p-3 mb-3 rounded shadow-sm text-center"
           style={{
@@ -138,70 +95,48 @@ export default function PaymentChoice() {
           </h4>
         </div>
 
-        {/* 🔹 QR หรือ บัญชี */}
-        {method === "qr" ? (
-          <div
-            className="p-3 mb-3 rounded shadow-sm text-center"
-            style={{
-              background: "linear-gradient(135deg, #f8f9fa, #e9ecef)",
-            }}
-          >
-            <h3 className="fw-semibold mb-2 text-black">📲 สแกนเพื่อชำระผ่าน PromptPay</h3>
-            <img
-              src={qrUrl}
-              alt="QR PromptPay"
-              width="220"
-              className="border rounded shadow-sm my-2"
-            />
-            {isInLine ? (
-              <p className="small text-danger fw-semibold mt-2">
-                กดค้างที่ QR แล้วเลือก “บันทึกภาพ” เพื่อบันทึกลงเครื่อง
-              </p>
-            ) : (
-              <button
-                className="btn btn-outline-success w-100 fw-semibold"
-                onClick={() => handleDownload(qrUrl)}
-              >
-                📥 ดาวน์โหลด QR PromptPay
-              </button>
-            )}
-          </div>
-        ) : (
-          <div
-            className="p-3 mb-3 rounded shadow-sm text-center text-white"
-            style={{
-              background: "linear-gradient(135deg, #5d00ff, #9bc5ee)",
-            }}
-          >
-            <h5 className="fw-bold mb-1">ธนาคารไทยพาณิชย์</h5>
-            <p className="mb-1 fw-semibold">เลขบัญชี: 505-2997156</p>
-            <p className="mb-2">นายภูวณัฐ พาหะละ</p>
+        {/* 🔹 QR PromptPay อย่างเดียว */}
+        <div
+          className="p-3 mb-3 rounded shadow-sm text-center"
+          style={{
+            background: "linear-gradient(135deg, #f8f9fa, #e9ecef)",
+          }}
+        >
+          <h3 className="fw-semibold mb-2 text-black">
+            📲 สแกนเพื่อชำระผ่าน PromptPay
+          </h3>
 
+          <img
+            src={qrUrl}
+            alt="QR PromptPay"
+            width="230"
+            className="border rounded shadow-sm my-2"
+          />
+
+          {isInLine ? (
+            <p className="small text-danger fw-semibold mt-2">
+              กดค้างที่ QR แล้วเลือก “บันทึก QR Code” เพื่อบันทึกลงเครื่อง
+            </p>
+          ) : (
             <button
-              className="btn fw-semibold w-100"
-              style={{
-                background: "linear-gradient(90deg, #ffcc70, #ff8177)",
-                border: "none",
-                color: "black",
-              }}
-              onClick={handleCopy}
+              className="btn btn-outline-success w-100 fw-semibold"
+              onClick={() => handleDownload(qrUrl)}
             >
-              📋 คัดลอกเลขบัญชี
+             ดาวน์โหลด QR Code
             </button>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* 🔹 ปุ่มดำเนินการต่อ */}
+        {/* ปุ่มต่อไป */}
         <button
           className="btn w-100 mt-2 fw-semibold text-white py-2"
           style={{
             background: "linear-gradient(90deg, #43cea2, #185a9d)",
             borderRadius: "10px",
-            transition: "0.3s",
           }}
           onClick={() => nav("/upload-slip", { state: bill })}
         >
-          ➡️ ดำเนินการต่อ
+         แนบสลิปการโอน
         </button>
       </div>
     </div>
