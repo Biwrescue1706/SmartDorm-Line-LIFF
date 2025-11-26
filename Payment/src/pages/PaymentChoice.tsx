@@ -1,7 +1,6 @@
 // src/pages/PaymentChoice.tsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import type { Room } from "../../types/Room";
 import { API_BASE } from "../config";
 import Swal from "sweetalert2";
 import { refreshLiffToken } from "../lib/liff";
@@ -12,7 +11,6 @@ import liff from "@line/liff";
 export default function PaymentChoice() {
   const { state } = useLocation();
   const nav = useNavigate();
-  const room = state as Room | null;
 
   const [ready, setReady] = useState(false);
   const [qrSrc, setQrSrc] = useState("");
