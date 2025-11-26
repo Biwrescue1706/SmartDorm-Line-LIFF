@@ -88,17 +88,18 @@ export default function PaymentChoice() {
   return (
     <div className="smartdorm-page">
       <NavBar />
-      <div className="mt-5"></div>
-
-      <div className="text-center mb-3">
-        <h2 className="fw-bold text-success mb-0">ชำระค่าเช่า</h2>
-        <h3 className="text-muted mt-1">
-          เลขที่บิล: {bill.billId} | ห้อง {bill.room.number}
-        </h3>
-      </div>
-
+      <div className="mt-3"></div>
       {/* 🔹 การ์ดหลัก */}
       <div className="smartdorm-card">
+<div className="text-center mb-3">
+        <h2 className="fw-bold text-success mb-2">ชำระค่าเช่า</h2>
+        <h3 className="text-black mt-1 mb-2">
+          เลขที่บิล : {bill.billId}
+        </h2>
+<h3 className="text-black mt-1 mb-2">
+          ห้อง {bill.room.number}
+        </h2>
+      </div>
         <h2 className="fw-bold text-center mb-3 text-primary">
           💳 วิธีการชำระเงิน
         </h2>
