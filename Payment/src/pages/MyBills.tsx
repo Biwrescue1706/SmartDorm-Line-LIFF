@@ -124,7 +124,7 @@ export default function MyBills() {
     return (
       <div className="smartdorm-page text-center">
         <NavBar />
-        <div style={{ height: "70px" }}></div>
+        <div style={{ height: "10px" }}></div>
         <h4 className="text-muted mt-4">ไม่มีบิลค้างชำระ 🎉</h4>
       </div>
     );
@@ -133,18 +133,18 @@ export default function MyBills() {
   return (
     <div className="smartdorm-page pb-4">
       <NavBar />
-      <div style={{ height: "65px" }}></div>
+      <div style={{ height: "10px" }}></div>
 
       {/* HEADER */}
       <div className="text-center mb-4">
-        <h3 className="fw-bold" style={{ color: "#4B008A" }}>
+        <h1 className="fw-bold" style={{ color: "#4B008A" }}>
           🧾 รายการบิลที่รอชำระ
-        </h3>
-        <small className="text-muted">เลือกห้องเพื่อดูบิลที่ยังไม่ชำระ</small>
-      </div>
+        </h1>
+        <h3 className="te className="text-black">เลือกห้องเพื่อดูบิลที่ยังไม่ชำระ</h3>
+      </>
 
       {/* ROOM SELECT */}
-      <div className="container mb-4">
+      <div className="container  mb-4">
         <select
           className="form-select text-center fw-semibold border-0 shadow-sm py-2"
           style={{
@@ -164,56 +164,64 @@ export default function MyBills() {
       </div>
 
       {/* BILL LIST */}
-      <div className="container px-3">
-        {filteredBills.map((b, i) => (
-          <div
-            key={i}
-            className="card mb-3 shadow rounded-4 border-0"
-            style={{ background: "white", cursor: "pointer" }}
-          >
-            <div className="card-body">
+     {/* BILL LIST */}
+<div className="container">
 
-              <div className="d-flex justify-content-between">
-                <div>
-                  <span
-                    className="badge px-3 py-2 mb-2"
-                    style={{
-                      background: "rgba(123, 44, 191, 0.12)",
-                      color: "#7B2CBF",
-                      borderRadius: "10px",
-                    }}
-                  >
-                    ห้อง {b.room?.number}
-                  </span>
+  {filteredBills.map((b, i) => (
+    <div
+      key={i}
+      className="card shadow-sm border-0 rounded-4 mb-4"
+      style={{
+        background: "white",
+        padding: "14px",
+        borderRadius: "18px",
+      }}
+    >
+      <div className="card-body">
 
-                  <h4 className="fw-bold mb-1" style={{ color: "#371B58" }}>
-                    ฿ {b.total.toLocaleString()}
-                  </h4>
+        {/* TAG ROOM */}
+        <span
+          className="badge px-3 py-2 mb-2"
+          style={{
+            background: "rgba(123, 44, 191, 0.12)",
+            color: "#7B2CBF",
+            borderRadius: "12px",
+            fontSize: "0.9rem",
+          }}
+        >
+          ห้อง {b.room?.number}
+        </span>
 
-                  <small className="text-muted">
-                    เดือน {formatThaiMonth(b.month)}
-                  </small>
-                </div>
+        {/* PRICE */}
+        <h4 className="fw-bold mt-1 mb-2" style={{ color: "#371B58" }}>
+          ฿ {b.total.toLocaleString()}
+        </h4>
 
-                <button
-                  className="btn fw-semibold px-3"
-                  style={{
-                    background: "linear-gradient(135deg, #7B2CBF, #4B008A)",
-                    color: "white",
-                    borderRadius: "12px",
-                  }}
-                  onClick={() =>
-                    nav("/bill-detail", { state: { billId: b.billId } })
-                  }
-                >
-                  ชำระบิล
-                </button>
-              </div>
+        {/* MONTH */}
+        <p className="text-muted mb-3">
+          เดือน {formatThaiMonth(b.month)}
+        </p>
 
-            </div>
-          </div>
-        ))}
+        {/* PAY BUTTON */}
+        <button
+          className="btn w-100 fw-semibold py-2"
+          style={{
+            background: "linear-gradient(135deg, #7B2CBF, #4B008A)",
+            color: "white",
+            borderRadius: "14px",
+          }}
+          onClick={() =>
+            nav("/bill-detail", { state: { billId: b.billId } })
+          }
+        >
+          ชำระบิล
+        </button>
+
       </div>
+    </div>
+  ))}
+
+</div>
     </div>
   );
 }
