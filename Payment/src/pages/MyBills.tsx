@@ -32,68 +32,70 @@ export default function MyBills() {
   const [loading, setLoading] = useState(true);
   const nav = useNavigate();
 
-  // LOAD DATA
-useEffect(() => {
-  (async () => {
-    try {
-      const token = await refreshLiffToken();
-      if (!token) throw new Error("ไม่พบ token (ต้องเปิดผ่าน LIFF)");
+  useEffect(() => {
+    document.body.style.backgroundColor = "#f7ecff"; // SCB Pastel Theme
+  }, []);
 
-      const unpaidRes = await axios.post(`${API_BASE}/user/bills/unpaid`, {
-        accessToken: token,
-      });
+  // LOAD DATA -------------------------------------------
+  useEffect(() => {
+    (async () => {
+      try {
+        const token = await refreshLiffToken();
+        if (!token) throw new Error("ไม่พบ token (ต้องเปิดผ่าน LIFF)");
 
-      const paidRes = await axios.post(`${API_BASE}/user/payments`, {
-        accessToken: token,
-      });
+        const unpaidRes = await axios.post(`${API_BASE}/user/bills/unpaid`, {
+          accessToken: token,
+        });
 
-      const unpaid = unpaidRes.data.bills.map((b: any) => ({
-        ...b,
-        status: 0,
-        room: b.room ?? { number: b.roomNumber ?? "-" },
-      }));
+        const paidRes = await axios.post(`${API_BASE}/user/payments`, {
+          accessToken: token,
+        });
 
-      const paid = paidRes.data.bills.map((b: any) => ({
-        ...b,
-        status: 1,
-        room: b.room ?? { number: b.roomNumber ?? "-" },
-      }));
+        const unpaid = unpaidRes.data.bills.map((b: any) => ({
+          ...b,
+          status: 0,
+          room: b.room ?? { number: b.roomNumber ?? "-" },
+        }));
 
-      const allBills = [...unpaid, ...paid];
-      setBills(allBills);
+        const paid = paidRes.data.bills.map((b: any) => ({
+          ...b,
+          status: 1,
+          room: b.room ?? { number: b.roomNumber ?? "-" },
+        }));
 
-      // 🟢 FIX TYPE ERROR HERE
-      const unpaidRooms: string[] = Array.from(
-        new Set<string>(
-          unpaid
-            .filter((b: Bill) => b.status === 0)
-            .map((b: Bill) => String(b.room?.number ?? "-"))
-        )
-      ).filter((r) => r !== "-");
+        const allBills = [...unpaid, ...paid];
+        setBills(allBills);
 
-      setRooms([...unpaidRooms]);
+        // KEEP ONLY ROOMS WITH UNPAID BILLS ------------------
+        const unpaidRooms: string[] = Array.from(
+          new Set<string>(
+            unpaid
+              .filter((b: Bill) => b.status === 0)
+              .map((b: Bill) => String(b.room?.number ?? "-"))
+          )
+        ).filter((r) => r !== "-");
 
-      if (unpaidRooms.length > 0) {
-        setSelectedRoom(String(unpaidRooms[0]));
+        setRooms([...unpaidRooms]);
+
+        if (unpaidRooms.length > 0) {
+          setSelectedRoom(String(unpaidRooms[0]));
+        }
+      } catch (err: any) {
+        Swal.fire({
+          icon: "error",
+          title: "โหลดข้อมูลล้มเหลว",
+          text:
+            err.response?.data?.error ||
+            err.response?.data?.message ||
+            err.message,
+        });
+      } finally {
+        setLoading(false);
       }
-    } catch (err: any) {
-      Swal.fire({
-        icon: "error",
-        title: "โหลดข้อมูลล้มเหลว",
-        text:
-          err.response?.data?.error ||
-          err.response?.data?.message ||
-          err.message,
-      });
-    } finally {
-      setLoading(false);
-    }
-  })();
-}, []);
+    })();
+  }, []);
 
-  // ===========================
-  // FILTER BILLS BY ROOM + STATUS = 0 (UNPAID)
-  // ===========================
+  // FILTER BILLS -----------------------------------------
   useEffect(() => {
     if (!selectedRoom) return;
 
@@ -108,47 +110,48 @@ useEffect(() => {
     setFilteredBills(filtered);
   }, [selectedRoom, bills]);
 
-  // ===========================
-  // LOADING
-  // ===========================
+  // LOADING -----------------------------------------------
   if (loading)
     return (
       <div className="text-center py-5">
-        <div className="spinner-border text-success"></div>
+        <div className="spinner-border text-purple"></div>
         <p className="mt-3 text-muted">กำลังโหลดข้อมูลบิล...</p>
       </div>
     );
 
-  // ===========================
-  // EMPTY (NO UNPAID ROOMS)
-  // ===========================
+  // NO UNPAID BILLS ---------------------------------------
   if (rooms.length === 0)
     return (
       <div className="smartdorm-page text-center">
         <NavBar />
-        <div style={{ height: "60px" }}></div>
+        <div style={{ height: "70px" }}></div>
         <h4 className="text-muted mt-4">ไม่มีบิลค้างชำระ 🎉</h4>
       </div>
     );
 
-  // ===========================
-  // MAIN UI
-  // ===========================
+  // MAIN UI -----------------------------------------------
   return (
     <div className="smartdorm-page pb-4">
       <NavBar />
-      <div style={{ height: "60px" }}></div>
+      <div style={{ height: "65px" }}></div>
 
       {/* HEADER */}
       <div className="text-center mb-4">
-        <h3 className="fw-bold text-success">🧾 รายการบิลที่รอชำระ</h3>
-        <small className="text-muted">เลือกห้องเพื่อดูบิล</small>
+        <h3 className="fw-bold" style={{ color: "#4B008A" }}>
+          🧾 รายการบิลที่รอชำระ
+        </h3>
+        <small className="text-muted">เลือกห้องเพื่อดูบิลที่ยังไม่ชำระ</small>
       </div>
 
       {/* ROOM SELECT */}
-      <div className="container mb-3">
+      <div className="container mb-4">
         <select
-          className="form-select text-center fw-semibold"
+          className="form-select text-center fw-semibold border-0 shadow-sm py-2"
+          style={{
+            background: "white",
+            borderRadius: "14px",
+            color: "#4B008A",
+          }}
           value={selectedRoom}
           onChange={(e) => setSelectedRoom(e.target.value)}
         >
@@ -164,28 +167,49 @@ useEffect(() => {
       <div className="container px-3">
         {filteredBills.map((b, i) => (
           <div
-            className="card shadow-sm mb-3 border-start border-4 border-success rounded-3"
             key={i}
+            className="card mb-3 shadow rounded-4 border-0"
+            style={{ background: "white", cursor: "pointer" }}
           >
-            <div className="card-body d-flex justify-content-between align-items-center">
-              <div>
-                <h5 className="fw-bold mb-1">ห้อง {b.room?.number}</h5>
-                <p className="text-secondary mb-1">
-                  เดือน {formatThaiMonth(b.month)}
-                </p>
-                <p className="fw-semibold fs-5 text-dark mb-0">
-                  💰 {b.total.toLocaleString()} บาท
-                </p>
+            <div className="card-body">
+
+              <div className="d-flex justify-content-between">
+                <div>
+                  <span
+                    className="badge px-3 py-2 mb-2"
+                    style={{
+                      background: "rgba(123, 44, 191, 0.12)",
+                      color: "#7B2CBF",
+                      borderRadius: "10px",
+                    }}
+                  >
+                    ห้อง {b.room?.number}
+                  </span>
+
+                  <h4 className="fw-bold mb-1" style={{ color: "#371B58" }}>
+                    ฿ {b.total.toLocaleString()}
+                  </h4>
+
+                  <small className="text-muted">
+                    เดือน {formatThaiMonth(b.month)}
+                  </small>
+                </div>
+
+                <button
+                  className="btn fw-semibold px-3"
+                  style={{
+                    background: "linear-gradient(135deg, #7B2CBF, #4B008A)",
+                    color: "white",
+                    borderRadius: "12px",
+                  }}
+                  onClick={() =>
+                    nav("/bill-detail", { state: { billId: b.billId } })
+                  }
+                >
+                  ชำระบิล
+                </button>
               </div>
 
-              <button
-                className="btn btn-success px-3 py-2 fw-semibold"
-                onClick={() =>
-                  nav("/bill-detail", { state: { billId: b.billId } })
-                }
-              >
-                ชำระบิล
-              </button>
             </div>
           </div>
         ))}
