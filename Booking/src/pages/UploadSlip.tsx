@@ -157,7 +157,7 @@ function UploadSlipForm({ room, accessToken }: { room: Room; accessToken: string
 
   return (
     <form onSubmit={handleSubmit} className="card shadow-lg p-4 border-0 rounded-4">
-      <h3 className="text-center mb-3">📤 อัปโหลดสลิป</h3>
+      <h3 className="text-center mb-3 mt-5">📤 อัปโหลดสลิป</h3>
       <h5 className="text-center mb-4">ห้อง {room.number}</h5>
 
       <label className="form-label fw-semibold">LINE ผู้ใช้</label>
