@@ -32,65 +32,64 @@ export default function MyBills() {
   const [loading, setLoading] = useState(true);
   const nav = useNavigate();
 
-  // ===========================
   // LOAD DATA
-  // ===========================
-  useEffect(() => {
-    (async () => {
-      try {
-        const token = await refreshLiffToken();
-        if (!token) throw new Error("ไม่พบ token (ต้องเปิดผ่าน LIFF)");
+useEffect(() => {
+  (async () => {
+    try {
+      const token = await refreshLiffToken();
+      if (!token) throw new Error("ไม่พบ token (ต้องเปิดผ่าน LIFF)");
 
-        // LOAD UNPAID AND PAID
-        const unpaidRes = await axios.post(`${API_BASE}/user/bills/unpaid`, {
-          accessToken: token,
-        });
+      const unpaidRes = await axios.post(`${API_BASE}/user/bills/unpaid`, {
+        accessToken: token,
+      });
 
-        const paidRes = await axios.post(`${API_BASE}/user/payments`, {
-          accessToken: token,
-        });
+      const paidRes = await axios.post(`${API_BASE}/user/payments`, {
+        accessToken: token,
+      });
 
-        const unpaid = unpaidRes.data.bills.map((b: any) => ({
-          ...b,
-          status: 0,
-          room: b.room ?? { number: b.roomNumber ?? "-" },
-        }));
+      const unpaid = unpaidRes.data.bills.map((b: any) => ({
+        ...b,
+        status: 0,
+        room: b.room ?? { number: b.roomNumber ?? "-" },
+      }));
 
-        const paid = paidRes.data.bills.map((b: any) => ({
-          ...b,
-          status: 1,
-          room: b.room ?? { number: b.roomNumber ?? "-" },
-        }));
+      const paid = paidRes.data.bills.map((b: any) => ({
+        ...b,
+        status: 1,
+        room: b.room ?? { number: b.roomNumber ?? "-" },
+      }));
 
-        const allBills = [...unpaid, ...paid];
-        setBills(allBills);
+      const allBills = [...unpaid, ...paid];
+      setBills(allBills);
 
-        // ❌ FILTER ONLY ROOMS THAT STILL HAVE UNPAID BILLS
-        const unpaidRooms = Array.from(
-          new Set(
-            unpaid
-              .filter((b: Bill) => b.status === 0)
-              .map((b: Bill) => b.room?.number ?? "-")
-          )
-        ).filter((r) => r !== "-");
+      // 🟢 FIX TYPE ERROR HERE
+      const unpaidRooms: string[] = Array.from(
+        new Set<string>(
+          unpaid
+            .filter((b: Bill) => b.status === 0)
+            .map((b: Bill) => String(b.room?.number ?? "-"))
+        )
+      ).filter((r) => r !== "-");
 
-        setRooms(unpaidRooms);
+      setRooms([...unpaidRooms]);
 
-        if (unpaidRooms.length > 0) setSelectedRoom(unpaidRooms[0]);
-      } catch (err: any) {
-        Swal.fire({
-          icon: "error",
-          title: "โหลดข้อมูลล้มเหลว",
-          text:
-            err.response?.data?.error ||
-            err.response?.data?.message ||
-            err.message,
-        });
-      } finally {
-        setLoading(false);
+      if (unpaidRooms.length > 0) {
+        setSelectedRoom(String(unpaidRooms[0]));
       }
-    })();
-  }, []);
+    } catch (err: any) {
+      Swal.fire({
+        icon: "error",
+        title: "โหลดข้อมูลล้มเหลว",
+        text:
+          err.response?.data?.error ||
+          err.response?.data?.message ||
+          err.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, []);
 
   // ===========================
   // FILTER BILLS BY ROOM + STATUS = 0 (UNPAID)
