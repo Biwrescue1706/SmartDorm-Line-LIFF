@@ -1,4 +1,4 @@
-// src/pages/PaymentChoice.tsx
+// Booking/src/pages/PaymentChoice.tsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { Room } from "../types/Room";
@@ -6,7 +6,7 @@ import { API_BASE } from "../config";
 import Swal from "sweetalert2";
 import { refreshLiffToken } from "../lib/liff";
 import axios from "axios";
-import LiffNav from "../components/Nav/LiffNav";
+import LiffNav from "../components/LiffNav";
 import liff from "@line/liff";
 
 export default function PaymentChoice() {

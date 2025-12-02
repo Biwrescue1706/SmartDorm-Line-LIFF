@@ -1,4 +1,4 @@
-// src/pages/UploadSlip.tsx
+// Booking/src/pages/UploadSlip.tsx
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -6,7 +6,7 @@ import axios from "axios";
 import { ensureLiffReady, getAccessToken, logoutLiff } from "../lib/liff";
 import { API_BASE } from "../config";
 import type { Room } from "../types/Room";
-import LiffNav from "../components/Nav/LiffNav";
+import LiffNav from "../components/LiffNav";
 
 export default function UploadSlip() {
   const { state } = useLocation();

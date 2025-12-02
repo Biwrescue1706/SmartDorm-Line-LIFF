@@ -1,4 +1,4 @@
-// src/pages/RoomDetail.tsx
+// Booking/src/pages/RoomDetail.tsx
 import { useEffect } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +6,7 @@ import axios from "axios";
 import { useRoomDetail } from "../hooks/useRoomDetail";
 import { refreshLiffToken, logoutLiff } from "../lib/liff";
 import { API_BASE } from "../config";
-import LiffNav from "../components/Nav/LiffNav";
+import LiffNav from "../components/LiffNav";
 
 export default function RoomDetail() {
   const { room, roomId, loading, error } = useRoomDetail();

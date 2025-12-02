@@ -1,7 +1,7 @@
-// src/pages/ThankYou.tsx
+// Booking/src/pages/ThankYou.tsx
 import { useEffect, useState } from "react";
 import { ensureLiffReady, logoutLiff } from "../lib/liff";
-import LiffNav from "../components/Nav/LiffNav"; //  Navbar
+import LiffNav from "../components/LiffNav"; //  Navbar
 
 export default function ThankYou() {
   const [countdown, setCountdown] = useState(10); //  เริ่มที่ 10 วินาที

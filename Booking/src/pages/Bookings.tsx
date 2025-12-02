@@ -1,8 +1,9 @@
+// Booking/src/pages/Bookings.tsx
 import { useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { useRooms } from "../hooks/useRooms";
 import type { Room } from "../types/Room";
-import LiffNav from "../components/Nav/LiffNav"; //  Navbar ด้านบน
+import LiffNav from "../components/LiffNav";  
 
 export default function Bookings() {
   const { rooms, loading } = useRooms(true);
