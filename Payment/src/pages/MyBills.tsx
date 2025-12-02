@@ -11,7 +11,7 @@ interface Bill {
   billId: string;
   month?: string;
   total: number;
-  status: number;
+  status: number; // 0 = unpaid, 1 = paid
   room?: { number?: string };
 }
 
@@ -39,10 +39,9 @@ export default function MyBills() {
     (async () => {
       try {
         const token = await refreshLiffToken();
-        console.log("🔥 TOKEN =", token);
-
         if (!token) throw new Error("ไม่พบ token (ต้องเปิดผ่าน LIFF)");
 
+        // LOAD UNPAID AND PAID
         const unpaidRes = await axios.post(`${API_BASE}/user/bills/unpaid`, {
           accessToken: token,
         });
@@ -50,9 +49,6 @@ export default function MyBills() {
         const paidRes = await axios.post(`${API_BASE}/user/payments`, {
           accessToken: token,
         });
-
-        console.log("🔥 UNPAID API →", unpaidRes.data);
-        console.log("🔥 PAID API →", paidRes.data);
 
         const unpaid = unpaidRes.data.bills.map((b: any) => ({
           ...b,
@@ -67,30 +63,28 @@ export default function MyBills() {
         }));
 
         const allBills = [...unpaid, ...paid];
-        console.log("🔥 ALL BILLS (unpaid+paid) →", allBills);
-
         setBills(allBills);
 
-        const allRooms = Array.from(
-          new Set(allBills.map((b) => b.room?.number ?? "-"))
+        // ❌ FILTER ONLY ROOMS THAT STILL HAVE UNPAID BILLS
+        const unpaidRooms = Array.from(
+          new Set(
+            unpaid
+              .filter((b: Bill) => b.status === 0)
+              .map((b: Bill) => b.room?.number ?? "-")
+          )
         ).filter((r) => r !== "-");
 
-        console.log("🔥 ALL ROOMS →", allRooms);
+        setRooms(unpaidRooms);
 
-        setRooms(allRooms);
-
-        if (allRooms.length > 0) setSelectedRoom(allRooms[0]);
-        console.log("🔥 SELECTED ROOM =", allRooms[0]);
+        if (unpaidRooms.length > 0) setSelectedRoom(unpaidRooms[0]);
       } catch (err: any) {
-        console.error("❌ โหลดบิลผิดพลาด:", err);
         Swal.fire({
           icon: "error",
           title: "โหลดข้อมูลล้มเหลว",
           text:
             err.response?.data?.error ||
             err.response?.data?.message ||
-            err.message ||
-            "ไม่พบบิล",
+            err.message,
         });
       } finally {
         setLoading(false);
@@ -99,12 +93,10 @@ export default function MyBills() {
   }, []);
 
   // ===========================
-  // FILTER BILLS
+  // FILTER BILLS BY ROOM + STATUS = 0 (UNPAID)
   // ===========================
   useEffect(() => {
     if (!selectedRoom) return;
-
-    console.log("🔥 กำลัง Filter สำหรับห้อง =", selectedRoom);
 
     const filtered = bills
       .filter((b) => b.room?.number === selectedRoom && b.status === 0)
@@ -113,8 +105,6 @@ export default function MyBills() {
           new Date(b.month ?? "").getTime() -
           new Date(a.month ?? "").getTime()
       );
-
-    console.log("🔥 FILTERED BILLS →", filtered);
 
     setFilteredBills(filtered);
   }, [selectedRoom, bills]);
@@ -131,14 +121,14 @@ export default function MyBills() {
     );
 
   // ===========================
-  // EMPTY (NO ROOMS)
+  // EMPTY (NO UNPAID ROOMS)
   // ===========================
   if (rooms.length === 0)
     return (
-      <div className="smartdorm-page text-center justify-content-center">
+      <div className="smartdorm-page text-center">
         <NavBar />
         <div style={{ height: "60px" }}></div>
-        <h4 className="text-muted">ยังไม่มีรายการบิลในระบบ (rooms empty)</h4>
+        <h4 className="text-muted mt-4">ไม่มีบิลค้างชำระ 🎉</h4>
       </div>
     );
 
@@ -146,21 +136,20 @@ export default function MyBills() {
   // MAIN UI
   // ===========================
   return (
-    <div className="smartdorm-page" style={{ paddingBottom: "40px" }}>
+    <div className="smartdorm-page pb-4">
       <NavBar />
       <div style={{ height: "60px" }}></div>
 
       {/* HEADER */}
       <div className="text-center mb-4">
-        <h2 className="fw-bold text-success">🧾 รายการบิลที่รอชำระ</h2>
-        <p className="text-secondary">เลือกห้องเพื่อดูบิล</p>
+        <h3 className="fw-bold text-success">🧾 รายการบิลที่รอชำระ</h3>
+        <small className="text-muted">เลือกห้องเพื่อดูบิล</small>
       </div>
 
       {/* ROOM SELECT */}
-      <div className="text-center mb-4">
+      <div className="container mb-3">
         <select
-          className="form-select mx-auto"
-          style={{ maxWidth: "330px", borderRadius: "12px" }}
+          className="form-select text-center fw-semibold"
           value={selectedRoom}
           onChange={(e) => setSelectedRoom(e.target.value)}
         >
@@ -173,39 +162,35 @@ export default function MyBills() {
       </div>
 
       {/* BILL LIST */}
-      {filteredBills.length === 0 ? (
-        <p className="text-center text-muted">
-          ไม่มีบิลของห้องนี้ที่รอชำระ  
-          (filteredBills empty)
-        </p>
-      ) : (
-        <div className="w-100 mx-auto" style={{ maxWidth: "500px" }}>
-          {filteredBills.map((b, i) => (
-            <div
-              key={i}
-              className="p-3 mb-3 shadow-sm rounded"
-              style={{ borderLeft: "6px solid #facc15" }}
-            >
-              <div className="d-flex justify-content-between">
-                <div>
-                  <h4>ห้อง {b.room?.number}</h4>
-                  <p>เดือน {formatThaiMonth(b.month)}</p>
-                  <p>💰 {b.total} บาท</p>
-                </div>
-
-                <button
-                  className="btn btn-success"
-                  onClick={() =>
-                    nav("/bill-detail", { state: { billId: b.billId } })
-                  }
-                >
-                  ชำระบิล
-                </button>
+      <div className="container px-3">
+        {filteredBills.map((b, i) => (
+          <div
+            className="card shadow-sm mb-3 border-start border-4 border-success rounded-3"
+            key={i}
+          >
+            <div className="card-body d-flex justify-content-between align-items-center">
+              <div>
+                <h5 className="fw-bold mb-1">ห้อง {b.room?.number}</h5>
+                <p className="text-secondary mb-1">
+                  เดือน {formatThaiMonth(b.month)}
+                </p>
+                <p className="fw-semibold fs-5 text-dark mb-0">
+                  💰 {b.total.toLocaleString()} บาท
+                </p>
               </div>
+
+              <button
+                className="btn btn-success px-3 py-2 fw-semibold"
+                onClick={() =>
+                  nav("/bill-detail", { state: { billId: b.billId } })
+                }
+              >
+                ชำระบิล
+              </button>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
