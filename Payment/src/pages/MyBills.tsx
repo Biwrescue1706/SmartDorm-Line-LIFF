@@ -18,7 +18,10 @@ interface Bill {
 const formatThaiMonth = (d?: string) => {
   if (!d || isNaN(new Date(d).getTime())) return "-";
   const date = new Date(d);
-  return date.toLocaleDateString("th-TH", { year: "numeric", month: "long" });
+  return date.toLocaleDateString("th-TH", {
+    year: "numeric",
+    month: "long",
+  });
 };
 
 export default function MyBills() {
@@ -29,14 +32,15 @@ export default function MyBills() {
   const [loading, setLoading] = useState(true);
   const nav = useNavigate();
 
-  // ✅ โหลดข้อมูลบิลทั้งหมด
+  // ===========================
+  // LOAD DATA
+  // ===========================
   useEffect(() => {
     (async () => {
       try {
         const token = await refreshLiffToken();
-        if (!token) throw new Error("ไม่พบ token (ต้องเปิดผ่าน LIFF)");
+        if (!token) throw new Error("ไม่พบ token");
 
-        // ดึงข้อมูลจาก backend
         const unpaidRes = await axios.post(`${API_BASE}/user/bills/unpaid`, {
           accessToken: token,
         });
@@ -44,7 +48,6 @@ export default function MyBills() {
           accessToken: token,
         });
 
-        // สร้างข้อมูลบิล
         const unpaid = unpaidRes.data.bills.map((b: any) => ({
           ...b,
           status: 0,
@@ -60,27 +63,17 @@ export default function MyBills() {
         const allBills = [...unpaid, ...paid];
         setBills(allBills);
 
-        // ✅ เอาเฉพาะห้องที่ยังมีบิลรอชำระ
-        const unpaidRooms = Array.from(
-          new Set(
-            allBills
-              .filter((b) => b.status === 0)
-              .map((b) => b.room?.number ?? "-")
-          )
+        const allRooms = Array.from(
+          new Set(allBills.map((b) => b.room?.number ?? "-"))
         ).filter((r) => r !== "-");
 
-        setRooms(unpaidRooms);
-        if (unpaidRooms.length > 0) setSelectedRoom(unpaidRooms[0]);
+        setRooms(allRooms);
+        if (allRooms.length > 0) setSelectedRoom(allRooms[0]);
       } catch (err: any) {
-        console.error("❌ โหลดบิลผิดพลาด:", err);
         Swal.fire({
           icon: "error",
           title: "โหลดข้อมูลล้มเหลว",
-          text:
-            err.response?.data?.error ||
-            err.response?.data?.message ||
-            err.message ||
-            "ไม่พบบิล",
+          text: err.message,
         });
       } finally {
         setLoading(false);
@@ -88,19 +81,25 @@ export default function MyBills() {
     })();
   }, []);
 
-  // ✅ กรองบิลตามห้องที่เลือก
+  // ===========================
+  // FILTER
+  // ===========================
   useEffect(() => {
     if (!selectedRoom) return;
+
     const filtered = bills
       .filter((b) => b.room?.number === selectedRoom && b.status === 0)
       .sort(
         (a, b) =>
           new Date(b.month ?? "").getTime() - new Date(a.month ?? "").getTime()
       );
+
     setFilteredBills(filtered);
   }, [selectedRoom, bills]);
 
-  // ✅ แสดง Loading
+  // ===========================
+  // LOADING
+  // ===========================
   if (loading)
     return (
       <div className="text-center py-5">
@@ -109,32 +108,53 @@ export default function MyBills() {
       </div>
     );
 
-  // ✅ ไม่มีบิลเลย
+  // ===========================
+  // EMPTY
+  // ===========================
   if (rooms.length === 0)
     return (
       <div className="smartdorm-page text-center justify-content-center">
         <NavBar />
-        <div className="mt-5"></div>
-        <h5 className="text-muted">ไม่มีบิลที่รอการชำระในระบบ</h5>
+        <div style={{ height: "60px" }}></div>
+        <h4 className="text-muted">ยังไม่มีรายการบิลในระบบ</h4>
       </div>
     );
 
+  // ===========================
+  // MAIN UI
+  // ===========================
   return (
-    <div className="smartdorm-page">
+    <div className="smartdorm-page" style={{ paddingBottom: "40px" }}>
       <NavBar />
-      <div className="mt-5"></div>
+      <div style={{ height: "60px" }}></div>
 
-      {/* Header */}
-      <div className="text-center mb-3">
-        <h2 className="fw-bold text-success mb-0">🧾 รายการบิลที่รอชำระ</h2>
-        <h3 className="text-muted mt-1">เลือกห้องเพื่อดูบิลของคุณ</h3>
+      {/* HEADER */}
+      <div className="text-center mb-4">
+        <h2
+          className="fw-bold"
+          style={{
+            color: "#16a34a",
+            letterSpacing: "0.5px",
+          }}
+        >
+          🧾 รายการบิลที่รอชำระ
+        </h2>
+        <p className="text-secondary" style={{ fontSize: "15px" }}>
+          โปรดเลือกห้องที่ต้องการดูบิล
+        </p>
       </div>
 
-      {/* 🔽 Dropdown เลือกห้อง */}
-      <div className="text-center mb-3">
+      {/* ROOM SELECT */}
+      <div className="text-center mb-4">
         <select
-          className="form-select mx-auto"
-          style={{ maxWidth: "300px", borderRadius: "8px" }}
+          className="form-select mx-auto shadow-sm"
+          style={{
+            maxWidth: "330px",
+            borderRadius: "12px",
+            padding: "10px 14px",
+            fontSize: "15px",
+            border: "1px solid #d1d5db",
+          }}
           value={selectedRoom}
           onChange={(e) => setSelectedRoom(e.target.value)}
         >
@@ -146,52 +166,83 @@ export default function MyBills() {
         </select>
       </div>
 
-      {/* 🧾 รายการบิล */}
+      {/* BILL LIST */}
       {filteredBills.length === 0 ? (
-        <p className="text-center text-muted">ไม่มีบิลของห้องนี้ที่รอชำระ</p>
+        <p className="text-center text-muted">
+          ไม่มีบิลของห้องนี้ที่รอชำระ
+        </p>
       ) : (
         <div
-          className="w-100"
+          className="w-100 mx-auto"
           style={{
             maxWidth: "500px",
             display: "flex",
             flexDirection: "column",
-            gap: "14px",
+            gap: "16px",
           }}
         >
           {filteredBills.map((b, i) => (
             <div
               key={i}
-              className="smartdorm-card"
+              className="shadow-sm"
               style={{
-                borderLeft: "6px solid #ffc107",
+                padding: "18px",
+                borderRadius: "16px",
+                background: "white",
+                borderLeft: "6px solid #facc15",
+                boxShadow: "0 3px 12px rgba(0,0,0,0.08)",
               }}
             >
-              <div className="d-flex justify-content-between align-items-start flex-wrap">
+              <div className="d-flex justify-content-between flex-wrap">
                 <div>
-                  <h4 className="fw-bold mb-1 text-dark">
+                  <h4
+                    className="fw-bold mb-1"
+                    style={{ fontSize: "20px", color: "#111827" }}
+                  >
                     ห้อง {b.room?.number ?? "-"}
                   </h4>
-                  <h4 className="mb-1 text-muted">
+
+                  <div className="text-secondary mb-1">
                     เดือน {formatThaiMonth(b.month)}
-                  </h4>
-                  <h4 className="mb-1 text-muted">
-                    💰 ยอด {b.total.toLocaleString()} บาท
-                  </h4>
-                  <span className="badge rounded-pill px-3 py-2 bg-warning text-dark fw-semibold">
+                  </div>
+
+                  <div
+                    className="fw-semibold"
+                    style={{ fontSize: "17px", color: "#16a34a" }}
+                  >
+                    💰 {b.total.toLocaleString()} บาท
+                  </div>
+
+                  <span
+                    className="badge mt-2"
+                    style={{
+                      background: "#facc15",
+                      color: "#78350f",
+                      padding: "6px 12px",
+                      fontSize: "13px",
+                      borderRadius: "20px",
+                    }}
+                  >
                     ⌛ ยังไม่ชำระ
                   </span>
                 </div>
 
-                {/* ✅ ปุ่มไปหน้ารายละเอียดบิล */}
+                {/* BUTTON */}
                 <button
-                  className="btn-primary-smart fw-semibold text-white px-3 py-2 mt-2 mt-sm-0"
+                  className="fw-semibold text-white mt-3 mt-sm-0"
                   style={{
-                    borderRadius: "8px",
-                    minWidth: "110px",
-                    whiteSpace: "nowrap",
+                    background:
+                      "linear-gradient(90deg, #16a34a 0%, #22c55e 100%)",
+                    border: "none",
+                    borderRadius: "12px",
+                    padding: "10px 18px",
+                    fontSize: "15px",
+                    minWidth: "120px",
+                    boxShadow: "0 2px 5px rgba(0,0,0,0.15)",
                   }}
-                  onClick={() => nav("/bill-detail", { state: { billId: b.billId } })}
+                  onClick={() =>
+                    nav("/bill-detail", { state: { billId: b.billId } })
+                  }
                 >
                   💸 ชำระบิล
                 </button>
