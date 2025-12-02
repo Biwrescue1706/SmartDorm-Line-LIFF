@@ -11,6 +11,7 @@ interface Bill {
   month?: string;
   total: number;
   status: number; // 0 = unpaid, 1 = paid
+  dueDate?: string; // 🟣 เพิ่ม field สำหรับวันที่กำหนดชำระ
   room?: { number?: string };
 }
 
@@ -23,6 +24,23 @@ const formatThaiMonth = (d?: string) => {
   });
 };
 
+// 🟣 ฟังก์ชันแปลงเป็น "5 มกราคม 2569"
+const formatThaiDate = (d?: string) => {
+  if (!d || isNaN(new Date(d).getTime())) return "-";
+  const date = new Date(d);
+
+  const thaiMonths = [
+    "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+    "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม",
+  ];
+
+  const day = date.getDate();
+  const month = thaiMonths[date.getMonth()];
+  const year = date.getFullYear() + 543;
+
+  return `${day} ${month} ${year}`;
+};
+
 export default function MyBills() {
   const [bills, setBills] = useState<Bill[]>([]);
   const [filteredBills, setFilteredBills] = useState<Bill[]>([]);
@@ -32,10 +50,10 @@ export default function MyBills() {
   const nav = useNavigate();
 
   useEffect(() => {
-    document.body.style.backgroundColor = "#f7ecff"; // SCB pastel tone
+    document.body.style.backgroundColor = "#f7ecff"; // พื้นหลังโทน SCB
   }, []);
 
-  // LOAD DATA ------------------------------------------------
+  // โหลดข้อมูล ------------------------------------------------
   useEffect(() => {
     (async () => {
       try {
@@ -65,19 +83,17 @@ export default function MyBills() {
         const allBills = [...unpaid, ...paid];
         setBills(allBills);
 
-        // Only rooms with unpaid bills
+        // ห้องที่ยังมีบิลค้างชำระเท่านั้น
         const unpaidRooms: string[] = Array.from(
           new Set<string>(
-            unpaid
-              .filter((b: Bill) => b.status === 0)
-              .map((b: Bill) => String(b.room?.number ?? "-"))
+            unpaid.map((b: Bill) => String(b.room?.number ?? "-"))
           )
         ).filter((r) => r !== "-");
 
-        setRooms([...unpaidRooms]);
+        setRooms(unpaidRooms);
 
         if (unpaidRooms.length > 0) {
-          setSelectedRoom(String(unpaidRooms[0]));
+          setSelectedRoom(unpaidRooms[0]);
         }
       } catch (err: any) {
         Swal.fire({
@@ -94,7 +110,7 @@ export default function MyBills() {
     })();
   }, []);
 
-  // FILTER BILLS ---------------------------------------------
+  // กรองบิลตามห้อง ------------------------------------------------
   useEffect(() => {
     if (!selectedRoom) return;
 
@@ -118,7 +134,7 @@ export default function MyBills() {
       </div>
     );
 
-  // NO BILLS --------------------------------------------------
+  // ไม่มีบิลค้าง ---------------------------------------------------
   if (rooms.length === 0)
     return (
       <div className="smartdorm-page text-center">
@@ -132,15 +148,14 @@ export default function MyBills() {
   return (
     <div className="smartdorm-page pb-4">
       <NavBar />
-      <div style={{ height: "20px" }}></div>
+      <div style={{ height: "5px" }}></div>
 
       {/* HEADER */}
       <div className="text-center mb-4">
-        <h1 className="fw-bold text-dark">🧾 รายการบิลที่รอชำระ</h1>
-        <h5 className="text-dark mt-2">เลือกห้องเพื่อดูบิลที่ยังไม่ชำระ</h5>
+        <h2 className="fw-bold text-dark">🧾 รายการบิลที่รอชำระ</h2>
       </div>
 
-      {/* ROOM SELECT */}
+      {/* เลือกห้อง */}
       <div className="container mb-4">
         <select
           className="form-select text-center fw-semibold border-0 shadow-sm py-2"
@@ -160,7 +175,7 @@ export default function MyBills() {
         </select>
       </div>
 
-      {/* BILL LIST */}
+      {/* รายการบิล */}
       <div className="container">
 
         {filteredBills.map((b, i) => (
@@ -169,13 +184,13 @@ export default function MyBills() {
             className="card shadow-sm border-0 rounded-4 mb-4 text-center"
             style={{
               background: "white",
-              padding: "22px",
+              padding: "24px",
               borderRadius: "18px",
             }}
           >
             <div className="card-body">
 
-              {/* TAG ห้อง */}
+              {/* ห้อง */}
               <span
                 className="badge px-4 py-2 mb-3"
                 style={{
@@ -188,17 +203,24 @@ export default function MyBills() {
                 ห้อง {b.room?.number}
               </span>
 
-              {/* MONTH */}
+              {/* เดือน */}
               <p className="text-muted mb-1" style={{ fontSize: "1.05rem" }}>
                 เดือน {formatThaiMonth(b.month)}
               </p>
 
-              {/* PRICE */}
+              {/* ราคา */}
               <h2 className="fw-bold my-3" style={{ color: "#371B58" }}>
                 ฿ {b.total.toLocaleString()}
               </h2>
 
-              {/* BUTTON */}
+              {/* กำหนดชำระ */}
+              {b.dueDate && (
+                <h5 className="fw-bold text-secondary mb-4">
+                  กำหนดชำระ : {formatThaiDate(b.dueDate)}
+                </h5>
+              )}
+
+              {/* ปุ่ม */}
               <button
                 className="btn w-100 fw-semibold py-2"
                 style={{
