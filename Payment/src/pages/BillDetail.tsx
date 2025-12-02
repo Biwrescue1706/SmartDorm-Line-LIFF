@@ -1,4 +1,4 @@
-// src/pages/BillDetail.tsx
+// Payment/src/pages/BillDetail.tsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";

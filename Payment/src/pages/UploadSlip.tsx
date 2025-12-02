@@ -1,3 +1,5 @@
+// Payment/src/pages/UploadSlip.tsx
+
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Swal from "sweetalert2";
