@@ -139,7 +139,6 @@ export default function MyBills() {
     return (
       <div className="smartdorm-page text-center">
         <NavBar />
-        <div style={{ height: "20px" }}></div>
         <h4 className="text-muted mt-4">ไม่มีบิลค้างชำระ 🎉</h4>
       </div>
     );
@@ -148,10 +147,9 @@ export default function MyBills() {
   return (
     <div className="smartdorm-page pb-4">
       <NavBar />
-      <div style={{ height: "5px" }}></div>
 
       {/* HEADER */}
-      <div className="text-center mb-4">
+      <div className="text-center mb-4 mt-4">
         <h2 className="fw-bold text-dark">🧾 รายการบิลที่รอชำระ</h2>
       </div>
 
