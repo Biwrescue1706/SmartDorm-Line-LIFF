@@ -8,6 +8,44 @@ import { API_BASE } from "../config";
 import { refreshLiffToken } from "../lib/liff";
 import NavBar from "../components/NavBar";
 
+/**
+ * ฟังก์ชันย่อขนาดไฟล์รูปภาพให้เหลือประมาณ 200KB อัตโนมัติ
+ */
+const compressImage = (file: File, quality = 0.6): Promise<File> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d")!;
+
+      // ลดขนาดรูป (กว้างไม่เกิน 1080px)
+      const maxW = 1080;
+      let w = img.width;
+      let h = img.height;
+
+      if (w > maxW) {
+        h = (maxW / w) * h;
+        w = maxW;
+      }
+
+      canvas.width = w;
+      canvas.height = h;
+      ctx.drawImage(img, 0, 0, w, h);
+
+      // บีบอัด JPG
+      canvas.toBlob(
+        (blob) => {
+          resolve(new File([blob!], file.name.replace(/\.\w+$/, ".jpg"), { type: "image/jpeg" }));
+        },
+        "image/jpeg",
+        quality
+      );
+    };
+  });
+};
+
 export default function UploadSlip() {
   const { state } = useLocation();
   const nav = useNavigate();
@@ -15,6 +53,26 @@ export default function UploadSlip() {
 
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const onSelectFile = async (file: File | null) => {
+    if (!file) return;
+
+    // ขนาดไฟล์ใหญ่กว่า 2MB → ย่ออัตโนมัติ
+    if (file.size > 2 * 1024 * 1024) {
+      Swal.fire({
+        title: "กำลังลดขนาดรูป...",
+        html: "กำลังประมวลผลภาพสลิป โปรดรอ",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      const compressed = await compressImage(file, 0.55); // ใช้ quality 55%
+      Swal.close();
+      setFile(compressed);
+    } else {
+      setFile(file);
+    }
+  };
 
   const handleSubmit = async () => {
     if (!file) return Swal.fire("กรุณาเลือกสลิปก่อนส่ง", "", "warning");
@@ -127,14 +185,42 @@ export default function UploadSlip() {
           </b>
         </p>
 
-        {/* INPUT FILE */}
-        <label className="fw-semibold mb-2">เลือกรูปสลิป</label>
-        <input
-          type="file"
-          accept="image/*"
-          className="form-control mb-3"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
-        />
+        {/* AREA เลือกไฟล์ */}
+        <div
+          style={{
+            border: "2px dashed #CBD5E1",
+            padding: "20px",
+            borderRadius: "12px",
+            textAlign: "center",
+            cursor: "pointer",
+            marginBottom: "16px",
+          }}
+          onClick={() => document.getElementById("slipInput")?.click()}
+        >
+          {!file ? (
+            <>
+              <div style={{ fontSize: "46px", color: "#0F3D91" }}>📄</div>
+              <p style={{ margin: 0, color: "#475569" }}>
+                กดเพื่อเลือกไฟล์ หรือ <b style={{ color: "#0F3D91" }}>ลากมาวางที่นี่</b>
+              </p>
+              <p style={{ fontSize: "12px", color: "#94A3B8", marginTop: "4px" }}>
+                รองรับไฟล์รูปภาพทุกประเภท
+              </p>
+            </>
+          ) : (
+            <p style={{ color: "#0F3D91", fontWeight: 600, margin: 0 }}>
+              ✔ เลือกไฟล์แล้ว ({file.name})
+            </p>
+          )}
+
+          <input
+            id="slipInput"
+            type="file"
+            accept="image/*,.heic,.heif,.webp,.tiff,.bmp,.gif"
+            hidden
+            onChange={(e) => onSelectFile(e.target.files?.[0] || null)}
+          />
+        </div>
 
         {/* PREVIEW SLIP */}
         {file && (
