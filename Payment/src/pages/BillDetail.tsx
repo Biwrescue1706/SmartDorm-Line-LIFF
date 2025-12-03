@@ -112,8 +112,8 @@ export default function BillDetail() {
         className="text-center py-3"
         style={{
           background: "linear-gradient(135deg,#6FF5C2,#38A3FF)",
-          borderBottomLeftRadius: "20px",
-          borderBottomRightRadius: "20px",
+          borderBottomLeftRadius: "5px",
+          borderBottomRightRadius: "5px",
           color: "white",
           boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
         }}
@@ -129,7 +129,7 @@ export default function BillDetail() {
       >
         {/* SECTION: USER */}
         <div
-          className="p-3 rounded-3 mb-3"
+          className="p-3 rounded-3 mb-5 mt-3"
           style={{ background: "#f3f7ff", borderLeft: "6px solid #3a7afe" }}
         >
           <div className="d-flex justify-content-between">
@@ -173,43 +173,43 @@ export default function BillDetail() {
 
           <tbody>
             <tr>
-              <td className="text-start">💧 น้ำ</td>
-              <td>{bill.wBefore}</td>
-              <td>{bill.wAfter}</td>
-              <td>{bill.wUnits}</td>
+              <td className="text-center">น้ำ</td>
+              <td className="text-center" >{bill.wBefore}</td>
+              <td className="text-center" >{bill.wAfter}</td>
+              <td className="text-center" >{bill.wUnits}</td>
               <td>{bill.waterCost.toLocaleString()}</td>
             </tr>
 
             <tr>
-              <td className="text-start">⚡ ไฟ</td>
-              <td>{bill.eBefore}</td>
-              <td>{bill.eAfter}</td>
-              <td>{bill.eUnits}</td>
-              <td>{bill.electricCost.toLocaleString()} </td>
+              <td className="text-center">ไฟฟ้า</td>
+              <td className="text-center" >{bill.eBefore}</td>
+              <td className="text-center" >{bill.eAfter}</td>
+              <td className="text-center" >{bill.eUnits}</td>
+              <td className="text-center"  >{bill.electricCost.toLocaleString()} </td>
             </tr>
 
             <tr>
-              <td className="text-start">💰 ค่าเช่าห้อง</td>
+              <td className="text-center">ค่าเช่าห้อง</td>
               <td>-</td><td>-</td><td>-</td>
-              <td>{bill.rent.toLocaleString()} บาท</td>
+              <td className="text-center">{bill.rent.toLocaleString()}</td>
             </tr>
 
             <tr>
-              <td className="text-start">🏢 ค่าส่วนกลาง</td>
+              <td className="text-center">ค่าส่วนกลาง</td>
               <td>-</td><td>-</td><td>-</td>
-              <td>{bill.service.toLocaleString()}</td>
+              <td className="text-center">{bill.service.toLocaleString()}</td>
             </tr>
 
             <tr>
-              <td className="text-start">⚠️ ค่าปรับ</td>
+              <td className="text-center">ค่าปรับ</td>
               <td>-</td><td>-</td><td>-</td>
-              <td>{bill.fine.toLocaleString()} บาท</td>
+              <td className="text-center">{bill.fine.toLocaleString()}</td>
             </tr>
 
             <tr style={{ background: "#fafcff" }}>
-              <td className="fw-bold text-start">💵 ยอดรวมทั้งหมด</td>
+              <td className="fw-bold text-center">ยอดรวมทั้งหมด</td>
               <td colSpan={3}></td>
-              <td className="fw-bold text-success">
+              <td className="fw-bold text-success text-center">
                 {bill.total.toLocaleString()}
               </td>
             </tr>
