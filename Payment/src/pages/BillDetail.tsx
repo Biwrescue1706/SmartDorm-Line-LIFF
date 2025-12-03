@@ -7,7 +7,6 @@ import { API_BASE } from "../config";
 import { refreshLiffToken } from "../lib/liff";
 import NavBar from "../components/NavBar";
 
-// ==== INTERFACE เดิม ไม่แก้ ====
 interface BillDetail {
   billId: string;
   month: string;
@@ -29,7 +28,6 @@ interface BillDetail {
   booking: { fullName: string };
 }
 
-// ==== UTILS ====
 const formatThaiDate = (d: string) => {
   const t = new Date(d);
   const m = [
@@ -45,18 +43,13 @@ const thaiNumberText = (num: number) => {
   const s = num.toString();
   let txt = "";
   for (let i = 0; i < s.length; i++) {
-    const d = Number(s[i]);
-    if (d !== 0) txt += thNum[d] + thDigit[s.length - i - 1];
+    if (s[i] !== "0") txt += thNum[+s[i]] + thDigit[s.length - i - 1];
   }
-  txt = txt
-    .replace("หนึ่งสิบ", "สิบ")
-    .replace("สองสิบ", "ยี่สิบ")
-    .replace("สิบหนึ่ง", "สิบเอ็ด");
-
-  return txt + "บาทถ้วน";
+  return txt.replace("หนึ่งสิบ","สิบ")
+            .replace("สองสิบ","ยี่สิบ")
+            .replace("สิบหนึ่ง","สิบเอ็ด") + "บาทถ้วน";
 };
 
-// ==== PAGE ====
 export default function BillDetail() {
   const nav = useNavigate();
   const { state } = useLocation();
@@ -113,8 +106,9 @@ export default function BillDetail() {
       {/* HEADER */}
       <div
         style={{
+          marginTop: "65px", // เพิ่มพื้นที่ใต้ NavBar จริง
           textAlign: "center",
-          padding: "22px 10px",
+          padding: "24px 10px",
           background: "#0F3D91",
           color: "white",
           borderBottomLeftRadius: "18px",
@@ -127,13 +121,7 @@ export default function BillDetail() {
       </div>
 
       {/* CARD */}
-      <div
-        className="container"
-        style={{
-          marginTop: "70px",
-          marginBottom: "60px",
-        }}
-      >
+      <div className="container" style={{ marginTop: "40px", marginBottom: "60px" }}>
         <div
           style={{
             background: "white",
@@ -180,7 +168,6 @@ export default function BillDetail() {
             รายละเอียดค่าใช้จ่าย
           </h5>
 
-          {/* TABLE */}
           <table
             className="table text-center"
             style={{
@@ -207,23 +194,18 @@ export default function BillDetail() {
               <tr style={{ background: "#F8FAFC", fontWeight: 600 }}>
                 <td>ยอดรวมทั้งหมด</td>
                 <td colSpan={3}></td>
-                <td style={{ color: "#0F3D91" }}>
-                  {bill.total.toLocaleString()}
-                </td>
+                <td style={{ color: "#0F3D91" }}>{bill.total.toLocaleString()}</td>
               </tr>
             </tbody>
           </table>
 
-          <p className="text-center mt-2" style={{ color: "#0F3D91", fontWeight: 500 }}>
+          <p className="text-center mt-2" style={{ color: "#0F3D91" }}>
             ({thaiNumberText(bill.total)})
           </p>
 
           {/* BUTTONS */}
           {bill.status === 0 && (
-            <div
-              className="d-flex justify-content-center"
-              style={{ gap: "26px", marginTop: "42px" }}
-            >
+            <div className="d-flex justify-content-center mt-5">
               <button
                 className="btn px-4 py-2"
                 style={{
@@ -232,6 +214,7 @@ export default function BillDetail() {
                   background: "white",
                   color: "#475569",
                   fontWeight: 500,
+                  marginRight: "20px", // ระยะห่างปุ่มจริง
                 }}
                 onClick={() => nav("/mybills")}
               >
@@ -242,8 +225,9 @@ export default function BillDetail() {
                 className="btn px-4 py-2 text-white"
                 style={{
                   borderRadius: "10px",
-                  background: "#0F3D91",
+                  background: "linear-gradient(135deg,#1E3A8A,#0F3D91)",
                   fontWeight: 600,
+                  boxShadow: "0 4px 10px rgba(15,61,145,0.35)",
                 }}
                 onClick={() => nav("/payment-choice", { state: bill })}
               >
