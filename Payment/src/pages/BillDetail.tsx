@@ -121,7 +121,7 @@ export default function BillDetail() {
       </div>
 
       {/* CARD */}
-      <div className="container" style={{ marginTop: "40px", marginBottom: "60px" }}>
+      <div className="container" style={{ marginTop: "20px", marginBottom: "60px" }}>
         <div
           style={{
             background: "white",
@@ -138,7 +138,7 @@ export default function BillDetail() {
             style={{
               fontWeight: 600,
               fontSize: "1.05rem",
-              color: "#0F3D91",
+              color: "#000000",
               borderLeft: "5px solid #0F3D91",
               paddingLeft: "10px",
               marginBottom: "18px",
@@ -159,7 +159,7 @@ export default function BillDetail() {
             style={{
               fontWeight: 600,
               fontSize: "1.05rem",
-              color: "#0F3D91",
+              color: "#000000",
               borderLeft: "5px solid #0F3D91",
               paddingLeft: "10px",
               margin: "26px 0 14px",
@@ -178,57 +178,57 @@ export default function BillDetail() {
           >
             <thead style={{ background: "#F1F5F9" }}>
               <tr>
-                <th>รายการ</th>
-                <th>ครั้งก่อน</th>
-                <th>ครั้งหลัง</th>
-                <th>ใช้</th>
-                <th>ยอดเงิน</th>
+                <th className="text-center" >รายการ</th>
+                <th className="text-center" >ครั้งก่อน</th>
+                <th className="text-center" >ครั้งหลัง</th>
+                <th className="text-center" >ใช้</th>
+                <th className="text-center" >ยอดเงิน</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-<td>ค่าน้ำ</td>
-<td>{bill.wBefore}</td>
-<td>{bill.wAfter}</td>
-<td>{bill.wUnits}</td>
-<td>{bill.waterCost.toLocaleString()}</td>
+<td className="text-center" >ค่าน้ำ</td>
+<td className="text-center" >{bill.wBefore}</td>
+<td className="text-center" >{bill.wAfter}</td>
+<td className="text-center" >{bill.wUnits}</td>
+<td className="text-center" >{bill.waterCost.toLocaleString()}</td>
 </tr>
               <tr>
-<td>ค่าไฟฟ้า</td>
-<td>{bill.eBefore}</td>
-<td>{bill.eAfter}</td>
-<td>{bill.eUnits}</td>
-<td>{bill.electricCost.toLocaleString()}</td></tr>
+<td className="text-center" >ค่าไฟฟ้า</td>
+<td className="text-center" >{bill.eBefore}</td>
+<td className="text-center" >{bill.eAfter}</td>
+<td className="text-center" >{bill.eUnits}</td>
+<td className="text-center" >{bill.electricCost.toLocaleString()}</td></tr>
               <tr>
-<td>ค่าเช่าห้อง</td>
-<td>-</td>
-<td>-</td>
-<td>-</td>
-<td>{bill.rent.toLocaleString()}</td>
+<td className="text-center" >ค่าเช่าห้อง</td>
+<td className="text-center" >-</td>
+<td className="text-center" >-</td>
+<td className="text-center" >-</td>
+<td className="text-center" >{bill.rent.toLocaleString()}</td>
 </tr>
               <tr>
-<td>ค่าส่วนกลาง</td>
-<td>-</td>
-<td>-</td>
-<td>-</td>
-<td>{bill.service.toLocaleString()}</td>
+<td className="text-center" >ค่าส่วนกลาง</td>
+<td className="text-center" >-</td>
+<td className="text-center" >-</td>
+<td className="text-center" >-</td>
+<td className="text-center" >{bill.service.toLocaleString()}</td>
 </tr>
               <tr>
-<td>ค่าปรับ</td>
-<td>-</td>
-<td>-</td>
-<td>-</td>
-<td>{bill.fine.toLocaleString()}</td>
+<td className="text-center" >ค่าปรับ</td>
+<td className="text-center" >-</td>
+<td className="text-center" >-</td>
+<td className="text-center" >-</td>
+<td className="text-center" >{bill.fine.toLocaleString()}</td>
 </tr>
               <tr style={{ background: "#F8FAFC", fontWeight: 600 }}>
-                <td>ยอดรวมทั้งหมด</td>
+                <td className="text-center">ยอดรวมทั้งหมด</td>
                 <td colSpan={3}></td>
-                <td style={{ color: "#0F3D91" }}>{bill.total.toLocaleString()}</td>
+                <td style={{ color: "#000000" }}>{bill.total.toLocaleString()}</td>
               </tr>
             </tbody>
           </table>
 
-          <p className="text-center mt-2" style={{ color: "#0F3D91" }}>
+          <p className="text-center mt-2" style={{ color: "#000000" }}>
             ({thaiNumberText(bill.total)})
           </p>
 
