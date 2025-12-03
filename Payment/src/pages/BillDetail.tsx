@@ -116,8 +116,8 @@ export default function BillDetail() {
           boxShadow: "0 3px 12px rgba(0,0,0,0.18)",
         }}
       >
-        <h3 style={{ fontWeight: 600 }}>รายละเอียดบิลค่าเช่า</h3>
-        <p style={{ opacity: 0.8, fontSize: ".9rem" }}>เลขที่บิล {bill.billId}</p>
+        <h2 style={{ fontWeight: 600 }}>รายละเอียดบิลค่าเช่า</h2>
+        <p style={{ opacity: 0.8, fontSize: "1rem" }}>เลขที่บิล {bill.billId}</p>
       </div>
 
       {/* CARD */}
@@ -186,11 +186,40 @@ export default function BillDetail() {
               </tr>
             </thead>
             <tbody>
-              <tr><td>ค่าน้ำ</td><td>{bill.wBefore}</td><td>{bill.wAfter}</td><td>{bill.wUnits}</td><td>{bill.waterCost.toLocaleString()}</td></tr>
-              <tr><td>ค่าไฟฟ้า</td><td>{bill.eBefore}</td><td>{bill.eAfter}</td><td>{bill.eUnits}</td><td>{bill.electricCost.toLocaleString()}</td></tr>
-              <tr><td>ค่าเช่าห้อง</td><td>-</td><td>-</td><td>-</td><td>{bill.rent.toLocaleString()}</td></tr>
-              <tr><td>ค่าส่วนกลาง</td><td>-</td><td>-</td><td>-</td><td>{bill.service.toLocaleString()}</td></tr>
-              <tr><td>ค่าปรับ</td><td>-</td><td>-</td><td>-</td><td>{bill.fine.toLocaleString()}</td></tr>
+              <tr>
+<td>ค่าน้ำ</td>
+<td>{bill.wBefore}</td>
+<td>{bill.wAfter}</td>
+<td>{bill.wUnits}</td>
+<td>{bill.waterCost.toLocaleString()}</td>
+</tr>
+              <tr>
+<td>ค่าไฟฟ้า</td>
+<td>{bill.eBefore}</td>
+<td>{bill.eAfter}</td>
+<td>{bill.eUnits}</td>
+<td>{bill.electricCost.toLocaleString()}</td></tr>
+              <tr>
+<td>ค่าเช่าห้อง</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>{bill.rent.toLocaleString()}</td>
+</tr>
+              <tr>
+<td>ค่าส่วนกลาง</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>{bill.service.toLocaleString()}</td>
+</tr>
+              <tr>
+<td>ค่าปรับ</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>{bill.fine.toLocaleString()}</td>
+</tr>
               <tr style={{ background: "#F8FAFC", fontWeight: 600 }}>
                 <td>ยอดรวมทั้งหมด</td>
                 <td colSpan={3}></td>
@@ -222,17 +251,18 @@ export default function BillDetail() {
               </button>
 
               <button
-                className="btn px-4 py-2 text-white"
-                style={{
-                  borderRadius: "10px",
-                  background: "linear-gradient(135deg,#1E3A8A,#0F3D91)",
-                  fontWeight: 600,
-                  boxShadow: "0 4px 10px rgba(15,61,145,0.35)",
-                }}
-                onClick={() => nav("/payment-choice", { state: bill })}
-              >
-                ยืนยันการชำระเงิน
-              </button>
+  className="btn px-4 py-2"
+  style={{
+    borderRadius: "10px",
+    background: "linear-gradient(135deg,#1E3A8A,#0F3D91)",
+    fontWeight: 600,
+    boxShadow: "0 4px 10px rgba(15,61,145,0.35)",
+    color: "white", // บังคับสีตัวหนังสือ
+  }}
+  onClick={() => nav("/payment-choice", { state: bill })}
+>
+  ยืนยัน
+</button>
             </div>
           )}
         </div>
