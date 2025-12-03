@@ -1,31 +1,28 @@
 // src/pages/ThankYou.tsx
 import { useEffect, useState } from "react";
 import { logoutLiff, ensureLiffReady } from "../lib/liff";
-import NavBar from "../components/NavBar"; // ✅ Navbar ด้านบน
+import NavBar from "../components/NavBar";
 
 export default function ThankYou() {
-  const [countdown, setCountdown] = useState(10); // ✅ ตัวนับถอยหลัง (10 วินาที)
+  const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval>; // ✅ ใช้ ReturnType แทน NodeJS.Timeout
-    const startCountdown = () => {
-      interval = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 5000);
-    };
+    let interval: ReturnType<typeof setInterval>;
 
-    startCountdown();
+    interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
 
     const timer = setTimeout(async () => {
       const ready = await ensureLiffReady();
       if (ready) await logoutLiff();
-    }, 5000); // ✅ ออกจากระบบอัตโนมัติหลัง 5 วินาที
+    }, 5000);
 
     return () => {
       clearTimeout(timer);
@@ -34,31 +31,61 @@ export default function ThankYou() {
   }, []);
 
   return (
-    <div className="smartdorm-page justify-content-center text-center">
-      <NavBar /> {/* ✅ Navbar ด้านบน */}
-      <div className="mt-3"></div> {/* เผื่อพื้นที่ Navbar */}
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#F7FAFC",
+        fontFamily: "Prompt, sans-serif",
+      }}
+      className="text-center"
+    >
+      <NavBar />
 
-      {/* 🔹 การ์ดขอบคุณ */}
-      <div className="smartdorm-card text-center shadow-sm animate__animated animate__fadeIn">
-        <h2 className="fw-bold text-success mb-3">
-          🎉 ขอบคุณที่ชำระเงินเรียบร้อย!
+      {/* CARD */}
+      <div
+        style={{
+          marginTop: "90px",
+          background: "white",
+          maxWidth: "520px",
+          marginInline: "auto",
+          borderRadius: "18px",
+          padding: "32px 28px",
+          boxShadow: "0 6px 26px rgba(0,0,0,0.06)",
+          border: "1px solid #E5E7EB",
+        }}
+      >
+        <h2
+          style={{
+            fontWeight: 700,
+            color: "#0F3D91",
+            marginBottom: "12px",
+          }}
+        >
+          ชำระเงินสำเร็จแล้ว
         </h2>
 
-        <p className="text-muted mb-2">
-          ระบบได้บันทึกข้อมูลการชำระของคุณเรียบร้อยแล้ว
+        <p style={{ color: "#475569", marginBottom: "6px" }}>
+          ระบบได้รับข้อมูลการชำระเงินของคุณเรียบร้อย
         </p>
 
-        <p className="text-muted small mb-0">
-          (หน้าต่างนี้จะปิดโดยอัตโนมัติภายใน{" "}
-          <b>{countdown}</b> วินาที)
+        <p style={{ color: "#475569", fontSize: "14px", marginBottom: "20px" }}>
+          หน้านี้จะปิดโดยอัตโนมัติภายใน{" "}
+          <b style={{ color: "#0F3D91" }}>{countdown}</b> วินาที
         </p>
 
-        <div className="mt-4">
+        {/* Spinner */}
+        <div className="mt-3">
           <div
-            className="spinner-border text-success"
-            style={{ width: "2.5rem", height: "2.5rem" }}
+            className="spinner-border"
+            style={{
+              width: "2.8rem",
+              height: "2.8rem",
+              color: "#0F3D91",
+            }}
           ></div>
-          <p className="mt-2 text-secondary small">กำลังกลับไปยังหน้าหลัก...</p>
+          <p className="mt-2" style={{ color: "#64748B", fontSize: "14px" }}>
+            กำลังนำคุณกลับสู่หน้าหลัก...
+          </p>
         </div>
       </div>
     </div>
