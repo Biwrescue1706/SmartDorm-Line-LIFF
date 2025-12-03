@@ -1,5 +1,4 @@
 // Payment/src/pages/BillDetail.tsx
-
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -22,17 +21,8 @@ interface BillDetail {
   room: { number: string };
 }
 
-// แปลงเป็น "1 ธันวาคม 2568"
+// เดือน → 1 ธันวาคม 2568
 const formatThaiMonth = (d: string) => {
-  const date = new Date(d);
-  return date.toLocaleDateString("th-TH", {
-    year: "numeric",
-    month: "long",
-  });
-};
-
-// แปลงเป็น "6 มกราคม 2569"
-const formatThaiDate = (d: string) => {
   const t = new Date(d);
   const months = [
     "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน",
@@ -43,8 +33,8 @@ const formatThaiDate = (d: string) => {
 
 export default function BillDetail() {
   const { state } = useLocation();
-  const nav = useNavigate();
   const { billId } = state || {};
+  const nav = useNavigate();
   const [bill, setBill] = useState<BillDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -56,14 +46,12 @@ export default function BillDetail() {
           nav("/mybills");
           return;
         }
-
         const token = await refreshLiffToken();
         if (!token) throw new Error("ไม่มี token");
-
         const res = await axios.get(`${API_BASE}/bill/${billId}`);
         setBill(res.data);
-      } catch (err: any) {
-        Swal.fire("❌ โหลดข้อมูลล้มเหลว", "ไม่พบบิลในระบบ", "error");
+      } catch (err) {
+        Swal.fire("โหลดข้อมูลล้มเหลว", "ไม่พบบิลในระบบ", "error");
       } finally {
         setLoading(false);
       }
@@ -75,7 +63,7 @@ export default function BillDetail() {
       <div className="text-center">
         <NavBar />
         <div className="spinner-border text-success mt-5"></div>
-        <p className="mt-2">กำลังโหลดข้อมูล...</p>
+        <p>กำลังโหลดข้อมูล...</p>
       </div>
     );
 
@@ -91,67 +79,70 @@ export default function BillDetail() {
     <div className="smartdorm-page">
       <NavBar />
 
-      {/* HEADER */}
-      <div className="mt-4 text-center">
+      <div className="text-center mt-4">
         <h4 className="fw-bold text-success">รายละเอียดบิล SmartDorm</h4>
-        <p className="text-muted small mb-0">เลขที่บิล: {bill.billId}</p>
+        <p className="text-muted small">เลขที่บิล: {bill.billId}</p>
       </div>
 
-      {/* CARD */}
+      {/* CARD WITHOUT TABLE */}
       <div
-        className="smartdorm-card shadow-sm mt-3"
-        style={{ maxWidth: "500px", margin: "0 auto" }}
+        className="shadow-sm p-4 mt-3"
+        style={{
+          background: "white",
+          borderRadius: "18px",
+          maxWidth: "500px",
+          margin: "0 auto"
+        }}
       >
-        <table className="table table-borderless align-middle mb-0">
-          <tbody>
-            <tr>
-              <th className="text-muted w-50">🏠 ห้อง</th>
-              <td className="fw-semibold">{bill.room.number}</td>
-            </tr>
+        {/* ROW */}
+        <div className="d-flex justify-content-between mb-2">
+          <span>🏠 ห้อง</span>
+          <span className="fw-semibold">{bill.room.number}</span>
+        </div>
 
-            <tr>
-              <th className="text-muted">📅 เดือน</th>
-              <td>1 {formatThaiMonth(bill.month)}</td>
-            </tr>
+        <div className="d-flex justify-content-between mb-2">
+          <span>📅 เดือน</span>
+          <span>{formatThaiMonth(bill.month)}</span>
+        </div>
 
-            <tr>
-              <th className="text-muted">💰 ค่าเช่าห้อง</th>
-              <td>{bill.rent.toLocaleString()} บาท</td>
-            </tr>
+        <div className="d-flex justify-content-between mb-2">
+          <span>💰 ค่าเช่าห้อง</span>
+          <span>{bill.rent.toLocaleString()} บาท</span>
+        </div>
 
-            <tr>
-              <th className="text-muted">💧 ค่าน้ำ</th>
-              <td>{bill.waterCost.toLocaleString()} บาท</td>
-            </tr>
+        <div className="d-flex justify-content-between mb-2">
+          <span>💧 ค่าน้ำ</span>
+          <span>{bill.waterCost.toLocaleString()} บาท</span>
+        </div>
 
-            <tr>
-              <th className="text-muted">⚡ ค่าไฟ</th>
-              <td>{bill.electricCost.toLocaleString()} บาท</td>
-            </tr>
+        <div className="d-flex justify-content-between mb-2">
+          <span>⚡ ค่าไฟ</span>
+          <span>{bill.electricCost.toLocaleString()} บาท</span>
+        </div>
 
-            <tr>
-              <th className="text-muted">🏢 ค่าส่วนกลาง</th>
-              <td>{bill.service.toLocaleString()} บาท</td>
-            </tr>
+        <div className="d-flex justify-content-between mb-2">
+          <span>🏢 ค่าส่วนกลาง</span>
+          <span>{bill.service.toLocaleString()} บาท</span>
+        </div>
 
-            <tr>
-              <th className="text-muted">⚠️ ค่าปรับ</th>
-              <td>{bill.fine.toLocaleString()} บาท</td>
-            </tr>
+        <div className="d-flex justify-content-between mb-2">
+          <span>⚠️ ค่าปรับ</span>
+          <span>{bill.fine.toLocaleString()} บาท</span>
+        </div>
 
-            <tr>
-              <th className="text-muted">🗓️ ครบกำหนดชำระ</th>
-              <td>{formatThaiDate(bill.dueDate)}</td>
-            </tr>
+        {/* TOTAL */}
+        <hr />
+        <div className="d-flex justify-content-between fw-bold fs-5">
+          <span>💵 ยอดรวมทั้งหมด</span>
+          <span className="text-success">
+            {bill.total.toLocaleString()} บาท
+          </span>
+        </div>
 
-            <tr className="border-top">
-              <th className="fw-bold text-dark">💵 ยอดรวมทั้งหมด</th>
-              <td className="fw-bold text-success">
-                {bill.total.toLocaleString()} บาท
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        {/* DUE DATE */}
+        <div className="text-center text-dark mt-3">
+          ครบกำหนดชำระ: {formatThaiMonth(bill.dueDate)}
+        </div>
 
         {/* BUTTON */}
         {bill.status === 0 && (
@@ -160,7 +151,7 @@ export default function BillDetail() {
             style={{
               background: "linear-gradient(135deg, #7B2CBF, #4B008A)",
               color: "white",
-              borderRadius: "14px",
+              borderRadius: "14px"
             }}
             onClick={() => nav("/payment-choice", { state: bill })}
           >
