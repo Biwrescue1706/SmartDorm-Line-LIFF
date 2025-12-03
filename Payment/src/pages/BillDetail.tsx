@@ -27,7 +27,7 @@ interface BillDetail {
   booking: { fullName: string };
 }
 
-// 📅 แปลงเป็นไทย เช่น 5 มกราคม 2569
+// 📅 -> 5 มกราคม 2569
 const formatThaiDate = (d: string) => {
   const t = new Date(d);
   const months = [
@@ -37,21 +37,23 @@ const formatThaiDate = (d: string) => {
   return `${t.getDate()} ${months[t.getMonth()]} ${t.getFullYear() + 543}`;
 };
 
-// 🔢 แปลงเป็นข้อความไทย เช่น 2,969 → สองพันเก้าร้อยหกสิบเก้าบาทถ้วน
+// 🧮 -> 2,969 → "สองพันเก้าร้อยหกสิบเก้าบาทถ้วน"
 const thaiNumberText = (num: number) => {
   const thNums = ["ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า"];
-  const thUnits = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"];
-  const n = num.toString().split("").reverse();
+  const thPlaces = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"];
+  const n = num.toString();
   let txt = "";
+  let len = n.length;
 
-  for (let i = 0; i < n.length; i++) {
+  for (let i = 0; i < len; i++) {
     const digit = Number(n[i]);
-    if (digit !== 0) {
-      txt = thNums[digit] + thUnits[i] + txt;
-    }
+    if (digit !== 0) txt += thNums[digit] + thPlaces[len - i - 1];
   }
 
-  return txt.replace("หนึ่งสิบ", "สิบ").replace("สองสิบ", "ยี่สิบ") + "บาทถ้วน";
+  return txt
+    .replace("หนึ่งสิบ","สิบ")
+    .replace("สองสิบ","ยี่สิบ")
+    .replace("สิบหนึ่ง","สิบเอ็ด") + "บาทถ้วน";
 };
 
 export default function BillDetail() {
@@ -61,7 +63,7 @@ export default function BillDetail() {
   const [bill, setBill] = useState<BillDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // โหลดข้อมูลบิล
+  // LOAD DATA -------------------------------------------------
   useEffect(() => {
     (async () => {
       try {
@@ -84,15 +86,12 @@ export default function BillDetail() {
     })();
   }, [billId, nav]);
 
-  // LOADING UI
   if (loading)
     return (
-      <div className="smartdorm-page text-center" style={{ background: "#f6f9ff" }}>
+      <div className="text-center">
         <NavBar />
-        <div style={{ marginTop: "120px" }}>
-          <div className="spinner-border text-success" style={{ width: "3rem", height: "3rem" }}></div>
-          <p className="mt-3 text-muted fw-semibold">กำลังโหลดข้อมูล...</p>
-        </div>
+        <div className="spinner-border text-success mt-5"></div>
+        <p className="mt-2">กำลังโหลดข้อมูล...</p>
       </div>
     );
 
@@ -100,146 +99,122 @@ export default function BillDetail() {
     return (
       <div className="text-center">
         <NavBar />
-        <h5 className="mt-5 text-danger">❌ ไม่พบบิลนี้</h5>
+        <h5 className="text-danger mt-5">❌ ไม่พบบิลนี้</h5>
       </div>
     );
 
+  // UI --------------------------------------------------------
   return (
-    <div className="smartdorm-page" style={{ background: "#f6f9ff" }}>
+    <div style={{ background: "#f6f9ff", minHeight: "100vh" }}>
       <NavBar />
 
       {/* HEADER */}
-      <div
-        className="text-center py-3"
-        style={{
-          background: "linear-gradient(135deg,#6FF5C2,#38A3FF)",
-          borderBottomLeftRadius: "10px",
-          borderBottomRightRadius: "10px",
-          color: "white",
-          boxShadow: "0 4px 10px rgba(0,0,0,0.18)",
-        }}
-      >
-        <h3 className="fw-bold mb-0">รายละเอียดบิลค่าเช่า</h3>
-        <div className="small opacity-75 mt-1">เลขที่บิล {bill.billId}</div>
+      <div className="container-fluid bg-info text-white text-center py-3 shadow-sm">
+        <h3 className="fw-bold mb-1">รายละเอียดบิลค่าเช่า</h3>
+        <small className="opacity-75">เลขที่บิล {bill.billId}</small>
       </div>
 
-      {/* CARD */}
-      <div
-        className="bg-white shadow-sm p-4 rounded-4 mt-4"
-        style={{ maxWidth: "580px", margin: "0 auto" }}
-      >
-        {/* USER SECTION */}
-        <div
-          className="p-3 rounded-3 mb-4"
-          style={{ background: "#f3f7ff", borderLeft: "6px solid #3a7afe" }}
-        >
-          <div className="d-flex justify-content-between">
-            <span>👤 ชื่อลูกค้า</span>
-            <span className="fw-semibold text-dark">{bill.booking.fullName}</span>
+      {/* BODY */}
+      <div className="container mt-4">
+
+        {/* USER INFO */}
+        <div className="p-3 bg-light border rounded mb-4">
+          <div className="row mb-2">
+            <div className="col-6 fw-semibold">👤 ชื่อลูกค้า</div>
+            <div className="col-6 text-end">{bill.booking.fullName}</div>
           </div>
 
-          <div className="d-flex justify-content-between mt-2">
-            <span>🏠 ห้อง</span>
-            <span className="fw-semibold">{bill.room.number}</span>
+          <div className="row mb-2">
+            <div className="col-6 fw-semibold">🏠 ห้อง</div>
+            <div className="col-6 text-end">{bill.room.number}</div>
           </div>
 
-          <div className="d-flex justify-content-between mt-2">
-            <span>📅 ประจำเดือน</span>
-            <span>{formatThaiDate(bill.month)}</span>
+          <div className="row mb-2">
+            <div className="col-6 fw-semibold">📅 ประจำเดือน</div>
+            <div className="col-6 text-end">{formatThaiDate(bill.month)}</div>
           </div>
 
-          <div className="d-flex justify-content-between mt-2">
-            <span>📆 วันครบกำหนดชำระ</span>
-            <span className="text-danger fw-semibold">
-              {formatThaiDate(bill.dueDate)}
-            </span>
+          <div className="row">
+            <div className="col-6 fw-semibold">📆 วันครบกำหนดชำระ</div>
+            <div className="col-6 text-end text-danger">{formatThaiDate(bill.dueDate)}</div>
           </div>
         </div>
 
         {/* TABLE */}
-        <table className="table align-middle text-center">
-          <thead style={{ background: "#eef2ff", fontWeight: 600 }}>
-            <tr>
-              <th className="text-start ps-3">รายการ</th>
-              <th>ครั้งก่อน</th>
-              <th>ครั้งหลัง</th>
-              <th>ใช้</th>
-              <th>ยอดเงิน</th>
-            </tr>
-          </thead>
+        <div className="table-responsive mb-3">
+          <table className="table table-bordered text-center align-middle">
+            <thead className="table-secondary">
+              <tr>
+                <th className="text-center">รายการ</th>
+                <th className="text-center">ครั้งก่อน</th>
+                <th className="text-center">ครั้งหลัง</th>
+                <th className="text-center">ใช้</th>
+                <th className="text-center">ยอดเงิน</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>น้ำ</td>
+                <td>{bill.wBefore}</td>
+                <td>{bill.wAfter}</td>
+                <td>{bill.wUnits}</td>
+                <td>{bill.waterCost.toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td>ไฟฟ้า</td>
+                <td>{bill.eBefore}</td>
+                <td>{bill.eAfter}</td>
+                <td>{bill.eUnits}</td>
+                <td>{bill.electricCost.toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td>ค่าเช่าห้อง</td>
+                <td>-</td><td>-</td><td>-</td>
+                <td>{bill.rent.toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td>ค่าส่วนกลาง</td>
+                <td>-</td><td>-</td><td>-</td>
+                <td>{bill.service.toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td>ค่าปรับ</td>
+                <td>-</td><td>-</td><td>-</td>
+                <td>{bill.fine.toLocaleString()}</td>
+              </tr>
+              <tr className="table-light">
+                <td className="fw-bold">ยอดรวมทั้งหมด</td>
+                <td colSpan={3}></td>
+                <td className="fw-bold text-success">{bill.total.toLocaleString()}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-          <tbody>
-            <tr>
-              <td className="text-start">น้ำ</td>
-              <td>{bill.wBefore}</td>
-              <td>{bill.wAfter}</td>
-              <td>{bill.wUnits}</td>
-              <td>{bill.waterCost.toLocaleString()}</td>
-            </tr>
-
-            <tr>
-              <td className="text-start">ไฟฟ้า</td>
-              <td>{bill.eBefore}</td>
-              <td>{bill.eAfter}</td>
-              <td>{bill.eUnits}</td>
-              <td>{bill.electricCost.toLocaleString()}</td>
-            </tr>
-
-            <tr>
-              <td className="text-start">ค่าเช่าห้อง</td>
-              <td>-</td><td>-</td><td>-</td>
-              <td>{bill.rent.toLocaleString()}</td>
-            </tr>
-
-            <tr>
-              <td className="text-start">ค่าส่วนกลาง</td>
-              <td>-</td><td>-</td><td>-</td>
-              <td>{bill.service.toLocaleString()}</td>
-            </tr>
-
-            <tr>
-              <td className="text-start">ค่าปรับ</td>
-              <td>-</td><td>-</td><td>-</td>
-              <td>{bill.fine.toLocaleString()}</td>
-            </tr>
-
-            <tr style={{ background: "#fafcff" }}>
-              <td className="fw-bold text-start">ยอดรวมทั้งหมด</td>
-              <td colSpan={3}></td>
-              <td className="fw-bold text-success">
-                {bill.total.toLocaleString()}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        {/* TOTAL AS TEXT */}
-        <p className="text-center mt-1 mb-2 fw-semibold text-primary">
+        {/* TOTAL TEXT */}
+        <p className="text-center fw-semibold text-primary">
           ({thaiNumberText(bill.total)})
         </p>
 
         {/* BUTTONS */}
         {bill.status === 0 && (
-          <div className="d-flex justify-content-between gap-3 mt-4">
-            <button
-              className="btn btn-light w-50 py-2 fw-semibold"
-              style={{ borderRadius: "14px" }}
-              onClick={() => nav("/mybills")}
-            >
-              ยกเลิก
-            </button>
-
-            <button
-              className="btn w-50 py-2 fw-semibold text-white"
-              style={{
-                borderRadius: "14px",
-                background: "linear-gradient(135deg,#7B2CBF,#4B008A)",
-                boxShadow: "0 4px 12px rgba(123,44,191,0.4)",
-              }}
-              onClick={() => nav("/payment-choice", { state: bill })}
-            >
-              ยืนยันการชำระเงิน
-            </button>
+          <div className="row g-3 mt-4 mb-5">
+            <div className="col-6">
+              <button
+                className="btn btn-outline-secondary w-100 py-2 fw-semibold"
+                onClick={() => nav("/mybills")}
+              >
+                ยกเลิก
+              </button>
+            </div>
+            <div className="col-6">
+              <button
+                className="btn btn-primary w-100 py-2 fw-semibold"
+                onClick={() => nav("/payment-choice", { state: bill })}
+              >
+                ยืนยัน
+              </button>
+            </div>
           </div>
         )}
       </div>
