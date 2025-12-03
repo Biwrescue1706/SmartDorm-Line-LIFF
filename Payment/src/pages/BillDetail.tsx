@@ -27,129 +27,117 @@ interface BillDetail {
   booking: { fullName: string };
 }
 
-// 📅 -> 5 มกราคม 2569
+// 👉 5 มกราคม 2569
 const formatThaiDate = (d: string) => {
   const t = new Date(d);
-  const months = [
+  const m = [
     "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน",
     "กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"
   ];
-  return `${t.getDate()} ${months[t.getMonth()]} ${t.getFullYear() + 543}`;
+  return `${t.getDate()} ${m[t.getMonth()]} ${t.getFullYear() + 543}`;
 };
 
-// 🧮 -> 2,969 → "สองพันเก้าร้อยหกสิบเก้าบาทถ้วน"
+// 👉 2,969 → สองพันเก้าร้อยหกสิบเก้าบาทถ้วน
 const thaiNumberText = (num: number) => {
-  const thNums = ["ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า"];
-  const thPlaces = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"];
-  const n = num.toString();
-  let txt = "";
-  let len = n.length;
+  const th = ["ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า"];
+  const u = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"];
+  const s = num.toString();
+  let r = "";
 
-  for (let i = 0; i < len; i++) {
-    const digit = Number(n[i]);
-    if (digit !== 0) txt += thNums[digit] + thPlaces[len - i - 1];
+  for (let i = 0; i < s.length; i++) {
+    const d = Number(s[i]);
+    if (d !== 0) r += th[d] + u[s.length - i - 1];
   }
 
-  return txt
-    .replace("หนึ่งสิบ","สิบ")
-    .replace("สองสิบ","ยี่สิบ")
-    .replace("สิบหนึ่ง","สิบเอ็ด") + "บาทถ้วน";
+  return r.replace("หนึ่งสิบ","สิบ").replace("สองสิบ","ยี่สิบ") + "บาทถ้วน";
 };
 
 export default function BillDetail() {
-  const nav = useNavigate();
   const { state } = useLocation();
+  const nav = useNavigate();
   const { billId } = state || {};
   const [bill, setBill] = useState<BillDetail | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  // LOAD DATA -------------------------------------------------
+  // LOAD ------------------------------------------------------
   useEffect(() => {
     (async () => {
       try {
-        if (!billId) {
-          Swal.fire("ไม่พบบิล", "กรุณาเลือกบิลใหม่อีกครั้ง", "warning");
-          nav("/mybills");
-          return;
-        }
-
-        const token = await refreshLiffToken();
-        if (!token) throw new Error("ไม่มี token");
-
+        if (!billId) return nav("/mybills");
+        await refreshLiffToken();
         const res = await axios.get(`${API_BASE}/bill/${billId}`);
         setBill(res.data);
       } catch {
-        Swal.fire("❌ โหลดข้อมูลล้มเหลว", "ไม่พบบิลในระบบ", "error");
-      } finally {
-        setLoading(false);
+        Swal.fire("โหลดข้อมูลล้มเหลว", "", "error");
       }
     })();
-  }, [billId, nav]);
+  }, [billId]);
 
-  if (loading)
-    return (
-      <div className="text-center">
-        <NavBar />
-        <div className="spinner-border text-success mt-5"></div>
-        <p className="mt-2">กำลังโหลดข้อมูล...</p>
-      </div>
-    );
+  if (!bill) return null;
 
-  if (!bill)
-    return (
-      <div className="text-center">
-        <NavBar />
-        <h5 className="text-danger mt-5">❌ ไม่พบบิลนี้</h5>
-      </div>
-    );
-
-  // UI --------------------------------------------------------
   return (
-    <div style={{ background: "#f6f9ff", minHeight: "100vh" }}>
+    <div style={{ background: "#f3f6fc", minHeight: "100vh" }}>
       <NavBar />
 
       {/* HEADER */}
-      <div className="container-fluid bg-info text-white text-center py-3 shadow-sm">
-        <h3 className="fw-bold mb-1">รายละเอียดบิลค่าเช่า</h3>
+      <div
+        className="text-center py-3 shadow-sm"
+        style={{
+          background: "linear-gradient(135deg,#3db2ff,#0077ff)",
+          color: "white",
+          borderBottomLeftRadius: "16px",
+          borderBottomRightRadius: "16px",
+        }}
+      >
+        <h4 className="fw-bold">รายละเอียดบิลค่าเช่า</h4>
         <small className="opacity-75">เลขที่บิล {bill.billId}</small>
       </div>
 
-      {/* BODY */}
+      {/* CARD */}
       <div className="container mt-4">
+        <div className="bg-white shadow p-4 rounded-4">
 
-        {/* USER INFO */}
-        <div className="p-3 bg-light border rounded mb-4">
-          <div className="row mb-2">
-            <div className="col-6 fw-semibold">👤 ชื่อลูกค้า</div>
-            <div className="col-6 text-end">{bill.booking.fullName}</div>
+          {/* INFO */}
+          <div className="mb-4">
+            <h6 className="fw-bold text-secondary">ข้อมูลผู้เช่า</h6>
+            <hr />
+
+            <div className="row mb-2">
+              <div className="col-6 text-muted">ชื่อลูกค้า</div>
+              <div className="col-6 text-end fw-semibold">
+                {bill.booking.fullName}
+              </div>
+            </div>
+
+            <div className="row mb-2">
+              <div className="col-6 text-muted">ห้อง</div>
+              <div className="col-6 text-end fw-semibold">{bill.room.number}</div>
+            </div>
+
+            <div className="row mb-2">
+              <div className="col-6 text-muted">ประจำเดือน</div>
+              <div className="col-6 text-end">{formatThaiDate(bill.month)}</div>
+            </div>
+
+            <div className="row">
+              <div className="col-6 text-muted">ครบกำหนดชำระ</div>
+              <div className="col-6 text-end text-danger fw-semibold">
+                {formatThaiDate(bill.dueDate)}
+              </div>
+            </div>
           </div>
 
-          <div className="row mb-2">
-            <div className="col-6 fw-semibold">🏠 ห้อง</div>
-            <div className="col-6 text-end">{bill.room.number}</div>
-          </div>
+          {/* TABLE */}
+          <h6 className="fw-bold text-secondary">รายละเอียดค่าใช้จ่าย</h6>
+          <hr />
 
-          <div className="row mb-2">
-            <div className="col-6 fw-semibold">📅 ประจำเดือน</div>
-            <div className="col-6 text-end">{formatThaiDate(bill.month)}</div>
-          </div>
-
-          <div className="row">
-            <div className="col-6 fw-semibold">📆 วันครบกำหนดชำระ</div>
-            <div className="col-6 text-end text-danger">{formatThaiDate(bill.dueDate)}</div>
-          </div>
-        </div>
-
-        {/* TABLE */}
-        <div className="table-responsive mb-3">
           <table className="table table-bordered text-center align-middle">
-            <thead className="table-secondary">
+            <thead className="table-light">
               <tr>
-                <th className="text-center">รายการ</th>
-                <th className="text-center">ครั้งก่อน</th>
-                <th className="text-center">ครั้งหลัง</th>
-                <th className="text-center">ใช้</th>
-                <th className="text-center">ยอดเงิน</th>
+                <th>รายการ</th>
+                <th>ครั้งก่อน</th>
+                <th>ครั้งหลัง</th>
+                <th>ใช้</th>
+                <th>ยอดเงิน</th>
               </tr>
             </thead>
             <tbody>
@@ -185,38 +173,43 @@ export default function BillDetail() {
               <tr className="table-light">
                 <td className="fw-bold">ยอดรวมทั้งหมด</td>
                 <td colSpan={3}></td>
-                <td className="fw-bold text-success">{bill.total.toLocaleString()}</td>
+                <td className="fw-bold text-success">
+                  {bill.total.toLocaleString()}
+                </td>
               </tr>
             </tbody>
           </table>
-        </div>
 
-        {/* TOTAL TEXT */}
-        <p className="text-center fw-semibold text-primary">
-          ({thaiNumberText(bill.total)})
-        </p>
+          {/* TEXT SUMMARY */}
+          <p className="text-center fw-semibold text-primary mt-2">
+            ({thaiNumberText(bill.total)})
+          </p>
 
-        {/* BUTTONS */}
-        {bill.status === 0 && (
-          <div className="row g-3 mt-4 mb-5">
+          {/* ACTIONS */}
+          <div className="row mt-4">
             <div className="col-6">
               <button
-                className="btn btn-outline-secondary w-100 py-2 fw-semibold"
+                className="btn w-100 py-2 fw-semibold btn-light border"
                 onClick={() => nav("/mybills")}
               >
                 ยกเลิก
               </button>
             </div>
+
             <div className="col-6">
               <button
-                className="btn btn-primary w-100 py-2 fw-semibold"
+                className="btn w-100 py-2 fw-semibold text-white"
+                style={{
+                  background: "linear-gradient(135deg,#5c2aff,#9a3dff)",
+                }}
                 onClick={() => nav("/payment-choice", { state: bill })}
               >
-                ยืนยัน
+                ยืนยันการชำระเงิน
               </button>
             </div>
           </div>
-        )}
+
+        </div>
       </div>
     </div>
   );
