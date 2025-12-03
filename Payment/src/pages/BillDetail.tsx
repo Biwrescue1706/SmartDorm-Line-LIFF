@@ -28,7 +28,7 @@ interface BillDetail {
   booking: { fullName: string };
 }
 
-// 📅 แปลงเป็น "6 มกราคม 2569"
+// แปลงเป็นวันที่แบบ 6 มกราคม 2569
 const formatThaiDate = (d: string) => {
   const t = new Date(d);
   const months = [
@@ -36,6 +36,25 @@ const formatThaiDate = (d: string) => {
     "กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"
   ];
   return `${t.getDate()} ${months[t.getMonth()]} ${t.getFullYear() + 543}`;
+};
+
+// แปลงเป็นข้อความภาษาไทย เช่น 5,559 → "ห้าพันห้าร้อยห้าสิบเก้าบาทถ้วน"
+const thaiNumberText = (num: number): string => {
+  const thNums = ["ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า"];
+  const thPlaces = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"];
+  const n = num.toString();
+  let txt = "";
+  let len = n.length;
+
+  for (let i = 0; i < len; i++) {
+    const digit = Number(n[i]);
+    if (digit !== 0) {
+      txt += thNums[digit] + thPlaces[len - i - 1];
+    }
+  }
+
+  txt = txt.replace("หนึ่งสิบ", "สิบ").replace("สองสิบ", "ยี่สิบ").replace("สิบหนึ่ง", "สิบเอ็ด");
+  return txt + "บาทถ้วน";
 };
 
 export default function BillDetail() {
@@ -88,47 +107,54 @@ export default function BillDetail() {
     <div className="smartdorm-page" style={{ background: "#f6f9ff" }}>
       <NavBar />
 
-      {/* HEADER TITLE */}
+      {/* HEADER */}
       <div
         className="text-center py-3"
         style={{
           background: "linear-gradient(135deg,#6FF5C2,#38A3FF)",
-          borderBottomLeftRadius: "30px",
-          borderBottomRightRadius: "30px",
+          borderBottomLeftRadius: "20px",
+          borderBottomRightRadius: "20px",
           color: "white",
-          boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+          boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
         }}
       >
         <h3 className="fw-bold mb-1">รายละเอียดบิลค่าเช่า</h3>
         <div className="small opacity-75">เลขที่บิล {bill.billId}</div>
       </div>
 
-      {/* CARD AREA */}
+      {/* CARD */}
       <div
         className="bg-white shadow-sm p-4 rounded-4 mt-3"
         style={{ maxWidth: "520px", margin: "0 auto" }}
       >
-        {/* SECTION: USER & ROOM */}
+        {/* SECTION: USER */}
         <div
           className="p-3 rounded-3 mb-3"
           style={{ background: "#f3f7ff", borderLeft: "6px solid #3a7afe" }}
         >
           <div className="d-flex justify-content-between">
-            <span>👤 ชื่อลูกค้า</span>
+            <span>👤 ชื่อลูกค้า :</span>
             <span className="fw-semibold">{bill.booking.fullName}</span>
           </div>
+
           <div className="d-flex justify-content-between mt-2">
-            <span>🏠 ห้องพัก</span>
+            <span>🏠 ห้อง :</span>
             <span className="fw-semibold">{bill.room.number}</span>
           </div>
+
           <div className="d-flex justify-content-between mt-2">
-            <span>📅 ประจำเดือน</span>
+            <span>📅 ประจำเดือน :</span>
             <span>{formatThaiDate(bill.month)}</span>
+          </div>
+
+          <div className="d-flex justify-content-between mt-2">
+            <span>📆 วันครบกำหนดชำระ :</span>
+            <span className="fw-semibold text-danger">{formatThaiDate(bill.dueDate)}</span>
           </div>
         </div>
 
-        {/* SECTION: TABLE */}
-        <table className="table align-middle text-center rounded-3 overflow-hidden">
+        {/* TABLE */}
+        <table className="table align-middle text-center">
           <thead
             style={{
               background: "#eef2ff",
@@ -147,18 +173,19 @@ export default function BillDetail() {
 
           <tbody>
             <tr>
-              <td className="text-start">💧 ค่าน้ำ</td>
+              <td className="text-start">💧 น้ำ</td>
               <td>{bill.wBefore}</td>
               <td>{bill.wAfter}</td>
               <td>{bill.wUnits}</td>
-              <td>{bill.waterCost.toLocaleString()} บาท</td>
+              <td>{bill.waterCost.toLocaleString()}</td>
             </tr>
+
             <tr>
-              <td className="text-start">⚡ ค่าไฟ</td>
+              <td className="text-start">⚡ ไฟ</td>
               <td>{bill.eBefore}</td>
               <td>{bill.eAfter}</td>
               <td>{bill.eUnits}</td>
-              <td>{bill.electricCost.toLocaleString()} บาท</td>
+              <td>{bill.electricCost.toLocaleString()} </td>
             </tr>
 
             <tr>
@@ -170,7 +197,7 @@ export default function BillDetail() {
             <tr>
               <td className="text-start">🏢 ค่าส่วนกลาง</td>
               <td>-</td><td>-</td><td>-</td>
-              <td>{bill.service.toLocaleString()} บาท</td>
+              <td>{bill.service.toLocaleString()}</td>
             </tr>
 
             <tr>
@@ -183,38 +210,33 @@ export default function BillDetail() {
               <td className="fw-bold text-start">💵 ยอดรวมทั้งหมด</td>
               <td colSpan={3}></td>
               <td className="fw-bold text-success">
-                {bill.total.toLocaleString()} บาท
+                {bill.total.toLocaleString()}
               </td>
             </tr>
           </tbody>
         </table>
 
-        {/* DUE DATE */}
-        <div className="text-center fw-bold mt-3" style={{ color: "#ff7b00" }}>
-          ครบกำหนดชำระวันที่ {formatThaiDate(bill.dueDate)}
-        </div>
+        {/* TOTAL IN TEXT */}
+        <p className="text-center mt-2 fw-semibold text-primary">
+          ({thaiNumberText(bill.total)})
+        </p>
 
         {/* BUTTONS */}
         {bill.status === 0 && (
           <div className="d-flex gap-2 mt-4">
             <button
-              className="btn w-50 py-2"
-              style={{
-                borderRadius: "14px",
-                background: "#e8e8e8",
-                fontWeight: 600,
-              }}
+              className="btn w-50 py-2 fw-semibold"
+              style={{ borderRadius: "14px", background: "#e8e8e8" }}
               onClick={() => nav("/mybills")}
             >
               ยกเลิก
             </button>
 
             <button
-              className="btn w-50 py-2 text-white"
+              className="btn w-50 py-2 fw-semibold text-white"
               style={{
                 borderRadius: "14px",
                 background: "linear-gradient(135deg,#7B2CBF,#4B008A)",
-                fontWeight: 600,
                 boxShadow: "0 4px 12px rgba(123,44,191,0.4)",
               }}
               onClick={() => nav("/payment-choice", { state: bill })}
