@@ -48,7 +48,11 @@ const thaiNumberText = (num: number) => {
     const d = Number(s[i]);
     if (d !== 0) txt += thNum[d] + thDigit[s.length - i - 1];
   }
-  txt = txt.replace("หนึ่งสิบ", "สิบ").replace("สองสิบ", "ยี่สิบ").replace("สิบหนึ่ง","สิบเอ็ด");
+  txt = txt
+    .replace("หนึ่งสิบ", "สิบ")
+    .replace("สองสิบ", "ยี่สิบ")
+    .replace("สิบหนึ่ง", "สิบเอ็ด");
+
   return txt + "บาทถ้วน";
 };
 
@@ -123,7 +127,13 @@ export default function BillDetail() {
       </div>
 
       {/* CARD */}
-      <div className="container mt-4 mb-5">
+      <div
+        className="container"
+        style={{
+          marginTop: "70px",
+          marginBottom: "60px",
+        }}
+      >
         <div
           style={{
             background: "white",
@@ -194,7 +204,6 @@ export default function BillDetail() {
               <tr><td>ค่าเช่าห้อง</td><td>-</td><td>-</td><td>-</td><td>{bill.rent.toLocaleString()}</td></tr>
               <tr><td>ค่าส่วนกลาง</td><td>-</td><td>-</td><td>-</td><td>{bill.service.toLocaleString()}</td></tr>
               <tr><td>ค่าปรับ</td><td>-</td><td>-</td><td>-</td><td>{bill.fine.toLocaleString()}</td></tr>
-
               <tr style={{ background: "#F8FAFC", fontWeight: 600 }}>
                 <td>ยอดรวมทั้งหมด</td>
                 <td colSpan={3}></td>
@@ -211,7 +220,10 @@ export default function BillDetail() {
 
           {/* BUTTONS */}
           {bill.status === 0 && (
-            <div className="d-flex justify-content-center gap-3 mt-4">
+            <div
+              className="d-flex justify-content-center"
+              style={{ gap: "26px", marginTop: "42px" }}
+            >
               <button
                 className="btn px-4 py-2"
                 style={{
