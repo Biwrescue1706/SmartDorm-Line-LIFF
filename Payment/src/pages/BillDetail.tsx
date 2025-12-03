@@ -25,9 +25,10 @@ interface BillDetail {
   dueDate: string;
   status: number;
   room: { number: string };
+  booking: { fullName: string };
 }
 
-// แปลงเป็นวันที่แบบ 6 มกราคม 2569
+// 📅 แปลงเป็น "6 มกราคม 2569"
 const formatThaiDate = (d: string) => {
   const t = new Date(d);
   const months = [
@@ -38,13 +39,12 @@ const formatThaiDate = (d: string) => {
 };
 
 export default function BillDetail() {
+  const nav = useNavigate();
   const { state } = useLocation();
   const { billId } = state || {};
-  const nav = useNavigate();
   const [bill, setBill] = useState<BillDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // LOAD BILL DATA -------------------------------------------
   useEffect(() => {
     (async () => {
       try {
@@ -67,13 +67,12 @@ export default function BillDetail() {
     })();
   }, [billId, nav]);
 
-  // LOADING ---------------------------------------------------
   if (loading)
     return (
-      <div className="text-center">
+      <div className="text-center smartdorm-loading">
         <NavBar />
         <div className="spinner-border text-success mt-5"></div>
-        <p className="mt-2 text-muted">กำลังโหลดข้อมูล...</p>
+        <p className="mt-2">กำลังโหลดข้อมูล...</p>
       </div>
     );
 
@@ -81,44 +80,60 @@ export default function BillDetail() {
     return (
       <div className="text-center">
         <NavBar />
-        <h5 className="mt-5 text-danger">❌ ไม่พบบิลนี้</h5>
+        <h5 className="text-danger mt-5">❌ ไม่พบบิลนี้</h5>
       </div>
     );
 
-  // FINAL UI --------------------------------------------------
   return (
-    <div className="smartdorm-page">
+    <div className="smartdorm-page" style={{ background: "#f6f9ff" }}>
       <NavBar />
 
-      {/* HEADER */}
-      <h4 className="fw-bold text-center text-success mt-3">
-        รายละเอียดบิล SmartDorm
-      </h4>
-      <p className="text-center text-muted small">เลขที่บิล: {bill.billId}</p>
-
-      {/* CARD */}
+      {/* HEADER TITLE */}
       <div
-        className="bg-white shadow-sm p-3 mt-3 rounded-4"
+        className="text-center py-3"
+        style={{
+          background: "linear-gradient(135deg,#6FF5C2,#38A3FF)",
+          borderBottomLeftRadius: "30px",
+          borderBottomRightRadius: "30px",
+          color: "white",
+          boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+        }}
+      >
+        <h3 className="fw-bold mb-1">รายละเอียดบิลค่าเช่า</h3>
+        <div className="small opacity-75">เลขที่บิล {bill.billId}</div>
+      </div>
+
+      {/* CARD AREA */}
+      <div
+        className="bg-white shadow-sm p-4 rounded-4 mt-3"
         style={{ maxWidth: "520px", margin: "0 auto" }}
       >
-        {/* ห้อง / เดือน */}
-        <div className="d-flex justify-content-between mb-2">
-          <span>🏠 ห้อง</span>
-          <span className="fw-semibold">{bill.room.number}</span>
+        {/* SECTION: USER & ROOM */}
+        <div
+          className="p-3 rounded-3 mb-3"
+          style={{ background: "#f3f7ff", borderLeft: "6px solid #3a7afe" }}
+        >
+          <div className="d-flex justify-content-between">
+            <span>👤 ชื่อลูกค้า</span>
+            <span className="fw-semibold">{bill.booking.fullName}</span>
+          </div>
+          <div className="d-flex justify-content-between mt-2">
+            <span>🏠 ห้องพัก</span>
+            <span className="fw-semibold">{bill.room.number}</span>
+          </div>
+          <div className="d-flex justify-content-between mt-2">
+            <span>📅 ประจำเดือน</span>
+            <span>{formatThaiDate(bill.month)}</span>
+          </div>
         </div>
 
-        <div className="d-flex justify-content-between mb-3">
-          <span>📅 เดือน</span>
-          <span>{formatThaiDate(bill.month)}</span>
-        </div>
-
-        {/* TABLE */}
-        <table className="table text-center align-middle mt-3">
+        {/* SECTION: TABLE */}
+        <table className="table align-middle text-center rounded-3 overflow-hidden">
           <thead
             style={{
-              background: "#e6e6e6",
-              borderRadius: "12px",
-              fontSize: "0.95rem",
+              background: "#eef2ff",
+              fontWeight: 600,
+              fontSize: "0.92rem",
             }}
           >
             <tr>
@@ -131,53 +146,40 @@ export default function BillDetail() {
           </thead>
 
           <tbody>
-            {/* 💧 น้ำ */}
             <tr>
-              <td className="text-start">💧 น้ำ</td>
+              <td className="text-start">💧 ค่าน้ำ</td>
               <td>{bill.wBefore}</td>
               <td>{bill.wAfter}</td>
               <td>{bill.wUnits}</td>
               <td>{bill.waterCost.toLocaleString()} บาท</td>
             </tr>
-
-            {/* ⚡ ไฟ */}
             <tr>
-              <td className="text-start">⚡ ไฟ</td>
+              <td className="text-start">⚡ ค่าไฟ</td>
               <td>{bill.eBefore}</td>
               <td>{bill.eAfter}</td>
               <td>{bill.eUnits}</td>
               <td>{bill.electricCost.toLocaleString()} บาท</td>
             </tr>
 
-            {/* ค่าเช่า */}
             <tr>
               <td className="text-start">💰 ค่าเช่าห้อง</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
+              <td>-</td><td>-</td><td>-</td>
               <td>{bill.rent.toLocaleString()} บาท</td>
             </tr>
 
-            {/* ส่วนกลาง */}
             <tr>
               <td className="text-start">🏢 ค่าส่วนกลาง</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
+              <td>-</td><td>-</td><td>-</td>
               <td>{bill.service.toLocaleString()} บาท</td>
             </tr>
 
-            {/* ค่าปรับ */}
             <tr>
               <td className="text-start">⚠️ ค่าปรับ</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
+              <td>-</td><td>-</td><td>-</td>
               <td>{bill.fine.toLocaleString()} บาท</td>
             </tr>
 
-            {/* TOTAL */}
-            <tr style={{ background: "#fafafa" }}>
+            <tr style={{ background: "#fafcff" }}>
               <td className="fw-bold text-start">💵 ยอดรวมทั้งหมด</td>
               <td colSpan={3}></td>
               <td className="fw-bold text-success">
@@ -187,33 +189,37 @@ export default function BillDetail() {
           </tbody>
         </table>
 
-        <div className="fw-semibold text-center mt-2">
-          ครบกำหนดชำระ: {formatThaiDate(bill.dueDate)}
+        {/* DUE DATE */}
+        <div className="text-center fw-bold mt-3" style={{ color: "#ff7b00" }}>
+          ครบกำหนดชำระวันที่ {formatThaiDate(bill.dueDate)}
         </div>
 
-        {/* BUTTON ZONE */}
+        {/* BUTTONS */}
         {bill.status === 0 && (
           <div className="d-flex gap-2 mt-4">
-            {/* CANCEL */}
             <button
-              className="btn btn-outline-danger w-50 fw-semibold py-2"
-              style={{ borderRadius: "14px" }}
+              className="btn w-50 py-2"
+              style={{
+                borderRadius: "14px",
+                background: "#e8e8e8",
+                fontWeight: 600,
+              }}
               onClick={() => nav("/mybills")}
             >
               ยกเลิก
             </button>
 
-            {/* CONFIRM */}
             <button
-              className="btn w-50 fw-semibold py-2"
+              className="btn w-50 py-2 text-white"
               style={{
                 borderRadius: "14px",
                 background: "linear-gradient(135deg,#7B2CBF,#4B008A)",
-                color: "white",
+                fontWeight: 600,
+                boxShadow: "0 4px 12px rgba(123,44,191,0.4)",
               }}
               onClick={() => nav("/payment-choice", { state: bill })}
             >
-              ยืนยัน
+              ยืนยันการชำระเงิน
             </button>
           </div>
         )}
