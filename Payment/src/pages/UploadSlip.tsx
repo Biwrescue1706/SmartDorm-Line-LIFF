@@ -6,55 +6,55 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { API_BASE } from "../config";
 import { refreshLiffToken } from "../lib/liff";
-import NavBar from "../components/NavBar"; // ✅ ใช้ NavBar อัตโนมัติ
+import NavBar from "../components/NavBar";
 
 export default function UploadSlip() {
   const { state } = useLocation();
   const nav = useNavigate();
   const bill = state as any;
+
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    if (!file) {
-      Swal.fire("กรุณาเลือกสลิปก่อนส่ง", "", "warning");
-      return;
-    }
+    if (!file) return Swal.fire("กรุณาเลือกสลิปก่อนส่ง", "", "warning");
 
     try {
       setLoading(true);
       const token = await refreshLiffToken();
-      if (!token) throw new Error("ไม่มี access token");
+      if (!token) throw new Error("ไม่มี token");
 
       const form = new FormData();
       form.append("billId", bill.billId);
       form.append("accessToken", token);
       form.append("slip", file);
 
-      const res = await axios.post(`${API_BASE}/payment/create`, form, {
+      await axios.post(`${API_BASE}/payment/create`, form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      console.log("✅ ส่งสลิปสำเร็จ:", res.data);
       Swal.fire("ส่งสลิปสำเร็จ", "ขอบคุณที่ชำระเงิน", "success");
       nav("/thankyou");
     } catch (err: any) {
-      console.error(err);
       Swal.fire("❌ ไม่สามารถส่งสลิปได้", err.message, "error");
     } finally {
       setLoading(false);
     }
   };
 
-  // ⚠️ ถ้าไม่มี bill (เช่นเข้าหน้านี้ตรงๆ)
   if (!bill)
     return (
-      <div className="smartdorm-page text-center justify-content-center">
-        <NavBar /> {/* ✅ Navbar คงที่ด้านบน */}
-        <div className="mt-5"></div>
-        <h5 className="text-danger mb-3">❌ ไม่พบบิล</h5>
+      <div className="text-center" style={{ marginTop: "80px" }}>
+        <NavBar />
+        <h5 className="text-danger mt-5">❌ ไม่พบบิล</h5>
         <button
-          className="btn-primary-smart fw-semibold"
+          className="btn"
+          style={{
+            background: "#0F3D91",
+            color: "white",
+            borderRadius: "10px",
+            marginTop: "15px",
+          }}
           onClick={() => nav("/")}
         >
           กลับหน้าแรก
@@ -63,65 +63,106 @@ export default function UploadSlip() {
     );
 
   return (
-    <div className="smartdorm-page">
-      <NavBar /> {/* ✅ Navbar ด้านบน */}
-      <div className="mt-5"></div> {/* เผื่อพื้นที่ Navbar */}
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#F7FAFC",
+        fontFamily: "Prompt, sans-serif",
+      }}
+    >
+      <NavBar />
 
-      {/* 🔹 โลโก้ SmartDorm */}
-      <div className="text-center mb-3">
-        <h4 className="fw-bold text-success mb-0">📸 อัปโหลดสลิป SmartDorm</h4>
-        <p className="text-muted small mt-1">
-          แนบหลักฐานการโอนเงินเพื่อยืนยันการชำระ
-        </p>
+      {/* HEADER */}
+      <div
+        style={{
+          marginTop: "70px",
+          textAlign: "center",
+          padding: "20px 0",
+          background: "#0F3D91",
+          color: "white",
+          fontWeight: 600,
+          fontSize: "20px",
+          borderBottomLeftRadius: "18px",
+          borderBottomRightRadius: "18px",
+          boxShadow: "0 3px 10px rgba(0,0,0,0.18)",
+        }}
+      >
+        อัปโหลดสลิปการชำระเงิน
       </div>
 
-      {/* 🔹 กล่องอัปโหลด */}
-      <div className="smartdorm-card shadow-sm">
-        <h5 className="fw-bold text-center mb-3 text-primary">
-          อัปโหลดสลิปการชำระเงิน
+      {/* CARD */}
+      <div
+        style={{
+          marginTop: "40px",
+          marginBottom: "60px",
+          background: "white",
+          maxWidth: "520px",
+          marginInline: "auto",
+          borderRadius: "18px",
+          padding: "26px 22px",
+          boxShadow: "0 6px 26px rgba(0,0,0,0.06)",
+          border: "1px solid #E5E7EB",
+        }}
+      >
+        <h5
+          style={{
+            color: "#0F3D91",
+            fontWeight: 600,
+            marginBottom: "16px",
+            borderLeft: "5px solid #0F3D91",
+            paddingLeft: "10px",
+          }}
+        >
+          รายละเอียดการชำระเงิน
         </h5>
 
-        <div className="text-center mb-3">
-          <p className="mb-0">
-            ห้อง <b>{bill.room?.number ?? "-"}</b>
-          </p>
-          <p className="mb-3">
-            💰 ยอด <b>{bill.total?.toLocaleString() ?? 0} บาท</b>
-          </p>
-        </div>
+        <p className="mb-1">
+          ห้อง <b>{bill.room?.number ?? "-"}</b>
+        </p>
 
-        {/* 🔹 เลือกไฟล์ */}
-        <div className="mb-3">
-          <label className="fw-semibold mb-2">เลือกรูปสลิป</label>
-          <input
-            type="file"
-            accept="image/*"
-            className="form-control"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-          />
-        </div>
+        <p className="mb-3">
+          ยอดที่ต้องชำระ{" "}
+          <b style={{ color: "#0F3D91" }}>
+            {bill.total?.toLocaleString("th-TH")} บาท
+          </b>
+        </p>
 
-        {/* 🔹 แสดง Preview */}
+        {/* INPUT FILE */}
+        <label className="fw-semibold mb-2">เลือกรูปสลิป</label>
+        <input
+          type="file"
+          accept="image/*"
+          className="form-control mb-3"
+          onChange={(e) => setFile(e.target.files?.[0] || null)}
+        />
+
+        {/* PREVIEW SLIP */}
         {file && (
           <div className="text-center mb-3">
             <img
               src={URL.createObjectURL(file)}
               alt="preview"
-              className="rounded shadow-sm"
               style={{
                 width: "100%",
                 maxWidth: "300px",
-                objectFit: "contain",
                 borderRadius: "10px",
+                boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
               }}
             />
           </div>
         )}
 
-        {/* 🔹 ปุ่มส่ง */}
+        {/* SUBMIT BUTTON */}
         <button
-          className="btn-primary-smart w-100 fw-semibold py-2"
+          className="btn w-100 fw-semibold py-2"
           disabled={loading}
+          style={{
+            background: "#0F3D91",
+            color: "white",
+            borderRadius: "10px",
+            fontSize: "18px",
+            boxShadow: "0 4px 10px rgba(15,61,145,0.35)",
+          }}
           onClick={handleSubmit}
         >
           {loading ? "⏳ กำลังส่ง..." : "📤 ส่งสลิปการชำระเงิน"}
