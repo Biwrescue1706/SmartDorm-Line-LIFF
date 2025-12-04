@@ -122,7 +122,7 @@ export default function Bookings() {
                         </div>
 
                         {/* BUTTON */}
-                        {isAvailable ? (
+                        {isAvailable && (
                           <button
                             className="btn fw-semibold w-100 text-dark mt-auto"
                             style={{
@@ -143,10 +143,6 @@ export default function Bookings() {
                             onClick={() => handleSelect(room)}
                           >
                             เลือกห้องนี้
-                          </button>
-                        ) : (
-                          <button className="btn w-100 fw-semibold py-2" disabled>
-                            ไม่สามารถเลือกได้
                           </button>
                         )}
                       </div>
