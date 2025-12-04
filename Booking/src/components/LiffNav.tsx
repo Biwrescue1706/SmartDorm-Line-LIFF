@@ -1,27 +1,16 @@
+// src/components/LiffNav.tsx
 import { useNavigate, useLocation } from "react-router-dom";
 
 export default function LiffNav() {
   const nav = useNavigate();
   const location = useLocation();
 
-  // ✅ แสดงปุ่มย้อนกลับในบางหน้า เช่น /bookings/:id, /payment, /upload-slip
   const showBack =
     location.pathname.startsWith("/bookings/") ||
     location.pathname.startsWith("/payment") ||
     location.pathname.startsWith("/upload-slip");
 
-  // ✅ ฟังก์ชันย้อนกลับ
-const handleBack = () => {
-  if (location.pathname.startsWith("/upload-slip")) {
-    nav(-1);
-  } else if (location.pathname.startsWith("/payment")) {
-    nav(-1);
-  } else if (location.pathname.startsWith("/bookings/")) {
-    nav(-1);
-  } else {
-    nav("/");
-  }
-};
+  const handleBack = () => nav(-1);
 
   return (
     <nav
@@ -30,77 +19,79 @@ const handleBack = () => {
         top: 0,
         left: 0,
         width: "100%",
-        height: "60px",
-        background: "linear-gradient(90deg, #43cea2, #185a9d)",
-        color: "white",
+        height: "62px",
+        paddingTop: "env(safe-area-inset-top)",
+        background: "linear-gradient(135deg, #38A3FF, #7B2CBF)",
         display: "flex",
         alignItems: "center",
-        justifyContent: showBack ? "space-between" : "center",
-        padding:
-          "0 16px env(safe-area-inset-left) 0 env(safe-area-inset-right)",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-        zIndex: 1000,
+        justifyContent: "center",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+        zIndex: 2000,
       }}
     >
-      {/* 🔙 ปุ่มย้อนกลับ */}
+      {/* ปุ่มย้อนกลับ */}
       {showBack && (
         <button
           onClick={handleBack}
           style={{
-            background: "none",
-            border: "none",
+            position: "absolute",
+            left: "14px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            background: "rgba(255,255,255,0.2)",
+            border: "1px solid rgba(255,255,255,0.35)",
+            backdropFilter: "blur(10px)",
             color: "white",
-            fontSize: "1.5rem",
-            fontWeight: "bold",
+            borderRadius: "12px",
+            padding: "4px 10px",
+            fontSize: "1.4rem",
             cursor: "pointer",
-            transition: "transform 0.2s",
+            transition: "all .2s ease",
           }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.transform = "translateX(-2px)")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.transform = "translateX(0)")
-          }
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.8")}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
         >
           ←
         </button>
       )}
 
-      {/* 🏫 โลโก้ SmartDorm กลาง */}
+      {/* Title + Logo (อยู่กลางจริง) */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
           gap: "8px",
-          flexGrow: 1,
+          pointerEvents: "none",
         }}
       >
-        <h5
+        <span
           style={{
-            margin: 0,
+            fontSize: "1.25rem",
             fontWeight: 700,
-            letterSpacing: "0.5px",
-            fontFamily: "Segoe UI, Prompt, sans-serif",
+            letterSpacing: ".3px",
+            fontFamily: "Prompt, Segoe UI, sans-serif",
+            textShadow: "0 1px 3px rgba(0,0,0,0.35)",
           }}
         >
-          🏫SmartDorm🎉
-        </h5>
+          🏫 SmartDorm
+        </span>
+
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
           alt="SmartDorm Logo"
           style={{
             width: "32px",
             height: "32px",
-            borderRadius: "6px",
             background: "white",
+            borderRadius: "8px",
             padding: "2px",
+            boxShadow: "0 2px 5px rgba(0,0,0,0.3)",
           }}
         />
       </div>
 
-      {/* ช่องว่างขวาให้สมดุลกับปุ่มย้อนกลับ */}
-      {showBack && <div style={{ width: "30px" }}></div>}
+      {/* Balance Right */}
+      {showBack && <div style={{ width: "36px" }} />}
     </nav>
   );
 }
