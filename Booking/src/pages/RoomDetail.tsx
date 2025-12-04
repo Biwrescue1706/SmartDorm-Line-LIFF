@@ -18,65 +18,49 @@ export default function RoomDetail() {
       try {
         const token = await refreshLiffToken();
         if (!token) return;
-
         await axios.post(`${API_BASE}/user/me`, { accessToken: token });
       } catch (err: any) {
-        if (
-          err.response?.data?.error?.includes("หมดอายุ") ||
-          err.response?.data?.error?.includes("invalid")
-        ) {
-          await logoutLiff();
-          return;
-        }
-
-        Swal.fire(
-          "การยืนยันสิทธิ์ล้มเหลว",
-          "กรุณาเข้าสู่ระบบใหม่อีกครั้ง",
-          "error"
-        ).then(() => nav("/"));
+        await logoutLiff();
+        Swal.fire("หมดเวลาการใช้งาน", "กรุณาล็อกอินใหม่อีกครั้ง", "warning");
+        nav("/");
       }
     })();
   }, [nav]);
 
-  // Loading
   if (loading)
     return (
       <>
         <LiffNav />
-        <div className="container text-center text-muted" style={{ paddingTop: "80px" }}>
+        <div className="container text-center text-muted" style={{ paddingTop: "90px" }}>
           ⏳ กำลังโหลดข้อมูลห้อง...
         </div>
       </>
     );
 
-  // Error
   if (error)
     return (
       <>
         <LiffNav />
-        <div className="container text-center text-danger" style={{ paddingTop: "80px" }}>
+        <div className="container text-center text-danger" style={{ paddingTop: "90px" }}>
           {error} (ID: {roomId})
         </div>
       </>
     );
 
-  // ไม่พบข้อมูลห้อง
   if (!room)
     return (
       <>
         <LiffNav />
-        <div className="container text-center" style={{ paddingTop: "80px" }}>
-          ไม่พบข้อมูลห้อง {roomId}
-          <div>
-            <button className="btn btn-primary mt-3" onClick={() => nav("/")}>
-              กลับหน้าแรก
-            </button>
-          </div>
+        <div className="container text-center" style={{ paddingTop: "90px" }}>
+          ❌ ไม่พบข้อมูลห้อง {roomId}
+          <button className="btn btn-primary mt-3" onClick={() => nav("/")}>
+            กลับหน้าแรก
+          </button>
         </div>
       </>
     );
 
-  // === ฟังก์ชันจัดการปุ่ม ===
+  // ค่าใช้จ่ายรวม
   const total = room.rent + room.deposit + room.bookingFee;
 
   const handleConfirm = () => {
@@ -89,96 +73,93 @@ export default function RoomDetail() {
     nav("/");
   };
 
-  // === Render หลัก ===
   return (
     <>
       <LiffNav />
-      <div className="container my-4" style={{ paddingTop: "70px" }}>
-        <div
-          className="card shadow-sm border-0"
-          style={{ background: "linear-gradient(135deg, #f8f9fa, #e9ecef)" }}
-        >
-          <div className="card-body">
-            <h3 className="text-center mb-4 fw-bold">รายละเอียดห้องพัก</h3>
+      <div style={{ paddingTop: "90px", background: "#f6f9ff", minHeight: "100vh" }}>
+        <div className="container">
+          {/* HEADER */}
+          <div
+            className="shadow p-4 mb-4 text-white rounded-4"
+            style={{
+              background: "linear-gradient(135deg,#38A3FF,#7B2CBF)",
+              boxShadow: "0 6px 16px rgba(0,0,0,.25)"
+            }}
+          >
+            <h3 className="text-center fw-bold mb-0">รายละเอียดห้องพัก</h3>
+            <p className="text-center mb-0 opacity-75">ตรวจสอบข้อมูลก่อนทำการจอง</p>
+          </div>
 
-            {/* ตารางแสดงรายละเอียดห้องในหน้าเดียว */}
-            <table className="table table-bordered align-middle text-center shadow-sm">
+          {/* CARD */}
+          <div className="bg-white rounded-4 shadow-sm p-4">
+            <table className="table align-middle text-center table-bordered">
               <tbody>
                 <tr>
-                  <th className="text-start w-30">หมายเลขห้อง</th>
-                  <td colSpan={2}>{room.number}</td>
+                  <th className="bg-light text-start">หมายเลขห้อง</th>
+                  <td className="fw-semibold">{room.number}</td>
                 </tr>
-
                 <tr>
-                  <th className="text-start w-30">ขนาดห้อง</th>
-                  <td colSpan={2}>{room.size}</td>
+                  <th className="bg-light text-start">ขนาดห้อง</th>
+                  <td className="fw-semibold">{room.size}</td>
                 </tr>
-
                 <tr>
-                  <th className="text-start w-30">ค่าส่วนกลาง</th>
-                  <td>50</td>
-                  <td>บาท</td>
+                  <th className="bg-light text-start">ค่าส่วนกลาง</th>
+                  <td>50 บาท</td>
                 </tr>
-
                 <tr>
-                  <th className="text-start w-30">ค่าไฟฟ้า</th>
-                  <td>7</td>
-                  <td>บาท / หน่วย</td>
+                  <th className="bg-light text-start">ค่าไฟฟ้า</th>
+                  <td>7 บาท / หน่วย</td>
                 </tr>
-
                 <tr>
-                  <th className="text-start w-30">ค่าน้ำ</th>
-                  <td>19</td>
-                  <td>บาท / หน่วย</td>
+                  <th className="bg-light text-start">ค่าน้ำ</th>
+                  <td>19 บาท / หน่วย</td>
                 </tr>
-
                 <tr>
-                  <th className="text-start w-30">ค่าเช่า</th>
-                  <td>{room.rent.toLocaleString("th-TH")}</td>
-                  <td>บาท</td>
+                  <th className="bg-light text-start">ค่าเช่า</th>
+                  <td className="fw-bold text-primary">
+                    {room.rent.toLocaleString("th-TH")} บาท
+                  </td>
                 </tr>
-
                 <tr>
-                  <th className="text-start w-30">เงินประกัน</th>
-                  <td>{room.deposit.toLocaleString("th-TH")}</td>
-                  <td>บาท</td>
+                  <th className="bg-light text-start">เงินประกัน</th>
+                  <td>{room.deposit.toLocaleString("th-TH")} บาท</td>
                 </tr>
-
                 <tr>
-                  <th className="text-start w-30">ค่าจอง</th>
-                  <td>{room.bookingFee.toLocaleString("th-TH")}</td>
-                  <td>บาท</td>
+                  <th className="bg-light text-start">ค่าจอง</th>
+                  <td>{room.bookingFee.toLocaleString("th-TH")} บาท</td>
                 </tr>
 
                 <tr className="table-success fw-bold">
-                  <th className="text-start w-30">รวมทั้งหมด</th>
-                  <td className="text-success">{total.toLocaleString("th-TH")}</td>
-                  <td>บาท</td>
+                  <th className="text-start">รวมทั้งหมด</th>
+                  <td className="text-success">
+                    {total.toLocaleString("th-TH")} บาท
+                  </td>
                 </tr>
 
                 <tr>
-                  <td colSpan={3} className="fst-italic text-muted small text-start">
-                    ( ตัดรอบบิลทุกวันที่ 25 ของเดือน <br />
-                    ราคานี้ยังไม่รวมค่าส่วนกลาง, ค่าน้ำ, ค่าไฟ <br />
-                    หากชำระเกินวันที่ 5 ของเดือน จะมีค่าปรับ 50 บาท/วัน )
+                  <td colSpan={2} className="text-muted small fst-italic text-start">
+                    ( ตัดรอบบิลวันที่ 25 ของเดือน <br />
+                    สามารถย้ายเข้าได้หลังชำระเงินครบถ้วน )
                   </td>
                 </tr>
               </tbody>
             </table>
 
-            {/* ปุ่ม */}
-            <div className="d-flex justify-content-between mt-4 gap-3">
+            {/* BUTTONS */}
+            <div className="d-flex gap-3 justify-content-between mt-4">
               <button
-                className="btn fw-semibold flex-fill"
+                className="btn flex-fill fw-semibold text-white"
                 style={{
-                  background: "linear-gradient(90deg, #ff6b6b, #d6336c)",
-                  color: "white",
+                  borderRadius: "14px",
+                  background: "linear-gradient(135deg,#FF6B6B,#C92A2A)"
                 }}
                 onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "linear-gradient(90deg, #d6336c, #a61e4d)")
+                  e.currentTarget.style.background =
+                    "linear-gradient(135deg,#C92A2A,#7A1E1E)"
                 }
                 onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "linear-gradient(90deg, #ff6b6b, #d6336c)")
+                  e.currentTarget.style.background =
+                    "linear-gradient(135deg,#FF6B6B,#C92A2A)"
                 }
                 onClick={handleCancel}
               >
@@ -186,20 +167,22 @@ export default function RoomDetail() {
               </button>
 
               <button
-                className="btn fw-semibold flex-fill"
+                className="btn flex-fill fw-semibold text-white"
                 style={{
-                  background: "linear-gradient(90deg, #20c997, #0d6efd)",
-                  color: "white",
+                  borderRadius: "14px",
+                  background: "linear-gradient(135deg,#20C997,#0D6EFD)"
                 }}
                 onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "linear-gradient(90deg, #198754, #0a58ca)")
+                  e.currentTarget.style.background =
+                    "linear-gradient(135deg,#198754,#0A58CA)"
                 }
                 onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "linear-gradient(90deg, #20c997, #0d6efd)")
+                  e.currentTarget.style.background =
+                    "linear-gradient(135deg,#20C997,#0D6EFD)"
                 }
                 onClick={handleConfirm}
               >
-                ยืนยันจอง
+                ยืนยัน
               </button>
             </div>
           </div>
