@@ -177,7 +177,6 @@ function UploadSlipForm({
         กรอกข้อมูลเพื่อยืนยันการจอง
       </h3>
 
-      {/* ห้อง */}
       <label className="form-label fw-semibold">🏠 ห้องที่เลือก</label>
       <input className="form-control mb-3" value={room.number} readOnly />
 
@@ -270,17 +269,51 @@ function UploadSlipForm({
         </div>
       )}
 
-      <button
-        disabled={loading}
-        className="btn w-100 fw-bold py-3 text-white"
-        style={{
-          borderRadius: "14px",
-          background: "linear-gradient(135deg,#7B2CBF,#4B008A)",
-          boxShadow: "0 4px 10px rgba(123,44,191,0.4)",
-        }}
-      >
-        {loading ? "กำลังบันทึก..." : "ยืนยันการจองและอัปโหลดสลิป"}
-      </button>
+      {/* ===== ปุ่มยืนยัน + ปุ่มยกเลิก ===== */}
+      <div className="d-flex gap-2 mt-4">
+        {/* ปุ่มยกเลิก */}
+        <button
+          type="button"
+          className="btn w-50 fw-semibold py-3 text-dark"
+          style={{
+            borderRadius: "14px",
+            background: "#e9ecef",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+          }}
+          onClick={() => {
+            Swal.fire({
+              title: "คุณต้องการยกเลิกการจองใช่หรือไม่?",
+              text: "ข้อมูลที่กรอกจะไม่ถูกบันทึก",
+              icon: "question",
+              showCancelButton: true,
+              confirmButtonText: "ใช่",
+              cancelButtonText: "ไม่",
+              reverseButtons: true,
+              confirmButtonColor: "#d6336c",
+              cancelButtonColor: "#6c757d",
+            }).then((res) => {
+              if (res.isConfirmed) {
+                nav("/");
+              }
+            });
+          }}
+        >
+          ยกเลิก
+        </button>
+
+        {/* ปุ่มยืนยัน */}
+        <button
+          disabled={loading}
+          className="btn w-50 fw-bold py-3 text-white"
+          style={{
+            borderRadius: "14px",
+            background: "linear-gradient(135deg,#7B2CBF,#4B008A)",
+            boxShadow: "0 4px 10px rgba(123,44,191,0.4)",
+          }}
+        >
+          {loading ? "กำลังบันทึก..." : "ยืนยันการจองและอัปโหลดสลิป"}
+        </button>
+      </div>
     </form>
   );
 }
