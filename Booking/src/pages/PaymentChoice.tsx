@@ -19,25 +19,24 @@ export default function PaymentChoice() {
 
   const total = room ? room.rent + room.deposit + room.bookingFee : 0;
 
-  // 🆕 สร้าง QR หนึ่งครั้งเมื่อผู้ใช้เข้า
+  // สร้าง QR ตอนเข้า
   const makeQR = () => {
     const qr = `${API_BASE}/qr/${total}?t=${Date.now()}`;
     setQrSrc(qr);
   };
 
-  // ตรวจสอบสิทธิ์และโหลด QR
+  // ตรวจสอบ token
   useEffect(() => {
     (async () => {
       try {
         const token = await refreshLiffToken();
-        if (!token) return;
+        if (!token) throw new Error();
 
         await axios.post(`${API_BASE}/user/me`, { accessToken: token });
-
         setReady(true);
-        makeQR(); // สร้าง QR ครั้งเดียว
+        makeQR();
       } catch {
-        Swal.fire("ไม่สามารถตรวจสอบสิทธิ์ได้", "กรุณาเข้าสู่ระบบใหม่", "error");
+        Swal.fire("❌ หมดเวลาการเข้าใช้งาน", "กรุณาเข้าสู่ระบบใหม่", "warning");
         nav("/");
       }
     })();
@@ -46,8 +45,8 @@ export default function PaymentChoice() {
   if (!room)
     return (
       <div className="text-center p-5">
-        <h5 className="text-danger mb-3">ไม่พบข้อมูลห้อง</h5>
-        <button className="btn btn-primary" onClick={() => nav("/")}>
+        <h5 className="text-danger">ไม่พบข้อมูลห้อง</h5>
+        <button className="btn btn-primary mt-3" onClick={() => nav("/")}>
           กลับหน้าแรก
         </button>
       </div>
@@ -57,7 +56,7 @@ export default function PaymentChoice() {
     return (
       <div className="text-center py-5">
         <div className="spinner-border text-success"></div>
-        <p className="mt-3">กำลังตรวจสอบสิทธิ์ผู้ใช้งาน...</p>
+        <p className="mt-3">กำลังตรวจสอบสิทธิ์การใช้งาน...</p>
       </div>
     );
 
@@ -67,72 +66,102 @@ export default function PaymentChoice() {
     <>
       <LiffNav />
 
-      <div style={{ paddingTop: "70px" }}>
-        <div className="container my-4">
-          <div className="card shadow-sm p-3 border-0">
-            <h3 className="fw-bold text-center mb-4">การชำระเงินผ่าน PromptPay</h3>
+      <div
+        style={{
+          paddingTop: "80px",
+          minHeight: "100vh",
+          background: "#f6f9ff",
+        }}
+      >
+        <div className="container">
 
-            {/* ⭐ สรุปยอดเงิน */}
+          {/* HEADER */}
+          <div
+            className="shadow text-white text-center py-4 rounded-4 mb-4"
+            style={{
+              background: "linear-gradient(135deg,#38A3FF,#7B2CBF)",
+              boxShadow: "0 6px 14px rgba(0,0,0,0.25)",
+            }}
+          >
+            <h3 className="fw-bold mb-0">ชำระเงินค่าจองห้องพัก</h3>
+            <small className="opacity-75">ชำระผ่าน PromptPay เพื่อดำเนินการต่อ</small>
+          </div>
+
+          {/* CARD */}
+          <div
+            className="bg-white p-4 shadow-sm rounded-4"
+            style={{ maxWidth: 520, margin: "0 auto" }}
+          >
+            {/* สรุปยอดเงิน */}
             <div
-              className="p-3 mb-3 rounded shadow-sm text-center"
-              style={{ background: "linear-gradient(135deg, #b1f370, #b3efea)" }}
+              className="text-center p-3 rounded-3 mb-4"
+              style={{
+                background: "linear-gradient(135deg,#6FF5C2,#38A3FF)",
+                color: "#033",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+              }}
             >
-              <h5 className="fw-bold mb-1">
-                ยอดรวม {total.toLocaleString("th-TH")} บาท
-              </h5>
+              <h5 className="fw-bold mb-1">ยอดรวมที่ต้องชำระ</h5>
+              <h2 className="fw-bold text-dark">
+                {total.toLocaleString("th-TH")} บาท
+              </h2>
             </div>
 
-            {/* ⭐ QR PromptPay */}
+            {/* QR PROMPTPAY */}
             <div
-              className="p-3 mb-3 rounded shadow-sm text-center"
-              style={{ background: "linear-gradient(135deg, #f8f9fa, #e9ecef)" }}
+              className="p-4 text-center rounded-3 mb-4 border"
+              style={{
+                background: "linear-gradient(135deg,#ffffff,#eef2ff)",
+                boxShadow: "0 0 8px rgba(0,0,0,0.08)",
+              }}
             >
               <h6 className="fw-semibold mb-2">📲 สแกนเพื่อชำระเงิน</h6>
-
               <img
                 src={qrSrc}
-                width="240"
+                width="250"
                 alt="QR PromptPay"
-                className="border rounded shadow-sm my-2"
+                className="my-3 border rounded shadow-sm"
               />
 
-              {/* ดาวน์โหลดเฉพาะบราวเซอร์ */}
               {!isInLine ? (
                 <button
-                  className="btn w-100 fw-semibold text-dark"
+                  className="btn w-100 fw-semibold"
                   style={{
-                    background: "linear-gradient(90deg, #42e695, #3bb2b8)",
-                    border: "none",
+                    background: "linear-gradient(90deg,#42e695,#3bb2b8)",
+                    borderRadius: "10px",
+                    color: "black",
                   }}
                   onClick={async () => {
                     const res = await fetch(qrSrc);
                     const blob = await res.blob();
-                    const blobUrl = URL.createObjectURL(blob);
+                    const url = URL.createObjectURL(blob);
                     const link = document.createElement("a");
-                    link.href = blobUrl;
+                    link.href = url;
                     link.download = `QR-${total}.png`;
                     link.click();
-                    URL.revokeObjectURL(blobUrl);
+                    URL.revokeObjectURL(url);
                   }}
                 >
                   ดาวน์โหลด QR
                 </button>
               ) : (
                 <p className="small text-danger fw-semibold">
-                  กดค้างที่ QR แล้วเลือก “บันทึกภาพ”
+                  (กดค้างที่ QR แล้วเลือก “บันทึกภาพ”)
                 </p>
               )}
             </div>
 
-            {/* ⭐ ไปอัปโหลดสลิป */}
+            {/* UPLOAD SLIP */}
             <button
-              className="btn w-100 fw-semibold mt-3 text-white"
+              className="btn w-100 fw-bold text-white py-3"
               style={{
-                background: "linear-gradient(90deg, #42e695, #3bb2b8)",
+                background: "linear-gradient(135deg,#7B2CBF,#4B008A)",
+                borderRadius: "14px",
+                boxShadow: "0 4px 12px rgba(123,44,191,.35)",
               }}
               onClick={() => nav("/upload-slip", { state: room })}
             >
-              อัปโหลดสลิป
+              อัปโหลดสลิปการชำระเงิน
             </button>
           </div>
         </div>
