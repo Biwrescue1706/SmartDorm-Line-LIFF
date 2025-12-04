@@ -14,7 +14,6 @@ export default function ThankYou() {
     const timer = setTimeout(async () => {
       const ready = await ensureLiffReady();
       if (ready) await logoutLiff();
-      else console.warn("⚠️ LIFF not ready, skipping logout");
     }, 10000);
 
     return () => {
@@ -27,68 +26,82 @@ export default function ThankYou() {
     <>
       <LiffNav />
 
+      {/* ===== PAGE BG ===== */}
       <div
         className="d-flex justify-content-center align-items-center text-center"
         style={{
           height: "100vh",
-          background:
-            "linear-gradient(135deg, #f6f9ff, #eaf8ff, #e5f9f1)",
+          background: "linear-gradient(135deg,#F2FBFF,#EAF7FF,#E7FFF4)",
           fontFamily: "Prompt, sans-serif",
+          padding: "16px",
         }}
       >
+        {/* ===== CARD ===== */}
         <div
-          className="p-4 rounded-4 shadow-lg bg-white border-0"
+          className="p-4 rounded-4 bg-white"
           style={{
-            maxWidth: "420px",
-            boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
-            animation: "fadeIn 0.7s ease-in-out",
+            width: "100%",
+            maxWidth: "430px",
+            boxShadow: "0 10px 28px rgba(0,0,0,0.18)",
+            animation: "fadeUp .8s ease",
+            border: "1px solid #f0f4ff",
           }}
         >
-          {/* 🎉 ICON */}
+          {/* ICON */}
           <div
-            className="mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center"
+            className="mx-auto mb-4 d-flex align-items-center justify-content-center rounded-circle"
             style={{
-              width: "90px",
-              height: "90px",
-              background:
-                "linear-gradient(135deg, #6FF5C2, #38A3FF)",
-              boxShadow: "0 4px 12px rgba(56,163,255,0.4)",
+              width: "95px",
+              height: "95px",
+              background: "linear-gradient(135deg,#6FF5C2,#38A3FF)",
+              boxShadow: "0 6px 18px rgba(56,163,255,.45)",
             }}
           >
-            <h1 className="fw-bold text-white mb-0">✔</h1>
+            <span
+              style={{
+                fontSize: "50px",
+                fontWeight: "700",
+                color: "white",
+              }}
+            >
+              ✔
+            </span>
           </div>
 
-          {/* ข้อความ */}
-          <h2 className="fw-bold text-success mb-2">
-            ขอบคุณที่ใช้บริการ!
+          {/* TITLE */}
+          <h2 className="fw-bold" style={{ color: "#1B9C85" }}>
+            การทำรายการสำเร็จ
           </h2>
-          <p className="text-muted mb-1">
+
+          <p className="text-muted mt-2 mb-1">
             ระบบได้รับข้อมูลของคุณเรียบร้อยแล้ว
           </p>
-          <p className="text-secondary small mb-3">
-            หน้าต่างนี้จะปิดโดยอัตโนมัติภายใน{" "}
-            <span className="fw-bold text-success">{countdown}</span>{" "}
-            วินาที
+
+          {/* COUNTDOWN */}
+          <p className="text-secondary small">
+            หน้าต่างนี้จะปิดภายใน{" "}
+            <span className="fw-bold text-success">{countdown}</span> วินาที
           </p>
 
-          {/* เส้นคั่น */}
+          {/* SEPARATOR */}
           <div
-            className="mx-auto mb-3"
+            className="mx-auto my-4"
             style={{
-              width: "60%",
-              height: "2px",
+              width: "65%",
+              height: "3px",
               background: "linear-gradient(90deg,#6FF5C2,#38A3FF)",
-              borderRadius: "5px",
+              borderRadius: "6px",
             }}
           ></div>
 
-          {/* ปุ่มกลับ */}
+          {/* LOGOUT BUTTON */}
           <button
-            className="btn fw-semibold w-100 text-white py-2"
+            className="btn fw-semibold w-100 text-white py-3 mb-2"
             style={{
-              borderRadius: "12px",
+              borderRadius: "14px",
+              letterSpacing: "0.3px",
               background: "linear-gradient(135deg,#7B2CBF,#4B008A)",
-              boxShadow: "0 4px 10px rgba(123,44,191,0.4)",
+              boxShadow: "0 4px 12px rgba(123,44,191,.35)",
             }}
             onClick={async () => {
               const ready = await ensureLiffReady();
@@ -97,8 +110,23 @@ export default function ThankYou() {
           >
             ออกจากระบบทันที
           </button>
+
+          {/* FOOT NOTE */}
+          <p className="small text-muted mt-3">
+            ขอบคุณที่ไว้วางใจ SmartDorm 💙
+          </p>
         </div>
       </div>
+
+      {/* ===== ANIMATION ===== */}
+      <style>
+        {`
+        @keyframes fadeUp {
+          from {opacity: 0; transform: translateY(25px);}
+          to   {opacity: 1; transform: translateY(0);}
+        }
+        `}
+      </style>
     </>
   );
 }
