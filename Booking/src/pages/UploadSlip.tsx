@@ -311,7 +311,7 @@ function UploadSlipForm({
             boxShadow: "0 4px 10px rgba(123,44,191,0.4)",
           }}
         >
-          {loading ? "กำลังบันทึก..." : "ยืนยันการจองและอัปโหลดสลิป"}
+          {loading ? "กำลังบันทึก..." : "ยืนยันการจอง"}
         </button>
       </div>
     </form>
