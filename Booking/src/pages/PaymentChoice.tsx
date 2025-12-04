@@ -161,7 +161,7 @@ export default function PaymentChoice() {
               }}
               onClick={() => nav("/upload-slip", { state: room })}
             >
-              อัปโหลดสลิปการชำระเงิน
+              ดำเนินการต่อ
             </button>
           </div>
         </div>
