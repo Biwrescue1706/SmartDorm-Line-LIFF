@@ -5,7 +5,7 @@ export default function NavBar() {
   const nav = useNavigate();
   const location = useLocation();
 
-  // ✅ ถ้าหน้าไม่ใช่ MyBills ให้แสดงปุ่มย้อนกลับ
+  // แสดงปุ่มย้อนกลับเฉพาะหน้าที่ต้องการ
   const showBack =
     location.pathname === "/bill-detail" ||
     location.pathname === "/payment-choice" ||
@@ -18,53 +18,51 @@ export default function NavBar() {
         top: 0,
         left: 0,
         width: "100%",
-        height: "60px",
-        background: "linear-gradient(90deg, #43cea2, #185a9d)",
+        height: "62px",
+        paddingTop: "env(safe-area-inset-top)",
+        background: "linear-gradient(135deg, #38A3FF, #7B2CBF)",
         color: "white",
         display: "flex",
         alignItems: "center",
-        justifyContent: showBack ? "space-between" : "center",
-        padding:
-          "0 16px env(safe-area-inset-left) 0 env(safe-area-inset-right)",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-        zIndex: 1000,
+        justifyContent: "center",
+        boxShadow: "0 3px 10px rgba(0,0,0,0.15)",
+        zIndex: 1500,
       }}
     >
+      {/* ปุ่มย้อนกลับฝั่งซ้าย */}
       {showBack && (
         <button
           onClick={() => nav(-1)}
           style={{
-            background: "none",
+            position: "absolute",
+            left: "16px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            background: "rgba(255,255,255,0.2)",
             border: "none",
+            padding: "4px 10px",
+            borderRadius: "10px",
             color: "white",
-            fontSize: "1.5rem",
-            fontWeight: "bold",
+            fontSize: "1.4rem",
             cursor: "pointer",
+            backdropFilter: "blur(8px)",
           }}
         >
           ←
         </button>
       )}
 
-      {/* ✅ ส่วนกลาง: SmartDorm + โลโก้ */}
+      {/* โลโก้ + ข้อความอยู่ตรงกลางแท้ */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
           gap: "8px",
-          flexGrow: 1,
+          pointerEvents: "none",
+          transform: "translateX(6px)",
         }}
       >
-        <h3
-          style={{
-            margin: 0,
-            fontWeight: 700,
-            letterSpacing: "0.5px",
-          }}
-        >
-🏫SmartDorm🎉
-</h3>
+        <span style={{ fontWeight: 700, fontSize: "1.3rem" }}>🏫 SmartDorm</span>
         <img
           src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
           alt="SmartDorm Logo"
@@ -74,11 +72,13 @@ export default function NavBar() {
             borderRadius: "6px",
             background: "white",
             padding: "2px",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
           }}
         />
       </div>
 
-      {showBack && <div style={{ width: "30px" }}></div>}
+      {/* เว้นพื้นที่ขวาให้บาลานซ์กับปุ่ม Back */}
+      {showBack && <div style={{ width: "32px", position: "absolute", right: "16px" }}></div>}
     </nav>
   );
 }
