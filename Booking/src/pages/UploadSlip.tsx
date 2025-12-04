@@ -64,7 +64,15 @@ export default function UploadSlip() {
   return (
     <>
       <LiffNav />
-      <div className="container py-4" style={{ paddingTop: "70px" }}>
+      <div
+        className="container"
+        style={{
+          paddingTop: "90px",
+          paddingBottom: "40px",
+          background: "#f6f9ff",
+          minHeight: "100vh",
+        }}
+      >
         <UploadSlipForm room={room} accessToken={accessToken!} />
       </div>
     </>
@@ -72,9 +80,15 @@ export default function UploadSlip() {
 }
 
 // ===============================================================
-//                 FORM ส่งข้อมูล + อัปโหลดสลิป
+//                 FORM อัปโหลดข้อมูล + สลิป
 // ===============================================================
-function UploadSlipForm({ room, accessToken }: { room: Room; accessToken: string }) {
+function UploadSlipForm({
+  room,
+  accessToken,
+}: {
+  room: Room;
+  accessToken: string;
+}) {
   const nav = useNavigate();
 
   const [userName, setUserName] = useState("");
@@ -111,7 +125,7 @@ function UploadSlipForm({ room, accessToken }: { room: Room; accessToken: string
     if (!cname.trim()) return toast("กรุณากรอกชื่อ");
     if (!csurname.trim()) return toast("กรุณากรอกนามสกุล");
     if (cphone.length !== 10) return toast("เบอร์โทรต้อง 10 หลัก");
-    if (cmumId.length !== 13) return toast("เลขบัตรประชาชนต้อง 13 หลัก");
+    if (cmumId.length !== 13) return toast("เลขบัตรต้อง 13 หลัก");
     if (!checkin) return toast("กรุณาเลือกวันที่เข้าพัก");
     return true;
   };
@@ -122,7 +136,6 @@ function UploadSlipForm({ room, accessToken }: { room: Room; accessToken: string
     setLoading(true);
 
     try {
-      // STEP 1: create booking first
       const res = await axios.post(`${API_BASE}/booking/create`, {
         accessToken,
         roomId: room.roomId,
@@ -136,7 +149,6 @@ function UploadSlipForm({ room, accessToken }: { room: Room; accessToken: string
 
       const bookingId = res.data.booking.bookingId;
 
-      // STEP 2: upload slip
       const form = new FormData();
       form.append("slip", slip!);
 
@@ -156,57 +168,118 @@ function UploadSlipForm({ room, accessToken }: { room: Room; accessToken: string
   const slipPreviewUrl = slip ? URL.createObjectURL(slip) : null;
 
   return (
-    <form onSubmit={handleSubmit} className="card shadow-lg p-4 border-0 rounded-4">
-      <h3 className="text-center mb-3 mt-5">📤 อัปโหลดสลิป</h3>
-      <h5 className="text-center mb-4">ห้อง {room.number}</h5>
+    <form
+      onSubmit={handleSubmit}
+      className="p-4 shadow-lg rounded-4 bg-white mx-auto"
+      style={{ maxWidth: "560px" }}
+    >
+      <h3 className="fw-bold text-center mb-4 text-primary">
+        กรอกข้อมูลเพื่อยืนยันการจอง
+      </h3>
+
+      {/* ห้อง */}
+      <label className="form-label fw-semibold">🏠 ห้องที่เลือก</label>
+      <input className="form-control mb-3" value={room.number} readOnly />
 
       <label className="form-label fw-semibold">LINE ผู้ใช้</label>
       <input className="form-control mb-3" value={userName} readOnly />
 
       <label className="form-label fw-semibold">คำนำหน้า</label>
-      <select className="form-select mb-3" value={ctitle} onChange={(e) => setCtitle(e.target.value)} required>
+      <select
+        className="form-select mb-3"
+        required
+        value={ctitle}
+        onChange={(e) => setCtitle(e.target.value)}
+      >
         <option value="">-- เลือก --</option>
         <option>นาย</option>
         <option>นาง</option>
         <option>น.ส.</option>
       </select>
 
-      <label className="form-label fw-semibold">ชื่อ</label>
-      <input className="form-control mb-3" value={cname} onChange={(e) => setCname(e.target.value)} required />
+      <div className="row">
+        <div className="col-6 mb-3">
+          <label className="form-label fw-semibold">ชื่อ</label>
+          <input
+            className="form-control"
+            value={cname}
+            onChange={(e) => setCname(e.target.value)}
+            required
+          />
+        </div>
 
-      <label className="form-label fw-semibold">นามสกุล</label>
-      <input className="form-control mb-3" value={csurname} onChange={(e) => setCsurname(e.target.value)} required />
+        <div className="col-6 mb-3">
+          <label className="form-label fw-semibold">นามสกุล</label>
+          <input
+            className="form-control"
+            value={csurname}
+            onChange={(e) => setCsurname(e.target.value)}
+            required
+          />
+        </div>
+      </div>
 
-      <label className="form-label fw-semibold">เบอร์โทร</label>
+      <label className="form-label fw-semibold">📞 เบอร์โทร</label>
       <input
         className="form-control mb-3"
         value={cphone}
-        onChange={(e) => setCphone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+        onChange={(e) =>
+          setCphone(e.target.value.replace(/\D/g, "").slice(0, 10))
+        }
         required
       />
 
-      <label className="form-label fw-semibold">เลขบัตรประชาชน</label>
+      <label className="form-label fw-semibold">🆔 เลขบัตรประชาชน</label>
       <input
         className="form-control mb-3"
         value={cmumId}
-        onChange={(e) => setCmumId(e.target.value.replace(/\D/g, "").slice(0, 13))}
+        onChange={(e) =>
+          setCmumId(e.target.value.replace(/\D/g, "").slice(0, 13))
+        }
         required
       />
 
-      <label className="form-label fw-semibold">วันที่เข้าพัก</label>
-      <input type="date" className="form-control mb-3" value={checkin} onChange={(e) => setCheckin(e.target.value)} required />
+      <label className="form-label fw-semibold">📅 วันที่เข้าพัก</label>
+      <input
+        type="date"
+        className="form-control mb-3"
+        value={checkin}
+        onChange={(e) => setCheckin(e.target.value)}
+        required
+      />
 
-      <label className="form-label fw-semibold">แนบสลิป</label>
-      <input type="file" accept="image/*" className="form-control mb-3" onChange={(e) => setSlip(e.target.files?.[0] || null)} required />
+      <label className="form-label fw-semibold">แนบสลิป PromptPay</label>
+      <input
+        type="file"
+        accept="image/*"
+        className="form-control mb-3"
+        onChange={(e) => setSlip(e.target.files?.[0] || null)}
+        required
+      />
 
       {slipPreviewUrl && (
         <div className="text-center mb-3">
-          <img src={slipPreviewUrl} style={{ maxWidth: "280px", borderRadius: "10px" }} />
+          <img
+            src={slipPreviewUrl}
+            style={{
+              maxWidth: "300px",
+              borderRadius: "12px",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+            }}
+          />
         </div>
       )}
 
-      <button disabled={loading} className="btn btn-success w-100 fw-semibold">
-        {loading ? "กำลังบันทึก..." : "ยืนยันการจอง"}
+      <button
+        disabled={loading}
+        className="btn w-100 fw-bold py-3 text-white"
+        style={{
+          borderRadius: "14px",
+          background: "linear-gradient(135deg,#7B2CBF,#4B008A)",
+          boxShadow: "0 4px 10px rgba(123,44,191,0.4)",
+        }}
+      >
+        {loading ? "กำลังบันทึก..." : "ยืนยันการจองและอัปโหลดสลิป"}
       </button>
     </form>
   );
