@@ -1,22 +1,20 @@
 // src/App.tsx
 import { Routes, Route } from "react-router-dom";
-import { initLIFF } from "./lib/liff";
 import { useEffect } from "react";
+import { initLIFF } from "./lib/liff";
 
-// 📌 Pages
-import Returned from "./pages/CheckoutRequest";
+// pages
+import ReturnableRooms from "./pages/ReturnableRooms";
 
 export default function App() {
   useEffect(() => {
-    initLIFF(); // ✅ จะเก็บ userId ทันทีที่ login สำเร็จ
+    initLIFF(); // init LIFF + login + เก็บ token
   }, []);
 
   return (
-    <div>
-      {/* ✅ Routing */}
-      <Routes>
-        <Route path="/" element={<Returned />} />
-      </Routes>
-    </div>
+    <Routes>
+      {/* เปิดมาเจอหน้าขอคืนห้องทันที */}
+      <Route path="/" element={<ReturnableRooms />} />
+
   );
 }
