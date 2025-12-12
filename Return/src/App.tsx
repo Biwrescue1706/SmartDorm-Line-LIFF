@@ -8,8 +8,8 @@ import ReturnableRooms from "./pages/ReturnableRooms";
 
 export default function App() {
   useEffect(() => {
-    initLIFF(); // init LIFF + login + เก็บ token
-  }, []);
+  ensureLiffReady();
+}, []);
 
   return (
     <Routes>
