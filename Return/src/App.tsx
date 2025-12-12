@@ -1,7 +1,7 @@
 // src/App.tsx
 import { Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
-import { initLIFF } from "./lib/liff";
+import { ensureLiffReady } from "./lib/liff";
 
 // pages
 import ReturnableRooms from "./pages/ReturnableRooms";
