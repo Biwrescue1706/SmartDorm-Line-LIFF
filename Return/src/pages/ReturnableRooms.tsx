@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
 
 import { API_BASE } from "../config";
-import { refreshLiffToken, logoutLiff } from "../lib/liff";
+import { getSafeAccessToken } from "../lib/liff";
 
 /* =======================
    Types
@@ -20,25 +19,23 @@ type Booking = {
 };
 
 /* =======================
-   Component
+   Page
 ======================= */
 export default function ReturnableRooms() {
-  const nav = useNavigate();
-
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [loading, setLoading] = useState(false);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [query, setQuery] = useState("");
 
   /* =======================
-     1️⃣ ตรวจสอบสิทธิ์ LIFF + /user/me
+     1️⃣ ตรวจสอบสิทธิ์
   ======================= */
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
       try {
-        const token = await refreshLiffToken();
+        const token = await getSafeAccessToken();
         if (!token) throw new Error("no token");
 
         const res = await axios.post(`${API_BASE}/user/me`, {
@@ -50,32 +47,32 @@ export default function ReturnableRooms() {
         }
 
         if (!cancelled) {
-          setCheckingAuth(false); // ✅ ผ่าน
+          setCheckingAuth(false);
         }
       } catch (err) {
-        await logoutLiff(false);
+        console.error("auth error", err);
         Swal.fire(
-          "หมดเวลาการใช้งาน",
-          "กรุณาล็อกอินใหม่อีกครั้ง",
+          "ไม่สามารถตรวจสอบสิทธิ์ได้",
+          "กรุณาลองใหม่อีกครั้ง",
           "warning"
         );
-        nav("/");
+        setCheckingAuth(false);
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [nav]);
+  }, []);
 
   /* =======================
-     2️⃣ โหลดห้องที่คืนได้
+     2️⃣ โหลดห้องคืนได้
   ======================= */
   const fetchReturnableRooms = async () => {
     try {
       setLoading(true);
 
-      const token = await refreshLiffToken();
+      const token = await getSafeAccessToken();
       if (!token) return;
 
       const res = await axios.post(
@@ -95,12 +92,10 @@ export default function ReturnableRooms() {
     }
   };
 
-  /* โหลดหลัง auth ผ่าน */
   useEffect(() => {
     if (!checkingAuth) {
       fetchReturnableRooms();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkingAuth]);
 
   /* =======================
@@ -115,12 +110,7 @@ export default function ReturnableRooms() {
 
   const formatDate = (iso?: string) => {
     if (!iso) return "-";
-    const d = new Date(iso);
-    return d.toLocaleString("th-TH", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+    return new Date(iso).toLocaleDateString("th-TH");
   };
 
   /* =======================
@@ -134,7 +124,6 @@ export default function ReturnableRooms() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#F4F1FA",
           fontWeight: 600,
         }}
       >
@@ -148,32 +137,24 @@ export default function ReturnableRooms() {
   ======================= */
   return (
     <div style={{ padding: 20 }}>
-      <h3 style={{ marginBottom: 12 }}>ห้องที่สามารถขอคืนได้</h3>
+      <h3>ห้องที่สามารถขอคืนได้</h3>
 
-      <div style={{ marginBottom: 12 }}>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="ค้นหาเลขห้อง"
-          style={{
-            padding: "8px 12px",
-            borderRadius: 8,
-            border: "1px solid #ccc",
-            width: 200,
-          }}
-        />
-      </div>
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="ค้นหาเลขห้อง"
+        style={{ padding: 8, marginBottom: 12 }}
+      />
 
       {loading ? (
-        <div>กำลังโหลดข้อมูล…</div>
+        <div>กำลังโหลด…</div>
       ) : filtered.length === 0 ? (
         <div>ไม่พบห้องที่สามารถขอคืนได้</div>
       ) : (
-        <ul style={{ paddingLeft: 16 }}>
+        <ul>
           {filtered.map((b) => (
-            <li key={b.bookingId} style={{ marginBottom: 8 }}>
-              ห้อง {b.room?.number || "-"} —{" "}
-              <small>{formatDate(b.createdAt)}</small>
+            <li key={b.bookingId}>
+              ห้อง {b.room?.number} — {formatDate(b.createdAt)}
             </li>
           ))}
         </ul>
