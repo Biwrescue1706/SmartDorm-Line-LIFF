@@ -1,18 +1,20 @@
 // src/lib/liff.ts
 import liff from "@line/liff";
 import Swal from "sweetalert2";
-import { VITE_LIFF_ID } from "../config";
+
+// ✅ ใช้ env ตรง ๆ (ถูกต้องกับ Vite)
+const LIFF_ID = import.meta.env.VITE_LIFF_ID as string;
 
 let initialized = false;
 
 /* ============================================================
-   1️⃣ เตรียม LIFF ให้พร้อม (ต้องเรียกก่อนใช้งานทุกอย่าง)
+   1️⃣ เตรียม LIFF ให้พร้อม
 ============================================================ */
 export async function ensureLiffReady(): Promise<boolean> {
   try {
     if (!initialized) {
       await liff.init({
-        liffId: VITE_LIFF_ID,
+        liffId: LIFF_ID,
         withLoginOnExternalBrowser: true,
       });
       initialized = true;
@@ -25,25 +27,24 @@ export async function ensureLiffReady(): Promise<boolean> {
 
     return true;
   } catch (err) {
-    console.error("❌ ensureLiffReady error:", err);
+    console.error("ensureLiffReady error:", err);
     return false;
   }
 }
 
 /* ============================================================
-   2️⃣ ดึง accessToken (ตัวเดียวที่ backend ต้องการ)
+   2️⃣ ดึง accessToken ปกติ
 ============================================================ */
 export function getAccessToken(): string | null {
   try {
     return liff.getAccessToken() || null;
-  } catch (err) {
-    console.error("❌ getAccessToken error:", err);
+  } catch {
     return null;
   }
 }
 
 /* ============================================================
-   3️⃣ ดึง token แบบปลอดภัย (หาย → refresh → login ใหม่)
+   3️⃣ ดึง token แบบปลอดภัย (ตัวหลัก)
 ============================================================ */
 export async function getSafeAccessToken(): Promise<string | null> {
   try {
@@ -53,43 +54,45 @@ export async function getSafeAccessToken(): Promise<string | null> {
     let token = liff.getAccessToken();
 
     if (!token) {
-      console.warn("⚠️ accessToken หาย → re-init LIFF");
       await liff.init({
-        liffId: VITE_LIFF_ID,
+        liffId: LIFF_ID,
         withLoginOnExternalBrowser: true,
       });
       token = liff.getAccessToken();
     }
 
     if (!token) {
-      console.error("❌ token หมดอายุ → login ใหม่");
       await logoutLiff(false);
       liff.login();
       return null;
     }
 
     return token;
-  } catch (err) {
-    console.error("❌ getSafeAccessToken error:", err);
+  } catch {
     return null;
   }
 }
 
 /* ============================================================
-   4️⃣ ดึงข้อมูลผู้ใช้ (ใช้แสดงชื่อ ไม่จำเป็นต่อ backend)
+   ✅ alias ให้ตรงกับที่หน้าอื่นเรียก
+   (แก้ error TS2305 ตรงนี้)
+============================================================ */
+export const refreshLiffToken = getSafeAccessToken;
+
+/* ============================================================
+   4️⃣ ดึงข้อมูลผู้ใช้ (optional)
 ============================================================ */
 export async function getUserProfile() {
   try {
     await ensureLiffReady();
     return await liff.getProfile();
-  } catch (err) {
-    console.error("❌ getUserProfile error:", err);
+  } catch {
     return null;
   }
 }
 
 /* ============================================================
-   5️⃣ ออกจากระบบ (Return Room ใช้บ่อย)
+   5️⃣ logout
 ============================================================ */
 export async function logoutLiff(showAlert = true) {
   try {
@@ -103,16 +106,15 @@ export async function logoutLiff(showAlert = true) {
     }
 
     if (showAlert) {
-      await Swal.fire({
-        icon: "success",
-        title: "ออกจากระบบแล้ว",
-        text: "ขอบคุณที่ใช้บริการ SmartDorm",
-        confirmButtonText: "ตกลง",
-      });
+      await Swal.fire(
+        "ออกจากระบบแล้ว",
+        "กรุณาเข้าสู่ระบบใหม่",
+        "warning"
+      );
     }
 
     window.location.href = "/";
   } catch (err) {
-    console.error("❌ logoutLiff error:", err);
+    console.error("logoutLiff error:", err);
   }
 }
