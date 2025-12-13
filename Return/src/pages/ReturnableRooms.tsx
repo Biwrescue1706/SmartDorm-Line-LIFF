@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -22,6 +23,8 @@ type Booking = {
    Page
 ======================= */
 export default function ReturnableRooms() {
+  const nav = useNavigate();
+
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [loading, setLoading] = useState(false);
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -66,7 +69,7 @@ export default function ReturnableRooms() {
   }, []);
 
   /* =======================
-     2️⃣ โหลดห้องคืนได้
+     2️⃣ โหลดห้องที่คืนได้
   ======================= */
   const fetchReturnableRooms = async () => {
     try {
@@ -75,10 +78,9 @@ export default function ReturnableRooms() {
       const token = await getSafeAccessToken();
       if (!token) return;
 
-      const res = await axios.post(
-        `${API_BASE}/user/bookings/returnable`,
-        { accessToken: token }
-      );
+      const res = await axios.post(`${API_BASE}/user/bookings/returnable`, {
+        accessToken: token,
+      });
 
       setBookings(res.data?.bookings || []);
     } catch (err: any) {
@@ -137,13 +139,20 @@ export default function ReturnableRooms() {
   ======================= */
   return (
     <div style={{ padding: 20 }}>
-      <h3>ห้องที่สามารถขอคืนได้</h3>
+      <h3 style={{ marginBottom: 12 }}>ห้องที่สามารถขอคืนได้</h3>
 
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="ค้นหาเลขห้อง"
-        style={{ padding: 8, marginBottom: 12 }}
+        style={{
+          padding: 10,
+          marginBottom: 16,
+          width: "100%",
+          maxWidth: 320,
+          borderRadius: 8,
+          border: "1px solid #ccc",
+        }}
       />
 
       {loading ? (
@@ -151,13 +160,54 @@ export default function ReturnableRooms() {
       ) : filtered.length === 0 ? (
         <div>ไม่พบห้องที่สามารถขอคืนได้</div>
       ) : (
-        <ul>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+            gap: 16,
+          }}
+        >
           {filtered.map((b) => (
-            <li key={b.bookingId}>
-              ห้อง {b.room?.number} — {formatDate(b.createdAt)}
-            </li>
+            <div
+              key={b.bookingId}
+              style={{
+                border: "1px solid #ddd",
+                borderRadius: 14,
+                padding: 16,
+                background: "#fff",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+              }}
+            >
+              <h4 style={{ margin: "0 0 8px" }}>ห้อง {b.room?.number}</h4>
+
+              <div
+                style={{
+                  fontSize: 14,
+                  color: "#666",
+                  marginBottom: 12,
+                }}
+              >
+                วันที่จอง: {formatDate(b.createdAt)}
+              </div>
+
+              <button
+                onClick={() => nav(`/checkout/${b.bookingId}`)}
+                style={{
+                  width: "100%",
+                  padding: "10px 0",
+                  borderRadius: 10,
+                  border: "none",
+                  cursor: "pointer",
+                  background: "#4A0080",
+                  color: "#fff",
+                  fontWeight: 600,
+                }}
+              >
+                คืนห้อง
+              </button>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
