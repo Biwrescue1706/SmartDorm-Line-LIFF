@@ -9,6 +9,13 @@ import { getSafeAccessToken } from "../lib/liff";
 import LiffNav from "../components/LiffNav";
 
 /* =======================
+   SCB THEME
+======================= */
+const SCB_PURPLE = "#4A0080";
+const BG_SOFT = "#F6F2FB";
+const CARD_BG = "#FFFFFF";
+
+/* =======================
    Types
 ======================= */
 type Room = {
@@ -52,7 +59,6 @@ export default function CheckoutDetail() {
         });
 
         if (!res.data?.success) throw new Error("unauthorized");
-
         if (!cancelled) setCheckingAuth(false);
       } catch {
         Swal.fire(
@@ -119,7 +125,6 @@ export default function CheckoutDetail() {
         requestedCheckout: checkoutDate,
       });
 
-      // ✅ ไปหน้า ThankYou
       navigate("/thank-you");
     } catch (err: any) {
       Swal.fire(
@@ -147,6 +152,7 @@ export default function CheckoutDetail() {
             alignItems: "center",
             justifyContent: "center",
             fontWeight: 600,
+            color: SCB_PURPLE,
           }}
         >
           กำลังโหลดข้อมูล…
@@ -164,82 +170,76 @@ export default function CheckoutDetail() {
 
       <div
         style={{
+          minHeight: "100vh",
+          background: BG_SOFT,
           padding: 20,
-          paddingTop: 90, // ✅ กันโดน nav
-          maxWidth: 480,
-          margin: "0 auto",
+          paddingTop: 90,
         }}
       >
-        <h3 style={{ marginBottom: 16 }}>รายละเอียดการคืนห้อง</h3>
+        <div style={{ maxWidth: 480, margin: "0 auto" }}>
+          <h3
+            style={{
+              marginBottom: 16,
+              color: SCB_PURPLE,
+              fontWeight: 700,
+            }}
+          >
+            🏠 รายละเอียดการคืนห้อง
+          </h3>
 
-        <div
-          style={{
-            background: "#fff",
-            borderRadius: 16,
-            padding: 20,
-            boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
-          }}
-        >
-          <div style={{ marginBottom: 12 }}>
-            <strong>ห้อง:</strong> {booking.room?.number ?? "-"}
-          </div>
+          <div
+            style={{
+              background: CARD_BG,
+              borderRadius: 18,
+              padding: 20,
+              boxShadow: "0 6px 16px rgba(74,0,128,0.08)",
+            }}
+          >
+            <div style={{ marginBottom: 12 }}>
+              <strong>ห้อง:</strong> {booking.room?.number ?? "-"}
+            </div>
 
-          <div style={{ marginBottom: 12 }}>
-            <strong>ชื่อผู้เช่า:</strong> {booking.fullName || "-"}
-          </div>
+            <div style={{ marginBottom: 12 }}>
+              <strong>ชื่อผู้เช่า:</strong> {booking.fullName || "-"}
+            </div>
 
-          <div style={{ marginBottom: 12 }}>
-            <strong>เบอร์โทร:</strong> {booking.cphone || "-"}
-          </div>
+            <div style={{ marginBottom: 12 }}>
+              <strong>เบอร์โทร:</strong> {booking.cphone || "-"}
+            </div>
 
-          <div style={{ marginBottom: 16 }}>
-            <strong>วันที่คืนห้อง</strong>
-            <input
-              type="date"
-              value={checkoutDate}
-              onChange={(e) => setCheckoutDate(e.target.value)}
+            <div style={{ marginBottom: 18 }}>
+              <strong>วันที่คืนห้อง</strong>
+              <input
+                type="date"
+                value={checkoutDate}
+                onChange={(e) => setCheckoutDate(e.target.value)}
+                style={{
+                  marginTop: 6,
+                  width: "100%",
+                  padding: 12,
+                  borderRadius: 10,
+                  border: "1px solid #ccc",
+                }}
+              />
+            </div>
+
+            <button
+              onClick={submitCheckout}
+              disabled={loading}
               style={{
-                marginTop: 6,
                 width: "100%",
-                padding: 10,
-                borderRadius: 8,
-                border: "1px solid #ccc",
+                padding: "14px 0",
+                borderRadius: 14,
+                border: "none",
+                background: `linear-gradient(135deg, ${SCB_PURPLE}, #6A1BB1)`,
+                color: "#fff",
+                fontWeight: 700,
+                cursor: "pointer",
               }}
-            />
+            >
+              ยืนยันขอคืนห้อง
+            </button>
           </div>
-
-          <button
-            onClick={submitCheckout}
-            disabled={loading}
-            style={{
-              width: "100%",
-              padding: "12px 0",
-              borderRadius: 12,
-              border: "none",
-              background: "#4A0080",
-              color: "#fff",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            ยืนยันขอคืนห้อง
-          </button>
-
-          {/* 🔙 ย้อนกลับ → กลับหน้า / เท่านั้น */}
-          <button
-            onClick={() => navigate("/")}
-            style={{
-              marginTop: 10,
-              width: "100%",
-              padding: "10px 0",
-              borderRadius: 12,
-              border: "1px solid #ccc",
-              background: "#fff",
-              cursor: "pointer",
-            }}
-          >
-            ย้อนกลับ
-          </button>
         </div>
       </div>
     </>
