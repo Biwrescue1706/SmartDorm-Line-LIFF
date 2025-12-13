@@ -70,7 +70,7 @@ export default function LiffNav() {
             fontWeight: 700,
             letterSpacing: ".3px",
             fontFamily: "Prompt, Segoe UI, sans-serif",
-            textShadow: "0 1px 3px rgba(0,0,0,0.35)",
+            textShadow: "0 1px 3px #ffffffff",
           }}
         >
           🏫 SmartDorm
