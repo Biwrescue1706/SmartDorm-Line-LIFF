@@ -79,7 +79,7 @@ export default function LiffNav() {
         </span>
 
         <img
-          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
+          src="/assets/SmartDorm.webp"
           alt="SmartDorm Logo"
           style={{
             width: "32px",
