@@ -4,6 +4,7 @@ import { ensureLiffReady } from "./lib/liff";
 
 import ReturnableRooms from "./pages/ReturnableRooms";
 import CheckoutDetail from "./pages/CheckoutDetail";
+import ThankYou from "./pages/ThankYou";
 
 export default function App() {
   useEffect(() => {
@@ -14,6 +15,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<ReturnableRooms />} />
       <Route path="/checkout/:bookingId" element={<CheckoutDetail />} />
+      <Route path="/thank-you" element={<ThankYou />} />
     </Routes>
   );
 }

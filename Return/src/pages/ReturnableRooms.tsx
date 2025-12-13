@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 
 import { API_BASE } from "../config";
 import { getSafeAccessToken } from "../lib/liff";
+import LiffNav from "../components/LiffNav";
 
 /* =======================
    Types
@@ -49,9 +50,7 @@ export default function ReturnableRooms() {
           throw new Error("unauthorized");
         }
 
-        if (!cancelled) {
-          setCheckingAuth(false);
-        }
+        if (!cancelled) setCheckingAuth(false);
       } catch (err) {
         console.error("auth error", err);
         Swal.fire(
@@ -106,7 +105,7 @@ export default function ReturnableRooms() {
   const filtered = useMemo(() => {
     if (!query.trim()) return bookings;
     return bookings.filter((b) =>
-      (b.room?.number || "").includes(query.trim())
+      (b.room?.number ?? "").includes(query.trim())
     );
   }, [bookings, query]);
 
@@ -120,17 +119,21 @@ export default function ReturnableRooms() {
   ======================= */
   if (checkingAuth) {
     return (
-      <div
-        style={{
-          height: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontWeight: 600,
-        }}
-      >
-        กำลังตรวจสอบสิทธิ์…
-      </div>
+      <>
+        <LiffNav />
+        <div
+          style={{
+            height: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontWeight: 600,
+            paddingTop: 80,
+          }}
+        >
+          กำลังตรวจสอบสิทธิ์…
+        </div>
+      </>
     );
   }
 
@@ -138,77 +141,92 @@ export default function ReturnableRooms() {
      Render
   ======================= */
   return (
-    <div style={{ padding: 20 }}>
-      <h3 style={{ marginBottom: 12 }}>ห้องที่สามารถขอคืนได้</h3>
+    <>
+      <LiffNav />
 
-      <input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="ค้นหาเลขห้อง"
+      <div
         style={{
-          padding: 10,
-          marginBottom: 16,
-          width: "100%",
-          maxWidth: 320,
-          borderRadius: 8,
-          border: "1px solid #ccc",
+          padding: 20,
+          paddingTop: 90, // ✅ เว้นที่ให้ Nav
+          maxWidth: 900,
+          margin: "0 auto",
         }}
-      />
+      >
+        <h3 style={{ marginBottom: 12 }}>ห้องที่สามารถขอคืนได้</h3>
 
-      {loading ? (
-        <div>กำลังโหลด…</div>
-      ) : filtered.length === 0 ? (
-        <div>ไม่พบห้องที่สามารถขอคืนได้</div>
-      ) : (
-        <div
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="ค้นหาเลขห้อง"
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-            gap: 16,
+            padding: 10,
+            marginBottom: 16,
+            width: "100%",
+            maxWidth: 320,
+            borderRadius: 8,
+            border: "1px solid #ccc",
           }}
-        >
-          {filtered.map((b) => (
-            <div
-              key={b.bookingId}
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: 14,
-                padding: 16,
-                background: "#fff",
-                boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
-              }}
-            >
-              <h4 style={{ margin: "0 0 8px" }}>ห้อง {b.room?.number}</h4>
+        />
 
+        {loading ? (
+          <div>กำลังโหลด…</div>
+        ) : filtered.length === 0 ? (
+          <div>ไม่พบห้องที่สามารถขอคืนได้</div>
+        ) : (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+              gap: 16,
+            }}
+          >
+            {filtered.map((b) => (
               <div
+                key={b.bookingId}
                 style={{
-                  fontSize: 14,
-                  color: "#666",
-                  marginBottom: 12,
+                  border: "1px solid #ddd",
+                  borderRadius: 14,
+                  padding: 16,
+                  background: "#fff",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
                 }}
               >
-                วันที่จอง: {formatDate(b.createdAt)}
-              </div>
+                <h4 style={{ margin: "0 0 8px" }}>
+                  ห้อง {b.room?.number ?? "-"}
+                </h4>
 
-              <button
-                onClick={() => nav(`/checkout/${b.bookingId}`)}
-                style={{
-                  width: "100%",
-                  padding: "10px 0",
-                  borderRadius: 10,
-                  border: "none",
-                  cursor: "pointer",
-                  background: "#4A0080",
-                  color: "#fff",
-                  fontWeight: 600,
-                }}
-              >
-                คืนห้อง
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+                <div
+                  style={{
+                    fontSize: 14,
+                    color: "#666",
+                    marginBottom: 12,
+                  }}
+                >
+                  วันที่จอง: {formatDate(b.createdAt)}
+                </div>
+
+                <button
+                  disabled={loading}
+                  onClick={() => nav(`/checkout/${b.bookingId}`)}
+                  style={{
+                    width: "100%",
+                    padding: "10px 0",
+                    borderRadius: 10,
+                    border: "none",
+                    cursor: loading ? "not-allowed" : "pointer",
+                    background: "#4A0080",
+                    color: "#fff",
+                    fontWeight: 600,
+                    opacity: loading ? 0.6 : 1,
+                  }}
+                >
+                  คืนห้อง
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 }
