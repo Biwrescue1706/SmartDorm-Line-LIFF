@@ -29,8 +29,6 @@ export function useRooms(includeBooked = false) {
       setRooms(filtered);
     } catch (error) {
       Swal.fire({
-        toast: true,
-        position: "top-end",
         icon: "error",
         title: "โหลดข้อมูลห้องไม่สำเร็จ",
         showConfirmButton: false,
