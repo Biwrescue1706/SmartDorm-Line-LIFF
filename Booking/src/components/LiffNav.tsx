@@ -26,7 +26,7 @@ export default function LiffNav() {
         alignItems: "center",
         justifyContent: "center",
         boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
-        zIndex: 2000,
+        zIndex: 1000,
       }}
     >
       {/* ปุ่มย้อนกลับ */}
@@ -77,7 +77,7 @@ export default function LiffNav() {
         </span>
 
         <img
-          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
+          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.webp"
           alt="SmartDorm Logo"
           style={{
             width: "32px",
