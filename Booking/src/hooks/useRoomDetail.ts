@@ -1,3 +1,4 @@
+
 import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { Room } from "../types/Room";
@@ -30,8 +31,6 @@ export function useRoomDetail() {
       .catch(() => {
         setError("โหลดข้อมูลห้องไม่สำเร็จ");
         Swal.fire({
-          toast: true,
-          position: "top-end",
           icon: "error",
           title: "โหลดข้อมูลห้องไม่สำเร็จ",
           showConfirmButton: false,
