@@ -112,8 +112,6 @@ function UploadSlipForm({
 
   const toast = (text: string, icon: any = "warning") =>
     Swal.fire({
-      toast: true,
-      position: "top-end",
       icon,
       title: text,
       timer: 2000,
