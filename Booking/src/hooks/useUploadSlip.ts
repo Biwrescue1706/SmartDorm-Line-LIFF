@@ -15,8 +15,6 @@ export const useUploadSlip = () => {
       });
 
       Swal.fire({
-        toast: true,
-        position: "top-end",
         icon: "success",
         title: "อัปโหลดสลิปสำเร็จ",
         showConfirmButton: false,
@@ -26,8 +24,6 @@ export const useUploadSlip = () => {
       return res.data;
     } catch (err: any) {
       Swal.fire({
-        toast: true,
-        position: "top-end",
         icon: "error",
         title: "อัปโหลดสลิปไม่สำเร็จ",
         text:
