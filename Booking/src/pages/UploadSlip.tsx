@@ -1,4 +1,3 @@
-// Booking/src/pages/UploadSlip.tsx
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -7,6 +6,7 @@ import { ensureLiffReady, getAccessToken, logoutLiff } from "../lib/liff";
 import { API_BASE } from "../config";
 import type { Room } from "../types/Room";
 import LiffNav from "../components/LiffNav";
+import TitleSelect from "../components/TitleSelect";
 
 export default function UploadSlip() {
   const { state } = useLocation();
@@ -79,9 +79,8 @@ export default function UploadSlip() {
   );
 }
 
-// ===============================================================
-//                 FORM อัปโหลดข้อมูล + สลิป
-// ===============================================================
+/* ================= FORM ================= */
+
 function UploadSlipForm({
   room,
   accessToken,
@@ -120,6 +119,7 @@ function UploadSlipForm({
 
   const validate = () => {
     if (!slip) return toast("กรุณาแนบสลิป");
+    if (!ctitle) return toast("กรุณาเลือกคำนำหน้า");
     if (!cname.trim()) return toast("กรุณากรอกชื่อ");
     if (!csurname.trim()) return toast("กรุณากรอกนามสกุล");
     if (cphone.length !== 10) return toast("เบอร์โทรต้อง 10 หลัก");
@@ -157,7 +157,11 @@ function UploadSlipForm({
       toast("จองสำเร็จ", "success");
       setTimeout(() => nav("/thankyou"), 900);
     } catch (err: any) {
-      Swal.fire("เกิดข้อผิดพลาด", err.response?.data?.error || err.message, "error");
+      Swal.fire(
+        "เกิดข้อผิดพลาด",
+        err.response?.data?.error || err.message,
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -175,24 +179,13 @@ function UploadSlipForm({
         กรอกข้อมูลเพื่อยืนยันการจอง
       </h3>
 
-      <label className="form-label fw-semibold">🏠 ห้องที่เลือก</label>
+      <label className="form-label fw-semibold">ห้องที่เลือก</label>
       <input className="form-control mb-3" value={room.number} readOnly />
 
       <label className="form-label fw-semibold">LINE ผู้ใช้</label>
       <input className="form-control mb-3" value={userName} readOnly />
 
-      <label className="form-label fw-semibold">คำนำหน้า</label>
-      <select
-        className="form-select mb-3"
-        required
-        value={ctitle}
-        onChange={(e) => setCtitle(e.target.value)}
-      >
-        <option value="">-- เลือก --</option>
-        <option>นาย</option>
-        <option>นาง</option>
-        <option>น.ส.</option>
-      </select>
+      <TitleSelect value={ctitle} onChange={setCtitle} />
 
       <div className="row">
         <div className="col-6 mb-3">
@@ -216,7 +209,7 @@ function UploadSlipForm({
         </div>
       </div>
 
-      <label className="form-label fw-semibold">📞 เบอร์โทร</label>
+      <label className="form-label fw-semibold">เบอร์โทร</label>
       <input
         className="form-control mb-3"
         value={cphone}
@@ -226,7 +219,7 @@ function UploadSlipForm({
         required
       />
 
-      <label className="form-label fw-semibold">🆔 เลขบัตรประชาชน</label>
+      <label className="form-label fw-semibold">เลขบัตรประชาชน</label>
       <input
         className="form-control mb-3"
         value={cmumId}
@@ -236,7 +229,7 @@ function UploadSlipForm({
         required
       />
 
-      <label className="form-label fw-semibold">📅 วันที่เข้าพัก</label>
+      <label className="form-label fw-semibold">วันที่เข้าพัก</label>
       <input
         type="date"
         className="form-control mb-3"
@@ -245,7 +238,7 @@ function UploadSlipForm({
         required
       />
 
-      <label className="form-label fw-semibold">แนบสลิป PromptPay</label>
+      <label className="form-label fw-semibold">แนบสลิป</label>
       <input
         type="file"
         accept="image/*"
@@ -258,60 +251,14 @@ function UploadSlipForm({
         <div className="text-center mb-3">
           <img
             src={slipPreviewUrl}
-            style={{
-              maxWidth: "300px",
-              borderRadius: "12px",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-            }}
+            style={{ maxWidth: "300px", borderRadius: "12px" }}
           />
         </div>
       )}
 
-      {/* ===== ปุ่มยืนยัน + ปุ่มยกเลิก ===== */}
-      <div className="d-flex gap-2 mt-4">
-        {/* ปุ่มยกเลิก */}
-        <button
-          type="button"
-          className="btn w-50 fw-semibold py-3 text-dark"
-          style={{
-            borderRadius: "14px",
-            background: "#e9ecef",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-          }}
-          onClick={() => {
-            Swal.fire({
-              title: "คุณต้องการยกเลิกการจองใช่หรือไม่?",
-              text: "ข้อมูลที่กรอกจะไม่ถูกบันทึก",
-              icon: "question",
-              showCancelButton: true,
-              confirmButtonText: "ใช่",
-              cancelButtonText: "ไม่",
-              reverseButtons: true,
-              confirmButtonColor: "#d6336c",
-              cancelButtonColor: "#6c757d",
-            }).then((res) => {
-              if (res.isConfirmed) {
-                nav("/");
-              }
-            });
-          }}
-        >
-          ยกเลิก
-        </button>
-
-        {/* ปุ่มยืนยัน */}
-        <button
-          disabled={loading}
-          className="btn w-50 fw-bold py-3 text-white"
-          style={{
-            borderRadius: "14px",
-            background: "linear-gradient(135deg,#7B2CBF,#4B008A)",
-            boxShadow: "0 4px 10px rgba(123,44,191,0.4)",
-          }}
-        >
-          {loading ? "กำลังบันทึก..." : "ยืนยันการจอง"}
-        </button>
-      </div>
+      <button disabled={loading} className="btn btn-primary w-100 py-3">
+        {loading ? "กำลังบันทึก..." : "ยืนยันการจอง"}
+      </button>
     </form>
   );
 }
