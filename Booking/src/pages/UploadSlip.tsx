@@ -137,6 +137,13 @@ function UploadSlipForm({
       toast("กรุณาแนบสลิป");
       return false;
     }
+
+    // จำกัดไฟล์ไม่เกิน 5MB
+    if (slip.size > 5 * 1024 * 1024) {
+      toast("ขนาดไฟล์ต้องไม่เกิน 5MB");
+      return false;
+    }
+
     if (!ctitle) {
       toast("กรุณาเลือกคำนำหน้า");
       return false;
@@ -150,14 +157,12 @@ function UploadSlipForm({
       return false;
     }
 
-    // ตรวจเบอร์โทร ต้องครบ 10 ตัวเลข
     const phoneDigits = cphone.replace(/\D/g, "");
     if (phoneDigits.length !== 10) {
       toast("เบอร์โทรต้องครบ 10 ตัวเลข");
       return false;
     }
 
-    // ตรวจเลขบัตรประชาชน ต้องครบ 13 ตัวเลข
     const idDigits = cmumId.replace(/\D/g, "");
     if (idDigits.length !== 13) {
       toast("เลขบัตรประชาชนต้องครบ 13 ตัวเลข");
@@ -175,12 +180,11 @@ function UploadSlipForm({
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    if (!validate()) return; // ❌ ถ้าไม่ครบทุกเงื่อนไข จะไม่บันทึก
+    if (!validate()) return;
 
     setLoading(true);
 
     try {
-      // สร้าง Booking
       const res = await axios.post(`${API_BASE}/booking/create`, {
         accessToken,
         roomId: room.roomId,
@@ -194,7 +198,6 @@ function UploadSlipForm({
 
       const bookingId = res.data.booking.bookingId;
 
-      // อัพโหลดสลิป
       const form = new FormData();
       form.append("slip", slip!);
 
@@ -203,6 +206,17 @@ function UploadSlipForm({
       });
 
       toast("จองสำเร็จ", "success");
+
+      // reset form
+      setCtitle("");
+      setCname("");
+      setCsurname("");
+      setCphone("");
+      setCmumId("");
+      setCheckin("");
+      setSlip(null);
+      setSlipPreviewUrl(null);
+
       setTimeout(() => nav("/thankyou"), 900);
     } catch (err: any) {
       Swal.fire(
@@ -296,8 +310,22 @@ function UploadSlipForm({
         </div>
       )}
 
-      <button disabled={loading} className="btn btn-primary w-100 py-3">
-        {loading ? "กำลังบันทึก..." : "ยืนยันการจอง"}
+      <button
+        disabled={loading}
+        className="btn btn-primary w-100 py-3"
+        type="submit"
+      >
+        {loading ? (
+          <>
+            <span
+              className="spinner-border spinner-border-sm me-2"
+              role="status"
+            />
+            กำลังบันทึก...
+          </>
+        ) : (
+          "ยืนยันการจอง"
+        )}
       </button>
     </form>
   );
