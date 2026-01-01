@@ -1,3 +1,4 @@
+// src/pages/UploadSlip.tsx
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -98,8 +99,10 @@ function UploadSlipForm({
   const [cmumId, setCmumId] = useState("");
   const [checkin, setCheckin] = useState("");
   const [slip, setSlip] = useState<File | null>(null);
+  const [slipPreviewUrl, setSlipPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // โหลด LINE Profile
   useEffect(() => {
     fetch("https://api.line.me/v2/profile", {
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -109,6 +112,17 @@ function UploadSlipForm({
       .catch(() => {});
   }, [accessToken]);
 
+  // สร้าง Preview ของสลิป และป้องกัน memory leak
+  useEffect(() => {
+    if (!slip) {
+      setSlipPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(slip);
+    setSlipPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [slip]);
+
   const toast = (text: string, icon: any = "warning") =>
     Swal.fire({
       icon,
@@ -117,23 +131,56 @@ function UploadSlipForm({
       showConfirmButton: false,
     });
 
+  // =================== Validation ครบทุกฟิลด์ ===================
   const validate = () => {
-    if (!slip) return toast("กรุณาแนบสลิป");
-    if (!ctitle) return toast("กรุณาเลือกคำนำหน้า");
-    if (!cname.trim()) return toast("กรุณากรอกชื่อ");
-    if (!csurname.trim()) return toast("กรุณากรอกนามสกุล");
-    if (cphone.length !== 10) return toast("เบอร์โทรต้อง 10 หลัก");
-    if (cmumId.length !== 13) return toast("เลขบัตรต้อง 13 หลัก");
-    if (!checkin) return toast("กรุณาเลือกวันที่เข้าพัก");
+    if (!slip) {
+      toast("กรุณาแนบสลิป");
+      return false;
+    }
+    if (!ctitle) {
+      toast("กรุณาเลือกคำนำหน้า");
+      return false;
+    }
+    if (!cname.trim()) {
+      toast("กรุณากรอกชื่ออย่างน้อย 1 ตัวอักษร");
+      return false;
+    }
+    if (!csurname.trim()) {
+      toast("กรุณากรอกนามสกุลอย่างน้อย 1 ตัวอักษร");
+      return false;
+    }
+
+    // ตรวจเบอร์โทร ต้องครบ 10 ตัวเลข
+    const phoneDigits = cphone.replace(/\D/g, "");
+    if (phoneDigits.length !== 10) {
+      toast("เบอร์โทรต้องครบ 10 ตัวเลข");
+      return false;
+    }
+
+    // ตรวจเลขบัตรประชาชน ต้องครบ 13 ตัวเลข
+    const idDigits = cmumId.replace(/\D/g, "");
+    if (idDigits.length !== 13) {
+      toast("เลขบัตรประชาชนต้องครบ 13 ตัวเลข");
+      return false;
+    }
+
+    if (!checkin) {
+      toast("กรุณาเลือกวันที่เข้าพัก");
+      return false;
+    }
+
     return true;
   };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    if (!validate()) return;
+
+    if (!validate()) return; // ❌ ถ้าไม่ครบทุกเงื่อนไข จะไม่บันทึก
+
     setLoading(true);
 
     try {
+      // สร้าง Booking
       const res = await axios.post(`${API_BASE}/booking/create`, {
         accessToken,
         roomId: room.roomId,
@@ -147,6 +194,7 @@ function UploadSlipForm({
 
       const bookingId = res.data.booking.bookingId;
 
+      // อัพโหลดสลิป
       const form = new FormData();
       form.append("slip", slip!);
 
@@ -166,8 +214,6 @@ function UploadSlipForm({
       setLoading(false);
     }
   };
-
-  const slipPreviewUrl = slip ? URL.createObjectURL(slip) : null;
 
   return (
     <form
@@ -194,7 +240,6 @@ function UploadSlipForm({
             className="form-control"
             value={cname}
             onChange={(e) => setCname(e.target.value)}
-            required
           />
         </div>
 
@@ -204,7 +249,6 @@ function UploadSlipForm({
             className="form-control"
             value={csurname}
             onChange={(e) => setCsurname(e.target.value)}
-            required
           />
         </div>
       </div>
@@ -216,7 +260,6 @@ function UploadSlipForm({
         onChange={(e) =>
           setCphone(e.target.value.replace(/\D/g, "").slice(0, 10))
         }
-        required
       />
 
       <label className="form-label fw-semibold">เลขบัตรประชาชน</label>
@@ -226,7 +269,6 @@ function UploadSlipForm({
         onChange={(e) =>
           setCmumId(e.target.value.replace(/\D/g, "").slice(0, 13))
         }
-        required
       />
 
       <label className="form-label fw-semibold">วันที่เข้าพัก</label>
@@ -235,7 +277,6 @@ function UploadSlipForm({
         className="form-control mb-3"
         value={checkin}
         onChange={(e) => setCheckin(e.target.value)}
-        required
       />
 
       <label className="form-label fw-semibold">แนบสลิป</label>
@@ -244,7 +285,6 @@ function UploadSlipForm({
         accept="image/*"
         className="form-control mb-3"
         onChange={(e) => setSlip(e.target.files?.[0] || null)}
-        required
       />
 
       {slipPreviewUrl && (
