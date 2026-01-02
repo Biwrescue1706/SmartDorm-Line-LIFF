@@ -233,7 +233,7 @@ export default function BillDetail() {
           </p>
 
           {/* BUTTONS */}
-          {bill.status === 0 && (
+          {bill.billStatus === 0 && (
             <div className="d-flex justify-content-center mt-5">
               <button
                 className="btn px-4 py-2"
