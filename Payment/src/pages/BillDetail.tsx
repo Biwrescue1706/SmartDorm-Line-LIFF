@@ -23,7 +23,7 @@ interface BillDetail {
   eUnits: number;
   fine: number;
   dueDate: string;
-  status: number;
+  billStatus: number;
   room: { number: string };
   booking: { fullName: string };
 }
