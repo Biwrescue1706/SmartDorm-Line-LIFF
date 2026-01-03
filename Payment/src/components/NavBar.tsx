@@ -64,7 +64,7 @@ export default function NavBar() {
       >
         <span style={{ fontWeight: 700, fontSize: "1.3rem" }}>🏫 SmartDorm</span>
         <img
-          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.png"
+          src="https://smartdorm-admin.biwbong.shop/assets/SmartDorm.webp"
           alt="SmartDorm Logo"
           style={{
             width: "32px",
