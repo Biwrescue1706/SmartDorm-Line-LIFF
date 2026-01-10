@@ -4,7 +4,7 @@ import { ensureLiffReady, logoutLiff } from "../lib/liff";
 import LiffNav from "../components/LiffNav";
 
 export default function ThankYou() {
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(7);
 
   useEffect(() => {
     // ⏳ นับถอยหลัง

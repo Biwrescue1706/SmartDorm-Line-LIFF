@@ -1,112 +1,18 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import Swal from "sweetalert2";
-import { API_BASE } from "../config";
-import { getSafeAccessToken } from "../lib/liff";
 import LiffNav from "../components/LiffNav";
+import { useReturnableRooms } from "../hooks/useReturnableRooms";
 
-//    SCB THEME
 const SCB_PURPLE = "#4A0080";
 const SCB_GOLD = "#F7C600";
 const BG_SOFT = "#F6F2FB";
 const CARD_BG = "#FFFFFF";
 const TEXT_DARK = "#2D1A47";
 
-// /* =======================
-//    Types
-// ======================= */
-type Room = {
-  number: string;
-};
-
-type Booking = {
-  bookingId: string;
-  createdAt?: string;
-  room?: Room | null;
-  bookingDate?: string;
-  checkinAt?: string;
-};
-
-// /* =======================
-//    Page
-// ======================= */
 export default function ReturnableRooms() {
   const nav = useNavigate();
+  const { checkingAuth, loading, bookings, formatDate } =
+    useReturnableRooms();
 
-  const [checkingAuth, setCheckingAuth] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [bookings, setBookings] = useState<Booking[]>([]);
-
-  // /* =======================
-  //    1️⃣ ตรวจสอบสิทธิ์
-  // ======================= */
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const token = await getSafeAccessToken();
-        if (!token) throw new Error("no token");
-
-        const res = await axios.post(`${API_BASE}/user/me`, {
-          accessToken: token,
-        });
-
-        if (!res.data?.success) throw new Error("unauthorized");
-        if (!cancelled) setCheckingAuth(false);
-      } catch {
-        Swal.fire("ไม่สามารถตรวจสอบสิทธิ์ได้", "กรุณาลองใหม่", "warning");
-        setCheckingAuth(false);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  // /* =======================
-  //    2️⃣ โหลดห้องที่คืนได้
-  // ======================= */
-  const fetchReturnableRooms = async () => {
-    try {
-      setLoading(true);
-      const token = await getSafeAccessToken();
-      if (!token) return;
-
-      const res = await axios.post(`${API_BASE}/user/bookings/returnable`, {
-        accessToken: token,
-      });
-
-      setBookings(res.data?.bookings || []);
-    } catch (err: any) {
-      Swal.fire(
-        "เกิดข้อผิดพลาด",
-        err?.response?.data?.error || "โหลดข้อมูลไม่สำเร็จ",
-        "error"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!checkingAuth) fetchReturnableRooms();
-  }, [checkingAuth]);
-
-  const formatDate = (iso?: string) => {
-    if (!iso) return "-";
-    return new Date(iso).toLocaleDateString("th-TH", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  };
-
-  // /* =======================
-  //    Loading Guard
-  // ======================= */
   if (checkingAuth) {
     return (
       <>
@@ -128,9 +34,6 @@ export default function ReturnableRooms() {
     );
   }
 
-  // /* =======================
-  //    Render
-  // ======================= */
   return (
     <>
       <LiffNav />
@@ -144,13 +47,7 @@ export default function ReturnableRooms() {
         }}
       >
         <div style={{ maxWidth: 960, margin: "0 auto" }}>
-          <h2
-            style={{
-              color: SCB_PURPLE,
-              fontWeight: 700,
-              marginBottom: 6,
-            }}
-          >
+          <h2 style={{ color: SCB_PURPLE, fontWeight: 700, marginBottom: 6 }}>
             🏠 ห้องที่สามารถขอคืนได้
           </h2>
 
@@ -195,23 +92,11 @@ export default function ReturnableRooms() {
                       ห้อง {b.room?.number ?? "-"}
                     </h2>
 
-                    <h4
-                      style={{
-                        fontSize: 14,
-                        marginTop: 6,
-                        color: TEXT_DARK,
-                      }}
-                    >
+                    <h4 style={{ fontSize: 14, marginTop: 6, color: TEXT_DARK }}>
                       วันที่จอง : {formatDate(b.bookingDate)}
                     </h4>
 
-                    <h4
-                      style={{
-                        fontSize: 14,
-                        marginTop: 6,
-                        color: TEXT_DARK,
-                      }}
-                    >
+                    <h4 style={{ fontSize: 14, marginTop: 6, color: TEXT_DARK }}>
                       วันเข้าพักจริง : {formatDate(b.checkinAt)}
                     </h4>
                   </div>
