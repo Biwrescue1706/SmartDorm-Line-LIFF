@@ -1,3 +1,4 @@
+// src/types/checkout.ts
 export type Room = {
   number: string;
 };

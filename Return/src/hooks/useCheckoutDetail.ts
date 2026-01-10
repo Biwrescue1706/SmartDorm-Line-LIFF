@@ -1,3 +1,4 @@
+// src/hooks/useCheckoutDetail.ts
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -93,7 +94,7 @@ export function useCheckoutDetail() {
 
       await axios.put(`${API_BASE}/checkout/${bookingId}/request`, {
         accessToken: token,
-        requestedCheckout: checkoutDate,
+        checkout: checkoutDate,
       });
 
       navigate("/thank-you");

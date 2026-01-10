@@ -1,3 +1,4 @@
+// src/pages/CheckoutDetail.tsx
 import LiffNav from "../components/LiffNav";
 import { useCheckoutDetail } from "../hooks/useCheckoutDetail";
 

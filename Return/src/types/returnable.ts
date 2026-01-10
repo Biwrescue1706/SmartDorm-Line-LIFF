@@ -1,3 +1,4 @@
+// src/types/returnable.ts
 export type Room = {
   number: string;
 };

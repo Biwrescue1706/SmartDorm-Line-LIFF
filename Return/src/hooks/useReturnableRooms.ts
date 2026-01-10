@@ -1,3 +1,4 @@
+// src/hooks/useReturnableRooms.ts
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -43,7 +44,7 @@ export function useReturnableRooms() {
       const token = await getSafeAccessToken();
       if (!token) return;
 
-      const res = await axios.post(`${API_BASE}/user/bookings/returnable`, {
+      const res = await axios.post(`${API_BASE}/checkout/myBookings`, {
         accessToken: token,
       });
 
