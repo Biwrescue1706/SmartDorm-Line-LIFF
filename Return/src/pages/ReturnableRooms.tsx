@@ -2,23 +2,20 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
-
 import { API_BASE } from "../config";
 import { getSafeAccessToken } from "../lib/liff";
 import LiffNav from "../components/LiffNav";
 
-/* =======================
-   SCB THEME
-======================= */
+//    SCB THEME
 const SCB_PURPLE = "#4A0080";
 const SCB_GOLD = "#F7C600";
 const BG_SOFT = "#F6F2FB";
 const CARD_BG = "#FFFFFF";
 const TEXT_DARK = "#2D1A47";
 
-/* =======================
-   Types
-======================= */
+// /* =======================
+//    Types
+// ======================= */
 type Room = {
   number: string;
 };
@@ -27,11 +24,13 @@ type Booking = {
   bookingId: string;
   createdAt?: string;
   room?: Room | null;
+  bookingDate?: string;
+  checkinAt?: string;
 };
 
-/* =======================
-   Page
-======================= */
+// /* =======================
+//    Page
+// ======================= */
 export default function ReturnableRooms() {
   const nav = useNavigate();
 
@@ -39,9 +38,9 @@ export default function ReturnableRooms() {
   const [loading, setLoading] = useState(false);
   const [bookings, setBookings] = useState<Booking[]>([]);
 
-  /* =======================
-     1️⃣ ตรวจสอบสิทธิ์
-  ======================= */
+  // /* =======================
+  //    1️⃣ ตรวจสอบสิทธิ์
+  // ======================= */
   useEffect(() => {
     let cancelled = false;
 
@@ -67,9 +66,9 @@ export default function ReturnableRooms() {
     };
   }, []);
 
-  /* =======================
-     2️⃣ โหลดห้องที่คืนได้
-  ======================= */
+  // /* =======================
+  //    2️⃣ โหลดห้องที่คืนได้
+  // ======================= */
   const fetchReturnableRooms = async () => {
     try {
       setLoading(true);
@@ -105,9 +104,9 @@ export default function ReturnableRooms() {
     });
   };
 
-  /* =======================
-     Loading Guard
-  ======================= */
+  // /* =======================
+  //    Loading Guard
+  // ======================= */
   if (checkingAuth) {
     return (
       <>
@@ -129,9 +128,9 @@ export default function ReturnableRooms() {
     );
   }
 
-  /* =======================
-     Render
-  ======================= */
+  // /* =======================
+  //    Render
+  // ======================= */
   return (
     <>
       <LiffNav />
@@ -186,7 +185,7 @@ export default function ReturnableRooms() {
                   }}
                 >
                   <div>
-                    <h3
+                    <h2
                       style={{
                         margin: 0,
                         color: SCB_PURPLE,
@@ -194,17 +193,27 @@ export default function ReturnableRooms() {
                       }}
                     >
                       ห้อง {b.room?.number ?? "-"}
-                    </h3>
+                    </h2>
 
-                    <div
+                    <h4
                       style={{
                         fontSize: 14,
                         marginTop: 6,
                         color: TEXT_DARK,
                       }}
                     >
-                      วันที่จอง: {formatDate(b.createdAt)}
-                    </div>
+                      วันที่จอง : {formatDate(b.bookingDate)}
+                    </h4>
+
+                    <h4
+                      style={{
+                        fontSize: 14,
+                        marginTop: 6,
+                        color: TEXT_DARK,
+                      }}
+                    >
+                      วันเข้าพักจริง : {formatDate(b.checkinAt)}
+                    </h4>
                   </div>
 
                   <button
@@ -216,7 +225,7 @@ export default function ReturnableRooms() {
                       borderRadius: 14,
                       border: "none",
                       cursor: "pointer",
-                      fontWeight: 700,
+                      fontWeight: 800,
                       background: `linear-gradient(135deg, ${SCB_PURPLE}, #6A1BB1)`,
                       color: SCB_GOLD,
                     }}
