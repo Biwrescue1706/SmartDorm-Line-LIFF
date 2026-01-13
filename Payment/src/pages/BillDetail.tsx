@@ -213,19 +213,24 @@ export default function BillDetail() {
 <td className="text-center" >-</td>
 <td className="text-center" >{bill.service.toLocaleString()}</td>
 </tr>
-              <tr>
-<td className="text-center" >ค่าปรับ</td>
-<td className="text-center" >-</td>
-<td className="text-center" >-</td>
-<td className="text-center" >-</td>
-<td className="text-center" >{bill.fine.toLocaleString()}</td>
-</tr>
-              <tr style={{ background: "#F8FAFC", fontWeight: 600 }}>
-                <td className="text-center">ยอดรวมทั้งหมด</td>
-                <td colSpan={3}></td>
-                <td style={{ color: "#000000" }}>{bill.total.toLocaleString()}</td>
-              </tr>
-            </tbody>
+              {/* ค่าปรับ – ผสาน 3 ช่อง */}
+  <tr>
+    <td className="text-center">ค่าปรับ</td>
+    <td className="text-center" colSpan={3}>
+      ปรับ {bill.overdueDays} วัน
+    </td>
+    <td className="text-center">{bill.fine.toLocaleString()}</td>
+  </tr>
+              {/* ยอดรวม – ผสานฝั่งซ้ายเพิ่ม */}
+  <tr style={{ background: "#F8FAFC", fontWeight: 600 }}>
+    <td className="text-center" colSpan={4}>
+      ยอดรวมทั้งหมด
+    </td>
+    <td className="text-center" style={{ color: "#000000" }}>
+      {bill.total.toLocaleString()}
+    </td>
+  </tr>
+</tbody>
           </table>
 
           <p className="text-center mt-2" style={{ color: "#000000" }}>
