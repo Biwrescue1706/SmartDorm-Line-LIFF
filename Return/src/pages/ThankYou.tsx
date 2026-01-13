@@ -29,6 +29,10 @@ export default function ThankYou() {
       <LiffNav />
 
       {/* ===== PAGE BG ===== */}
+      <main className="main-content flex-grow-1 px-2 py-3 mt-5 mt-lg-7">
+        <div className="mx-auto" style={{ maxWidth: "1400px" }}>
+
+        </div>
       <div
         className="d-flex justify-content-center align-items-center text-center"
         style={{
@@ -135,6 +139,7 @@ export default function ThankYou() {
           }
         `}
       </style>
+      </main>
     </>
   );
 }
