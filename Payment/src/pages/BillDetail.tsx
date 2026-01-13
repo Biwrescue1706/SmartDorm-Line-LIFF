@@ -22,6 +22,7 @@ interface BillDetail {
   eAfter: number;
   eUnits: number;
   fine: number;
+  overdueDays : number;
   dueDate: string;
   billStatus: number;
   room: { number: string };
