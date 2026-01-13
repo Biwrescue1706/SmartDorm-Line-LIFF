@@ -22,6 +22,7 @@ interface BillDetail {
   eAfter: number;
   eUnits: number;
   fine: number;
+  overdueDays : number;
   dueDate: string;
   billStatus: number;
   room: { number: string };
@@ -168,35 +169,36 @@ export default function BillDetail() {
             รายละเอียดค่าใช้จ่าย
           </h5>
 
-          <table
-            className="table text-center"
-            style={{
-              border: "1px solid #E5E7EB",
-              borderRadius: "12px",
-              overflow: "hidden",
-            }}
-          >
-            <thead style={{ background: "#F1F5F9" }}>
-              <tr>
-                <th className="text-center" >รายการ</th>
-                <th className="text-center" >ครั้งก่อน</th>
-                <th className="text-center" >ครั้งหลัง</th>
-                <th className="text-center" >ใช้</th>
-                <th className="text-center" >ยอดเงิน</th>
-              </tr>
-            </thead>
+         <table
+  className="table"
+  style={{
+    border: "1px solid #E5E7EB",
+    borderRadius: "12px",
+    overflow: "hidden",
+    textAlign: "center",
+  }}
+>
+          <thead style={{ background: "#F1F5F9" }}>
+  <tr>
+    <th style={{ textAlign: "center", verticalAlign: "middle" }}>รายการ</th>
+    <th style={{ textAlign: "center", verticalAlign: "middle" }}>มิเตอร์เดือนหลัง</th>
+    <th style={{ textAlign: "center", verticalAlign: "middle" }}>มิเตอร์เดือนหลังก่อน</th>
+    <th style={{ textAlign: "center", verticalAlign: "middle" }}>จำนวนหน่วยที่ใช้</th>
+    <th style={{ textAlign: "center", verticalAlign: "middle" }}>จำนวนเงิน</th>
+  </tr>
+</thead>
             <tbody>
               <tr>
 <td className="text-center" >ค่าน้ำ</td>
-<td className="text-center" >{bill.wBefore}</td>
 <td className="text-center" >{bill.wAfter}</td>
+<td className="text-center" >{bill.wBefore}</td>
 <td className="text-center" >{bill.wUnits}</td>
 <td className="text-center" >{bill.waterCost.toLocaleString()}</td>
 </tr>
               <tr>
 <td className="text-center" >ค่าไฟฟ้า</td>
-<td className="text-center" >{bill.eBefore}</td>
 <td className="text-center" >{bill.eAfter}</td>
+<td className="text-center" >{bill.eBefore}</td>
 <td className="text-center" >{bill.eUnits}</td>
 <td className="text-center" >{bill.electricCost.toLocaleString()}</td></tr>
               <tr>
@@ -213,19 +215,24 @@ export default function BillDetail() {
 <td className="text-center" >-</td>
 <td className="text-center" >{bill.service.toLocaleString()}</td>
 </tr>
-              <tr>
-<td className="text-center" >ค่าปรับ</td>
-<td className="text-center" >-</td>
-<td className="text-center" >-</td>
-<td className="text-center" >-</td>
-<td className="text-center" >{bill.fine.toLocaleString()}</td>
-</tr>
-              <tr style={{ background: "#F8FAFC", fontWeight: 600 }}>
-                <td className="text-center">ยอดรวมทั้งหมด</td>
-                <td colSpan={3}></td>
-                <td style={{ color: "#000000" }}>{bill.total.toLocaleString()}</td>
-              </tr>
-            </tbody>
+              {/* ค่าปรับ – ผสาน 3 ช่อง */}
+  <tr>
+    <td className="text-center">ค่าปรับ</td>
+    <td className="text-center" colSpan={3}>
+      ปรับ {bill.overdueDays} วัน
+    </td>
+    <td className="text-center">{bill.fine.toLocaleString()}</td>
+  </tr>
+              {/* ยอดรวม – ผสานฝั่งซ้ายเพิ่ม */}
+  <tr style={{ background: "#F8FAFC", fontWeight: 600 }}>
+    <td className="text-center" colSpan={4}>
+      ยอดรวมทั้งหมด
+    </td>
+    <td className="text-center" style={{ color: "#000000" }}>
+      {bill.total.toLocaleString()}
+    </td>
+  </tr>
+</tbody>
           </table>
 
           <p className="text-center mt-2" style={{ color: "#000000" }}>
