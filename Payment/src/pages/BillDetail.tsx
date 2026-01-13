@@ -169,23 +169,24 @@ export default function BillDetail() {
             รายละเอียดค่าใช้จ่าย
           </h5>
 
-          <table
-            className="table text-center"
-            style={{
-              border: "1px solid #E5E7EB",
-              borderRadius: "12px",
-              overflow: "hidden",
-            }}
-          >
-            <thead style={{ background: "#F1F5F9" }}>
-              <tr>
-                <th className="text-center" >รายการ</th>
-                <th className="text-center" >มิเตอร์เดือนหลัง</th>
-                <th className="text-center" >มิเตอร์เดือนหลังก่อน</th>
-                                <th className="text-center" >จำนวนหน่วยที่ใช้</th>
-                <th className="text-center" >จำนวนเงิน</th>
-              </tr>
-            </thead>
+         <table
+  className="table"
+  style={{
+    border: "1px solid #E5E7EB",
+    borderRadius: "12px",
+    overflow: "hidden",
+    textAlign: "center",
+  }}
+>
+          <thead style={{ background: "#F1F5F9" }}>
+  <tr>
+    <th style={{ textAlign: "center", verticalAlign: "middle" }}>รายการ</th>
+    <th style={{ textAlign: "center", verticalAlign: "middle" }}>มิเตอร์เดือนหลัง</th>
+    <th style={{ textAlign: "center", verticalAlign: "middle" }}>มิเตอร์เดือนหลังก่อน</th>
+    <th style={{ textAlign: "center", verticalAlign: "middle" }}>จำนวนหน่วยที่ใช้</th>
+    <th style={{ textAlign: "center", verticalAlign: "middle" }}>จำนวนเงิน</th>
+  </tr>
+</thead>
             <tbody>
               <tr>
 <td className="text-center" >ค่าน้ำ</td>
