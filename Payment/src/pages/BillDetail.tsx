@@ -179,24 +179,24 @@ export default function BillDetail() {
             <thead style={{ background: "#F1F5F9" }}>
               <tr>
                 <th className="text-center" >รายการ</th>
-                <th className="text-center" >ครั้งก่อน</th>
-                <th className="text-center" >ครั้งหลัง</th>
-                <th className="text-center" >ใช้</th>
-                <th className="text-center" >ยอดเงิน</th>
+                <th className="text-center" >มิเตอร์เดือนหลัง</th>
+                <th className="text-center" >มิเตอร์เดือนหลังก่อน</th>
+                                <th className="text-center" >จำนวนหน่วยที่ใช้</th>
+                <th className="text-center" >จำนวนเงิน</th>
               </tr>
             </thead>
             <tbody>
               <tr>
 <td className="text-center" >ค่าน้ำ</td>
-<td className="text-center" >{bill.wBefore}</td>
 <td className="text-center" >{bill.wAfter}</td>
+<td className="text-center" >{bill.wBefore}</td>
 <td className="text-center" >{bill.wUnits}</td>
 <td className="text-center" >{bill.waterCost.toLocaleString()}</td>
 </tr>
               <tr>
 <td className="text-center" >ค่าไฟฟ้า</td>
-<td className="text-center" >{bill.eBefore}</td>
 <td className="text-center" >{bill.eAfter}</td>
+<td className="text-center" >{bill.eBefore}</td>
 <td className="text-center" >{bill.eUnits}</td>
 <td className="text-center" >{bill.electricCost.toLocaleString()}</td></tr>
               <tr>
