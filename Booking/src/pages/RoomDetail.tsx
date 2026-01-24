@@ -103,18 +103,6 @@ export default function RoomDetail() {
                   <td className="fw-semibold">{room.size}</td>
                 </tr>
                 <tr>
-                  <th className="bg-light text-start">ค่าส่วนกลาง</th>
-                  <td>50 บาท</td>
-                </tr>
-                <tr>
-                  <th className="bg-light text-start">ค่าไฟฟ้า</th>
-                  <td>7 บาท / หน่วย</td>
-                </tr>
-                <tr>
-                  <th className="bg-light text-start">ค่าน้ำ</th>
-                  <td>19 บาท / หน่วย</td>
-                </tr>
-                <tr>
                   <th className="bg-light text-start">ค่าเช่า</th>
                   <td className="fw-bold text-primary">
                     {room.rent.toLocaleString("th-TH")} บาท
@@ -129,6 +117,19 @@ export default function RoomDetail() {
                   <td>{room.bookingFee.toLocaleString("th-TH")} บาท</td>
                 </tr>
 
+<tr>
+                  <th className="bg-light text-start">ค่าส่วนกลาง</th>
+                  <td>50 บาท / เดือน</td>
+                </tr>
+                <tr>
+                  <th className="bg-light text-start">ค่าไฟฟ้า</th>
+                  <td>7 บาท / หน่วย</td>
+                </tr>
+                <tr>
+                  <th className="bg-light text-start">ค่าน้ำ</th>
+                  <td>19 บาท / หน่วย</td>
+                </tr>
+
                 <tr className="table-success fw-bold">
                   <th className="text-start">รวมทั้งหมด</th>
                   <td className="text-success">
@@ -138,8 +139,7 @@ export default function RoomDetail() {
 
                 <tr>
                   <td colSpan={2} className="text-muted small fst-italic text-start">
-                    ( ตัดรอบบิลวันที่ 25 ของเดือน <br />
-                    สามารถย้ายเข้าได้หลังชำระเงินครบถ้วน )
+                    ( ตัดรอบบิลวันที่ 25 ของเดือน <br /> กำหนดชำระบิล ตั้งแต่วันแจ้งบิล ถึง วันที่ 5 ของทุกเดือน <br /> หากชำระค่าเช่าเกินวันที่ 5 อัตราการปรับ วันละ 50 บาท )
                   </td>
                 </tr>
               </tbody>
