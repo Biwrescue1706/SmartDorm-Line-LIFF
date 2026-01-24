@@ -16,7 +16,7 @@ export default function Bookings() {
   const { rooms, loading } = useRooms(true);
   const nav = useNavigate();
 
-  // ✅ ใช้ string เพื่อรองรับ "ทั้งหมด"
+  // ใช้ string เพื่อรองรับ "ทั้งหมด"
   const [selectedFloor, setSelectedFloor] = useState<string>("ทั้งหมด");
 
   /* ------------------ FLOORS ------------------ */
@@ -122,8 +122,21 @@ export default function Bookings() {
                     <div
                       className="card h-100 border-0 shadow-sm"
                       style={{
-                        borderRadius: "18px",
+                        borderRadius: "12px",
                         background: isAvailable ? "white" : "#f1f1f1",
+                        cursor: isAvailable ? "pointer" : "default",
+                        pointerEvents: isAvailable ? "auto" : "none",
+                        opacity: isAvailable ? 1 : 0.6,
+                        transition: "transform .1s ease, box-shadow .1s ease",
+                      }}
+                      onClick={isAvailable ? () => handleSelect(room) : undefined}
+                      onMouseDown={(e) => {
+                        if (isAvailable)
+                          e.currentTarget.style.transform = "scale(0.97)";
+                      }}
+                      onMouseUp={(e) => {
+                        if (isAvailable)
+                          e.currentTarget.style.transform = "scale(1)";
                       }}
                     >
                       <div className="card-body text-center d-flex flex-column">
@@ -140,11 +153,11 @@ export default function Bookings() {
                           ค่าจอง : {room.bookingFee.toLocaleString()}
                         </small>
 
-                        <small className="fw-semibold text-success">
+                        <small className="fw-semibold text-success mt-1">
                           รวมทั้งหมด : {total.toLocaleString()}
                         </small>
 
-                        <div className="mt-2 mb-3">
+                        <div className="mt-2">
                           {isAvailable ? (
                             <span className="badge bg-success rounded-pill">
                               ว่าง
@@ -155,21 +168,6 @@ export default function Bookings() {
                             </span>
                           )}
                         </div>
-
-                        {isAvailable && (
-                          <button
-                            className="btn fw-semibold mt-auto"
-                            style={{
-                              background:
-                                "linear-gradient(90deg,#FFD43B,#00FF66)",
-                              borderRadius: "12px",
-                              border: "none",
-                            }}
-                            onClick={() => handleSelect(room)}
-                          >
-                            เลือกห้องนี้
-                          </button>
-                        )}
                       </div>
                     </div>
                   </div>
