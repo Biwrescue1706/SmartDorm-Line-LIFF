@@ -145,6 +145,7 @@ export default function MyBills() {
 
   // MAIN UI ---------------------------------------------------
   return (
+<>
       <NavBar />
     <div className="smartdorm-page pb-4">
 
@@ -239,5 +240,6 @@ export default function MyBills() {
 
       </div>
     </div>
+</>
   );
 }
