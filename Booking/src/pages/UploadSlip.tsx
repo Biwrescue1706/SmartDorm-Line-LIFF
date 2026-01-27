@@ -286,12 +286,13 @@ function UploadSlipForm({
       />
 
       <label className="form-label fw-semibold">วันที่เข้าพัก</label>
-      <input
-        type="date"
-        className="form-control mb-3"
-        value={checkin}
-        onChange={(e) => setCheckin(e.target.value)}
-      />
+<input
+  type="date"
+  className="form-control mb-3"
+  value={checkin}
+  min={new Date().toISOString().split("T")[0]}
+  onChange={(e) => setCheckin(e.target.value)}
+/>
 
       <label className="form-label fw-semibold">แนบสลิป</label>
       <input
