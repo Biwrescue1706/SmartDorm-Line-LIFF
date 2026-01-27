@@ -218,9 +218,14 @@ export default function BillDetail() {
               {/* ค่าปรับ – ผสาน 3 ช่อง */}
   <tr>
     <td className="text-center">ค่าปรับ</td>
-    <td className="text-center" colSpan={3}>
-      ปรับ {bill.overdueDays} วัน
-    </td>
+                          {bill.overdueDays && bill.overdueDays !== 0 ? (
+                        <td colSpan={3}>ปรับ {bill.overdueDays} วัน</td>
+                      ) : (
+                        <td colSpan={3}>-</td>
+                      )}
+                      <td className="text-center">
+                        {(bill.fine ?? 0).toLocaleString()}
+                      </td>
     <td className="text-center">{bill.fine.toLocaleString()}</td>
   </tr>
               {/* ยอดรวม – ผสานฝั่งซ้ายเพิ่ม */}
