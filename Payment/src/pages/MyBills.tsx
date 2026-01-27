@@ -145,8 +145,8 @@ export default function MyBills() {
 
   // MAIN UI ---------------------------------------------------
   return (
-    <div className="smartdorm-page pb-4">
       <NavBar />
+    <div className="smartdorm-page pb-4">
 
       {/* HEADER */}
       <div className="text-center mb-4 mt-4">
