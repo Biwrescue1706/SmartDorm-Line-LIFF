@@ -223,9 +223,7 @@ export default function BillDetail() {
                       ) : (
                         <td colSpan={3}>-</td>
                       )}
-                      <td className="text-center">
-                        {(bill.fine ?? 0).toLocaleString()}
-                      </td>
+                      
     <td className="text-center">{bill.fine.toLocaleString()}</td>
   </tr>
               {/* ยอดรวม – ผสานฝั่งซ้ายเพิ่ม */}
