@@ -1,4 +1,3 @@
-// Booking/src/pages/PaymentChoice.tsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { Room } from "../types/Room";
@@ -19,32 +18,12 @@ export default function PaymentChoice() {
 
   const total = room ? room.rent + room.deposit + room.bookingFee : 0;
 
-  // สร้าง QR (รองรับทั้ง SCB และ fallback)
-  const makeQR = async () => {
-    const url = `${API_BASE}/qr/${total}?t=${Date.now()}`;
-
-    try {
-      const res = await fetch(url);
-      const contentType = res.headers.get("content-type") || "";
-
-      // ถ้า backend ส่ง JSON { qrUrl }
-      if (contentType.includes("application/json")) {
-        const data = await res.json();
-        if (data.qrUrl) {
-          setQrSrc(data.qrUrl);
-          return;
-        }
-      }
-
-      // ถ้า backend ส่งเป็นรูป PNG ตรง ๆ
-      // ใช้ URL เดิมของ backend เพื่อให้ LINE แสดงได้แน่นอน
-      setQrSrc(url);
-    } catch (err) {
-      console.error("สร้าง QR ไม่สำเร็จ", err);
-    }
+  // สร้าง QR ตอนเข้า
+  const makeQR = () => {
+    const qr = `${API_BASE}/qr/${total}?t=${Date.now()}`;
+    setQrSrc(qr);
   };
 
-  // ตรวจสอบ token
   useEffect(() => {
     (async () => {
       try {
@@ -93,7 +72,6 @@ export default function PaymentChoice() {
         }}
       >
         <div className="container">
-          {/* HEADER */}
           <div
             className="shadow text-white text-center py-4 rounded-4 mb-4"
             style={{
@@ -107,12 +85,10 @@ export default function PaymentChoice() {
             </small>
           </div>
 
-          {/* CARD */}
           <div
             className="bg-white p-4 shadow-sm rounded-4"
             style={{ maxWidth: 520, margin: "0 auto" }}
           >
-            {/* สรุปยอดเงิน */}
             <div
               className="text-center p-3 rounded-3 mb-4"
               style={{
@@ -127,7 +103,6 @@ export default function PaymentChoice() {
               </h2>
             </div>
 
-            {/* QR */}
             <div
               className="p-4 text-center rounded-3 mb-4 border"
               style={{
@@ -137,14 +112,12 @@ export default function PaymentChoice() {
             >
               <h6 className="fw-semibold mb-2">สแกนเพื่อชำระเงิน</h6>
 
-              {qrSrc && (
-                <img
-                  src={qrSrc}
-                  width="250"
-                  alt="QR Payment"
-                  className="my-3 border rounded shadow-sm"
-                />
-              )}
+              <img
+                src={qrSrc}
+                width="250"
+                alt="QR PromptPay"
+                className="my-3 border rounded shadow-sm"
+              />
 
               {!isInLine ? (
                 <button
@@ -174,7 +147,6 @@ export default function PaymentChoice() {
               )}
             </div>
 
-            {/* CONTINUE */}
             <button
               className="btn w-100 fw-bold text-white py-3"
               style={{
