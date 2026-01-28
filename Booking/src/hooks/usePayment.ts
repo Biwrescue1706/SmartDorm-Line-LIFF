@@ -12,22 +12,16 @@ export function usePayment(total: number) {
   };
 
   const handleDownload = async (filename: string) => {
-    try {
-      const res = await fetch(qrUrl);
-      if (!res.ok) throw new Error("โหลด QR ล้มเหลว");
+    const res = await fetch(qrUrl);
+    const blob = await res.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
 
-      const blob = await res.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = filename;
+    link.click();
 
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = filename;
-      link.click();
-
-      window.URL.revokeObjectURL(blobUrl);
-    } catch (err) {
-      console.error("❌ Error downloading QR:", err);
-    }
+    window.URL.revokeObjectURL(blobUrl);
   };
 
   return { qrUrl, copied, handleCopy, handleDownload };
