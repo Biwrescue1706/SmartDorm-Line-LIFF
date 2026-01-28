@@ -3,28 +3,9 @@ import { API_BASE } from "../config";
 
 export function usePayment(total: number) {
   const [copied, setCopied] = useState(false);
-  const [qrSrc, setQrSrc] = useState<string>("");
 
-  const makeQR = async () => {
-    const url = `${API_BASE}/qr/${total}?t=${Date.now()}`;
-
-    try {
-      const res = await fetch(url);
-      const contentType = res.headers.get("content-type") || "";
-
-      if (contentType.includes("application/json")) {
-        const data = await res.json();
-        if (data.qrUrl) {
-          setQrSrc(data.qrUrl);
-          return;
-        }
-      }
-
-      setQrSrc(url);
-    } catch (err) {
-      console.error("สร้าง QR ไม่สำเร็จ", err);
-    }
-  };
+  // URL ของ QR จาก backend
+  const qrUrl = `${API_BASE}/qr/${total}`;
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -34,7 +15,7 @@ export function usePayment(total: number) {
 
   const handleDownload = async (filename: string) => {
     try {
-      const res = await fetch(qrSrc);
+      const res = await fetch(qrUrl);
       if (!res.ok) throw new Error("โหลด QR ล้มเหลว");
 
       const blob = await res.blob();
@@ -52,8 +33,7 @@ export function usePayment(total: number) {
   };
 
   return {
-    qrSrc,
-    makeQR,
+    qrUrl,
     copied,
     handleCopy,
     handleDownload,
