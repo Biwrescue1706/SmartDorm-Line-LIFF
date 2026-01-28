@@ -22,7 +22,7 @@ interface BillDetail {
   eAfter: number;
   eUnits: number;
   fine: number;
-  overdueDays : number;
+  overdueDays: number;
   dueDate: string;
   billStatus: number;
   room: { number: string };
@@ -38,17 +38,31 @@ const formatThaiDate = (d: string) => {
   return `${t.getDate()} ${m[t.getMonth()]} ${t.getFullYear() + 543}`;
 };
 
-const thaiNumberText = (num: number) => {
-  const thNum = ["ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า"];
-  const thDigit = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"];
-  const s = num.toString();
-  let txt = "";
-  for (let i = 0; i < s.length; i++) {
-    if (s[i] !== "0") txt += thNum[+s[i]] + thDigit[s.length - i - 1];
-  }
-  return txt.replace("หนึ่งสิบ","สิบ")
-            .replace("สองสิบ","ยี่สิบ")
-            .replace("สิบหนึ่ง","สิบเอ็ด") + "บาทถ้วน";
+/* ===================== NUMBER TO THAI BAHT ===================== */
+const numberToThaiBaht = (num: number) => {
+  const th = ["ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า"];
+  const unit = ["","สิบ","ร้อย","พัน","หมื่น","แสน","ล้าน"];
+
+  const readInt = (n: number) => {
+    let s = "";
+    const str = n.toString();
+    for (let i = 0; i < str.length; i++) {
+      const d = parseInt(str[i]);
+      const u = unit[str.length - i - 1];
+      if (d === 0) continue;
+      if (u === "สิบ" && d === 1) s += "สิบ";
+      else if (u === "สิบ" && d === 2) s += "ยี่สิบ";
+      else if (u === "" && d === 1 && str.length > 1) s += "เอ็ด";
+      else s += th[d] + u;
+    }
+    return s;
+  };
+
+  const [i, f] = num.toFixed(2).split(".");
+  let result = readInt(parseInt(i)) + "บาท";
+  if (f === "00") result += "ถ้วน";
+  else result += readInt(parseInt(f)) + "สตางค์";
+  return result;
 };
 
 export default function BillDetail() {
@@ -94,6 +108,22 @@ export default function BillDetail() {
       </div>
     );
 
+  const vat = bill.total * 0.07;
+  const beforeVat = bill.total - vat;
+  const thaiText = numberToThaiBaht(bill.total);
+
+  // ===== CHECK OVERDUE (แสดงผลเท่านั้น) =====
+  const today = new Date();
+  const due = new Date(bill.dueDate);
+  let isOverdue = false;
+  let overdueDays = 0;
+
+  if (bill.billStatus === 0 && today > due) {
+    isOverdue = true;
+    const diff = today.getTime() - due.getTime();
+    overdueDays = Math.ceil(diff / (1000 * 60 * 60 * 24));
+  }
+
   return (
     <div
       style={{
@@ -104,10 +134,10 @@ export default function BillDetail() {
     >
       <NavBar />
 
-      {/* HEADER */}
+      {/* HEADER (INVOICE) */}
       <div
         style={{
-          marginTop: "65px", // เพิ่มพื้นที่ใต้ NavBar จริง
+          marginTop: "65px",
           textAlign: "center",
           padding: "24px 10px",
           background: "#0F3D91",
@@ -117,8 +147,13 @@ export default function BillDetail() {
           boxShadow: "0 3px 12px rgba(0,0,0,0.18)",
         }}
       >
-        <h2 style={{ fontWeight: 600 }}>รายละเอียดบิลค่าเช่า</h2>
-        <p style={{ opacity: 0.8, fontSize: "1rem" }}>เลขที่บิล {bill.billId}</p>
+        <h2 style={{ fontWeight: 600 }}>ใบแจ้งหนี้</h2>
+        <p style={{ opacity: 0.85, fontSize: "0.95rem" }}>
+          หอพัก 47/21 ม.1 ต.บ้านสวน อ.เมืองชลบุรี จ.ชลบุรี
+        </p>
+        <p style={{ opacity: 0.7, fontSize: "0.9rem" }}>
+          เลขที่ใบแจ้งหนี้ : {bill.billId}
+        </p>
       </div>
 
       {/* CARD */}
@@ -151,8 +186,11 @@ export default function BillDetail() {
           <p><strong>ชื่อลูกค้า :</strong> {bill.booking.fullName}</p>
           <p><strong>ห้อง :</strong> {bill.room.number}</p>
           <p><strong>ประจำเดือน :</strong> {formatThaiDate(bill.month)}</p>
-          <p style={{ color: "#D92D20" }}>
-            <strong>วันครบกำหนดชำระ :</strong> {formatThaiDate(bill.dueDate)}
+          <p style={{ color: isOverdue ? "#D92D20" : "#000000" }}>
+            <strong>
+              {isOverdue ? `เกินกำหนด ${overdueDays} วัน` : "วันครบกำหนดชำระ"} :
+            </strong>{" "}
+            {formatThaiDate(bill.dueDate)}
           </p>
 
           {/* TABLE TITLE */}
@@ -169,78 +207,77 @@ export default function BillDetail() {
             รายละเอียดค่าใช้จ่าย
           </h5>
 
-         <table
-  className="table"
-  style={{
-    border: "1px solid #E5E7EB",
-    borderRadius: "12px",
-    overflow: "hidden",
-    textAlign: "center",
-  }}
->
-          <thead style={{ background: "#F1F5F9" }}>
-  <tr>
-    <th style={{ textAlign: "center", verticalAlign: "middle" }}>รายการ</th>
-    <th style={{ textAlign: "center", verticalAlign: "middle" }}>มิเตอร์เดือนหลัง</th>
-    <th style={{ textAlign: "center", verticalAlign: "middle" }}>มิเตอร์เดือนหลังก่อน</th>
-    <th style={{ textAlign: "center", verticalAlign: "middle" }}>จำนวนหน่วยที่ใช้</th>
-    <th style={{ textAlign: "center", verticalAlign: "middle" }}>จำนวนเงิน</th>
-  </tr>
-</thead>
+          <table
+            className="table"
+            style={{
+              border: "1px solid #E5E7EB",
+              borderRadius: "12px",
+              overflow: "hidden",
+              textAlign: "center",
+            }}
+          >
+            <thead style={{ background: "#F1F5F9" }}>
+              <tr>
+                <th>รายการ</th>
+                <th>มิเตอร์เดือนหลัง</th>
+                <th>มิเตอร์เดือนก่อน</th>
+                <th>จำนวนหน่วยที่ใช้</th>
+                <th>จำนวนเงิน</th>
+              </tr>
+            </thead>
             <tbody>
               <tr>
-<td className="text-center" >ค่าน้ำ</td>
-<td className="text-center" >{bill.wAfter}</td>
-<td className="text-center" >{bill.wBefore}</td>
-<td className="text-center" >{bill.wUnits}</td>
-<td className="text-center" >{bill.waterCost.toLocaleString()}</td>
-</tr>
+                <td>ค่าน้ำ</td>
+                <td>{bill.wAfter}</td>
+                <td>{bill.wBefore}</td>
+                <td>{bill.wUnits}</td>
+                <td>{bill.waterCost.toLocaleString()}</td>
+              </tr>
               <tr>
-<td className="text-center" >ค่าไฟฟ้า</td>
-<td className="text-center" >{bill.eAfter}</td>
-<td className="text-center" >{bill.eBefore}</td>
-<td className="text-center" >{bill.eUnits}</td>
-<td className="text-center" >{bill.electricCost.toLocaleString()}</td></tr>
+                <td>ค่าไฟฟ้า</td>
+                <td>{bill.eAfter}</td>
+                <td>{bill.eBefore}</td>
+                <td>{bill.eUnits}</td>
+                <td>{bill.electricCost.toLocaleString()}</td>
+              </tr>
               <tr>
-<td className="text-center" >ค่าเช่าห้อง</td>
-<td className="text-center" >-</td>
-<td className="text-center" >-</td>
-<td className="text-center" >-</td>
-<td className="text-center" >{bill.rent.toLocaleString()}</td>
-</tr>
+                <td>ค่าเช่า</td>
+                <td colSpan={3}>-</td>
+                <td className="text-end">{bill.rent.toLocaleString()}</td>
+              </tr>
               <tr>
-<td className="text-center" >ค่าส่วนกลาง</td>
-<td className="text-center" >-</td>
-<td className="text-center" >-</td>
-<td className="text-center" >-</td>
-<td className="text-center" >{bill.service.toLocaleString()}</td>
-</tr>
-              {/* ค่าปรับ – ผสาน 3 ช่อง */}
-  <tr>
-    <td className="text-center">ค่าปรับ</td>
-                          {bill.overdueDays && bill.overdueDays !== 0 ? (
-                        <td colSpan={3}>ปรับ {bill.overdueDays} วัน</td>
-                      ) : (
-                        <td colSpan={3}>-</td>
-                      )}
-                      
-    <td className="text-center">{bill.fine.toLocaleString()}</td>
-  </tr>
-              {/* ยอดรวม – ผสานฝั่งซ้ายเพิ่ม */}
-  <tr style={{ background: "#F8FAFC", fontWeight: 600 }}>
-    <td className="text-center" colSpan={4}>
-      ยอดรวมทั้งหมด
-    </td>
-    <td className="text-center" style={{ color: "#000000" }}>
-      {bill.total.toLocaleString()}
-    </td>
-  </tr>
-</tbody>
+                <td>ค่าส่วนกลาง</td>
+                <td colSpan={3}>-</td>
+                <td className="text-end">{bill.service.toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td>ค่าปรับ</td>
+                {bill.overdueDays > 0 ? (
+                  <td colSpan={3}>ปรับ {bill.overdueDays} วัน</td>
+                ) : (
+                  <td colSpan={3}>-</td>
+                )}
+                <td className="text-end">{bill.fine.toLocaleString()}</td>
+              </tr>
+            </tbody>
+            <tfoot className="fw-semibold bg-light">
+              <tr>
+                <td colSpan={4} className="text-end">ราคาก่อนรวมภาษี</td>
+                <td className="text-end">{beforeVat.toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td colSpan={4} className="text-end">ภาษี 7%</td>
+                <td className="text-end">{vat.toFixed(2)}</td>
+              </tr>
+              <tr className="table-success">
+                <td colSpan={4} className="text-end">รวมทั้งหมด</td>
+                <td className="text-end">{bill.total.toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td colSpan={5} className="text-start ps-2">({thaiText})</td>
+              </tr>
+            </tfoot>
           </table>
-
-          <p className="text-center mt-2" style={{ color: "#000000" }}>
-            ({thaiNumberText(bill.total)})
-          </p>
 
           {/* BUTTONS */}
           {bill.billStatus === 0 && (
@@ -253,7 +290,7 @@ export default function BillDetail() {
                   background: "white",
                   color: "#475569",
                   fontWeight: 500,
-                  marginRight: "20px", // ระยะห่างปุ่มจริง
+                  marginRight: "20px",
                 }}
                 onClick={() => nav("/mybills")}
               >
@@ -261,18 +298,18 @@ export default function BillDetail() {
               </button>
 
               <button
-  className="btn px-4 py-2"
-  style={{
-    borderRadius: "10px",
-    background: "linear-gradient(135deg,#1E3A8A,#0F3D91)",
-    fontWeight: 600,
-    boxShadow: "0 4px 10px rgba(15,61,145,0.35)",
-    color: "white", // บังคับสีตัวหนังสือ
-  }}
-  onClick={() => nav("/payment-choice", { state: bill })}
->
-  ยืนยัน
-</button>
+                className="btn px-4 py-2"
+                style={{
+                  borderRadius: "10px",
+                  background: "linear-gradient(135deg,#1E3A8A,#0F3D91)",
+                  fontWeight: 600,
+                  boxShadow: "0 4px 10px rgba(15,61,145,0.35)",
+                  color: "white",
+                }}
+                onClick={() => nav("/payment-choice", { state: bill })}
+              >
+                ยืนยัน
+              </button>
             </div>
           )}
         </div>
