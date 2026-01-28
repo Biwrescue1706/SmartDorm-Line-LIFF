@@ -19,7 +19,7 @@ export default function PaymentChoice() {
 
   const total = room ? room.rent + room.deposit + room.bookingFee : 0;
 
-  // 🔧 สร้าง QR (รองรับทั้ง PNG และ JSON { qrUrl })
+  // สร้าง QR (รองรับทั้ง SCB และ fallback)
   const makeQR = async () => {
     const url = `${API_BASE}/qr/${total}?t=${Date.now()}`;
 
@@ -37,9 +37,8 @@ export default function PaymentChoice() {
       }
 
       // ถ้า backend ส่งเป็นรูป PNG ตรง ๆ
-      const blob = await res.blob();
-      const imgUrl = URL.createObjectURL(blob);
-      setQrSrc(imgUrl);
+      // ใช้ URL เดิมของ backend เพื่อให้ LINE แสดงได้แน่นอน
+      setQrSrc(url);
     } catch (err) {
       console.error("สร้าง QR ไม่สำเร็จ", err);
     }
@@ -136,12 +135,13 @@ export default function PaymentChoice() {
                 boxShadow: "0 0 8px rgba(0,0,0,0.08)",
               }}
             >
-              <h6 className="fw-semibold mb-2">📲 สแกนเพื่อชำระเงิน</h6>
+              <h6 className="fw-semibold mb-2">สแกนเพื่อชำระเงิน</h6>
+
               {qrSrc && (
                 <img
                   src={qrSrc}
                   width="250"
-                  alt="QR PromptPay"
+                  alt="QR Payment"
                   className="my-3 border rounded shadow-sm"
                 />
               )}
