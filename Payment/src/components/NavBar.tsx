@@ -18,7 +18,7 @@ export default function NavBar() {
         top: 0,
         left: 0,
         width: "100%",
-        height: "62px",
+        height: "55px",
         paddingTop: "env(safe-area-inset-top)",
         background: "linear-gradient(135deg, #38A3FF, #7B2CBF)",
         color: "white",
@@ -62,13 +62,13 @@ export default function NavBar() {
           transform: "translateX(6px)",
         }}
       >
-        <span style={{ fontWeight: 700, fontSize: "1.3rem" }}>🏫 SmartDorm</span>
+        <span style={{ fontWeight: 700, fontSize: "1rem" }}>🏫 SmartDorm</span>
         <img
           src="https://manage.smartdorm-biwboong.shop/assets/SmartDorm.webp"
           alt="SmartDorm Logo"
           style={{
-            width: "32px",
-            height: "32px",
+            width: "22px",
+            height: "22px",
             borderRadius: "6px",
             background: "white",
             padding: "2px",
