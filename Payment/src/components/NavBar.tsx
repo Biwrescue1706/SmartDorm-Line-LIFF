@@ -26,7 +26,7 @@ export default function NavBar() {
         alignItems: "center",
         justifyContent: "center",
         boxShadow: "0 3px 10px rgba(0,0,0,0.15)",
-        zIndex: 1500,
+        zIndex: 999,
       }}
     >
       {/* ปุ่มย้อนกลับฝั่งซ้าย */}
@@ -36,14 +36,14 @@ export default function NavBar() {
           style={{
             position: "absolute",
             left: "16px",
-            top: "50%",
+            top: "40%",
             transform: "translateY(-50%)",
             background: "rgba(255,255,255,0.2)",
             border: "none",
             padding: "4px 10px",
             borderRadius: "10px",
             color: "white",
-            fontSize: "1.4rem",
+            fontSize: "1rem",
             cursor: "pointer",
             backdropFilter: "blur(8px)",
           }}
