@@ -18,14 +18,14 @@ export default function NavBar() {
         top: 0,
         left: 0,
         width: "100%",
-        height: "55px",
-        paddingTop: "env(safe-area-inset-top)",
+        minHeight: "55px", // ✅ ใช้ minHeight แทน height
+        paddingTop: "env(safe-area-inset-top)", // รองรับ notch
         background: "linear-gradient(135deg, #38A3FF, #7B2CBF)",
         color: "white",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        boxShadow: "0 3px 10px rgba(0,0,0,0.15)",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.12)", // เงาบางลง
         zIndex: 999,
       }}
     >
@@ -36,7 +36,7 @@ export default function NavBar() {
           style={{
             position: "absolute",
             left: "16px",
-            top: "40%",
+            top: "50%", // ยึดกลางจริง
             transform: "translateY(-50%)",
             background: "rgba(255,255,255,0.2)",
             border: "none",
@@ -52,17 +52,19 @@ export default function NavBar() {
         </button>
       )}
 
-      {/* โลโก้ + ข้อความอยู่ตรงกลางแท้ */}
+      {/* โลโก้ + ข้อความตรงกลาง */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
           gap: "8px",
           pointerEvents: "none",
-          transform: "translateX(6px)",
+          lineHeight: "1", // กันความสูงจาก emoji
         }}
       >
-        <span style={{ fontWeight: 700, fontSize: "1rem" }}>🏫 SmartDorm</span>
+        <span style={{ fontWeight: 700, fontSize: "1rem" }}>
+          SmartDorm
+        </span>
         <img
           src="https://manage.smartdorm-biwboong.shop/assets/SmartDorm.webp"
           alt="SmartDorm Logo"
@@ -76,9 +78,6 @@ export default function NavBar() {
           }}
         />
       </div>
-
-      {/* เว้นพื้นที่ขวาให้บาลานซ์กับปุ่ม Back */}
-      {showBack && <div style={{ width: "32px", position: "absolute", right: "16px" }}></div>}
     </nav>
   );
 }
