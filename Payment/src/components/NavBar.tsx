@@ -19,7 +19,6 @@ export default function NavBar() {
         left: 0,
         width: "100%",
         minHeight: "55px", // ✅ ใช้ minHeight แทน height
-        paddingTop: "env(safe-area-inset-top)", // รองรับ notch
         background: "linear-gradient(135deg, #38A3FF, #7B2CBF)",
         color: "white",
         display: "flex",
