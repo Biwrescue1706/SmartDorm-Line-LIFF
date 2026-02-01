@@ -21,7 +21,6 @@ export default function LiffNav() {
         left: 0,
         width: "100%",
         minHeight: "55px",
-        paddingTop: "env(safe-area-inset-top)",
         background: "linear-gradient(135deg, #38A3FF, #7B2CBF)",
         display: "flex",
         alignItems: "center",
