@@ -20,14 +20,14 @@ export default function LiffNav() {
         top: 0,
         left: 0,
         width: "100%",
-        height: "62px",
+        minHeight: "55px",
         paddingTop: "env(safe-area-inset-top)",
         background: "linear-gradient(135deg, #38A3FF, #7B2CBF)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
-        zIndex: 2000,
+        zIndex: 999,
       }}
     >
       {/* ⬅️ Back Button (เฉพาะ /checkout/:bookingId) */}
@@ -67,7 +67,7 @@ export default function LiffNav() {
       >
         <span
           style={{
-            fontSize: "1.25rem",
+            fontSize: "1rem",
             fontWeight: 700,
             letterSpacing: ".3px",
             fontFamily: "Prompt, Segoe UI, sans-serif",
@@ -82,8 +82,8 @@ export default function LiffNav() {
           src="https://manage.smartdorm-biwboong.shop/assets/SmartDorm.webp"
           alt="SmartDorm Logo"
           style={{
-            width: "32px",
-            height: "32px",
+            width: "22px",
+            height: "22px",
             background: "white",
             borderRadius: "8px",
             padding: "2px",

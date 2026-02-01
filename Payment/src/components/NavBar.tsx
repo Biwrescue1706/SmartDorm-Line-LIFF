@@ -37,7 +37,7 @@ export default function NavBar() {
             left: "16px",
             top: "50%", // ยึดกลางจริง
             transform: "translateY(-50%)",
-            background: "rgba(255,255,255,0.2)",
+            background: "rgb(102, 96, 96)",
             border: "none",
             padding: "4px 10px",
             borderRadius: "10px",
