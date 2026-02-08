@@ -18,7 +18,6 @@ export default function PaymentChoice() {
 
   const total = room ? room.rent + room.deposit + room.bookingFee : 0;
 
-  // สร้าง QR ตอนเข้า
   const makeQR = () => {
     const qr = `${API_BASE}/qr/${total}?t=${Date.now()}`;
     setQrSrc(qr);
@@ -42,20 +41,26 @@ export default function PaymentChoice() {
 
   if (!room)
     return (
-      <div className="text-center p-5">
-        <h5 className="text-danger">ไม่พบข้อมูลห้อง</h5>
-        <button className="btn btn-primary mt-3" onClick={() => nav("/")}>
-          กลับหน้าแรก
-        </button>
-      </div>
+      <>
+        <LiffNav />
+        <div className="container text-center pt-5 mt-4">
+          <h5 className="text-danger">ไม่พบข้อมูลห้อง</h5>
+          <button className="btn btn-primary mt-3" onClick={() => nav("/")}>
+            กลับหน้าแรก
+          </button>
+        </div>
+      </>
     );
 
   if (!ready)
     return (
-      <div className="text-center py-5">
-        <div className="spinner-border text-success"></div>
-        <p className="mt-3">กำลังตรวจสอบสิทธิ์การใช้งาน...</p>
-      </div>
+      <>
+        <LiffNav />
+        <div className="text-center py-5 mt-5">
+          <div className="spinner-border text-success"></div>
+          <p className="mt-3">กำลังตรวจสอบสิทธิ์การใช้งาน...</p>
+        </div>
+      </>
     );
 
   const isInLine = liff.isInClient();
@@ -64,52 +69,28 @@ export default function PaymentChoice() {
     <>
       <LiffNav />
 
-      <div
-        style={{
-          paddingTop: "80px",
-          minHeight: "100vh",
-          background: "#f6f9ff",
-        }}
-      >
+      <div className="pt-5"></div>
+
+      <div className="pb-5 min-vh-100 bg-light">
         <div className="container">
-          <div
-            className="shadow text-white text-center py-4 rounded-4 mb-4"
-            style={{
-              background: "linear-gradient(135deg,#38A3FF,#7B2CBF)",
-              boxShadow: "0 6px 14px rgba(0,0,0,0.25)",
-            }}
-          >
+
+          <div className="shadow text-white text-center py-4 rounded-4 mb-4 bg-primary bg-gradient mt-3">
             <h3 className="fw-bold mb-0">ชำระเงินค่าจองห้องพัก</h3>
             <small className="opacity-75">
               ชำระผ่าน PromptPay เพื่อดำเนินการต่อ
             </small>
           </div>
 
-          <div
-            className="bg-white p-4 shadow-sm rounded-4"
-            style={{ maxWidth: 520, margin: "0 auto" }}
-          >
-            <div
-              className="text-center p-3 rounded-3 mb-4"
-              style={{
-                background: "linear-gradient(135deg,#6FF5C2,#38A3FF)",
-                color: "#033",
-                boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-              }}
-            >
+          <div className="bg-white p-4 shadow-sm rounded-4 mx-auto" style={{ maxWidth: 520 }}>
+
+            <div className="text-center p-3 rounded-3 mb-4 bg-info bg-opacity-25">
               <h5 className="fw-bold mb-1">ยอดรวมที่ต้องชำระ</h5>
               <h2 className="fw-bold text-dark">
                 {total.toLocaleString("th-TH")} บาท
               </h2>
             </div>
 
-            <div
-              className="p-4 text-center rounded-3 mb-4 border"
-              style={{
-                background: "linear-gradient(135deg,#ffffff,#eef2ff)",
-                boxShadow: "0 0 8px rgba(0,0,0,0.08)",
-              }}
-            >
+            <div className="p-4 text-center rounded-3 mb-4 border bg-light">
               <h6 className="fw-semibold mb-2">สแกนเพื่อชำระเงิน</h6>
 
               <img
@@ -121,12 +102,7 @@ export default function PaymentChoice() {
 
               {!isInLine ? (
                 <button
-                  className="btn w-100 fw-semibold"
-                  style={{
-                    background: "linear-gradient(90deg,#42e695,#3bb2b8)",
-                    borderRadius: "10px",
-                    color: "black",
-                  }}
+                  className="btn btn-success w-100 fw-semibold"
                   onClick={async () => {
                     const res = await fetch(qrSrc);
                     const blob = await res.blob();
@@ -148,16 +124,12 @@ export default function PaymentChoice() {
             </div>
 
             <button
-              className="btn w-100 fw-bold text-white py-3"
-              style={{
-                background: "linear-gradient(135deg,#7B2CBF,#4B008A)",
-                borderRadius: "14px",
-                boxShadow: "0 4px 12px rgba(123,44,191,.35)",
-              }}
+              className="btn btn-primary w-100 fw-bold py-3"
               onClick={() => nav("/upload-slip", { state: room })}
             >
               ดำเนินการต่อ
             </button>
+
           </div>
         </div>
       </div>
