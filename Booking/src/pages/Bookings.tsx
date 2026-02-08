@@ -58,6 +58,7 @@ export default function Bookings() {
       <div
         style={{
           paddingTop: "78px",
+          paddingBottom: "60px",
           background: "#f6faff",
           minHeight: "100vh",
         }}
