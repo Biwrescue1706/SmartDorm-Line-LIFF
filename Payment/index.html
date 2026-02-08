@@ -16,10 +16,16 @@
   <body>
     <div id="root"></div>
 
-        <!-- Footer -->
+           <!-- Footer -->
     <footer
-      class="smart-footer text-center text-secondary py-2 fixed-bottom w-100"
-      style="z-index: 998"
+      class="smart-footer text-center fw-bold  text-dark py-2 w-100"
+      style="
+        margin-top: 50px;
+        font-size: 14px;
+        background: rgb(255, 255, 255);
+        backdrop-filter: blur(8px);
+        border-top: 1px solid rgb(0, 0, 0);
+      "
     >
       © <span id="smartYear"></span> SmartDorm • All rights reserved.
     </footer>
@@ -28,6 +34,7 @@
       document.getElementById("smartYear").textContent =
         `2025 - ${new Date().getFullYear()}`;
     </script>
+
 
     <script type="module" src="/src/main.tsx"></script>
     <script
