@@ -88,48 +88,48 @@ export default function RoomDetail() {
             <table className="table align-middle text-center table-bordered">
               <thead className="table-light">
                 <tr>
-                  <th className="text-start">รายการ</th>
+                  <th className="text-center">รายการ</th>
                   <th>ค่าใช้จ่าย</th>
                 </tr>
               </thead>
 
               <tbody>
                 <tr>
-                  <th className="bg-light text-start">หมายเลขห้อง</th>
+                  <th className="bg-light text-center">หมายเลขห้อง</th>
                   <td className="fw-semibold">{room.number}</td>
                 </tr>
                 <tr>
-                  <th className="bg-light text-start">ขนาดห้อง</th>
+                  <th className="bg-light text-center">ขนาดห้อง</th>
                   <td className="fw-semibold">{room.size}</td>
                 </tr>
                 <tr>
-                  <th className="bg-light text-start">ค่าเช่า</th>
+                  <th className="bg-light text-center">ค่าเช่า</th>
                   <td className="fw-bold text-primary">
                     {room.rent.toLocaleString("th-TH")} บาท
                   </td>
                 </tr>
                 <tr>
-                  <th className="bg-light text-start">เงินประกัน</th>
+                  <th className="bg-light text-center">เงินประกัน</th>
                   <td>{room.deposit.toLocaleString("th-TH")} บาท</td>
                 </tr>
                 <tr>
-                  <th className="bg-light text-start">ค่าจอง</th>
+                  <th className="bg-light text-center">ค่าจอง</th>
                   <td>{room.bookingFee.toLocaleString("th-TH")} บาท</td>
                 </tr>
                 <tr>
-                  <th className="bg-light text-start">ค่าส่วนกลาง</th>
+                  <th className="bg-light text-center">ค่าส่วนกลาง</th>
                   <td>50 บาท / เดือน</td>
                 </tr>
                 <tr>
-                  <th className="bg-light text-start">ค่าไฟฟ้า</th>
+                  <th className="bg-light text-center">ค่าไฟฟ้า</th>
                   <td>7 บาท / หน่วย</td>
                 </tr>
                 <tr>
-                  <th className="bg-light text-start">ค่าน้ำ</th>
+                  <th className="bg-light text-center">ค่าน้ำ</th>
                   <td>19 บาท / หน่วย</td>
                 </tr>
                 <tr className="table-success fw-bold">
-                  <th className="text-start">รวมทั้งหมด</th>
+                  <th className="text-center">รวมทั้งหมด</th>
                   <td className="text-success">
                     {total.toLocaleString("th-TH")} บาท
                   </td>
