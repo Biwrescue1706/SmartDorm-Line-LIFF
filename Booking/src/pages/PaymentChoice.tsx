@@ -68,8 +68,9 @@ export default function PaymentChoice() {
   return (
     <>
       <LiffNav />
-<div className="pt-5"></div>
-      <div className="pb-5 mb-4 min-vh-100 bg-light">
+      <div className="pt-5"></div>
+
+      <div className="pb-5 min-vh-100 bg-light">
         <div className="container">
 
           <div className="shadow p-4 mb-4 text-white text-center rounded-4 bg-primary bg-gradient">
@@ -79,56 +80,63 @@ export default function PaymentChoice() {
             </small>
           </div>
 
-          <div className="bg-white p-4 shadow-sm rounded-4 mx-auto col-12 col-md-8 col-xl-6">
+          {/* Responsive wrapper */}
+          <div className="row justify-content-center">
+            <div className="col-12 col-md-8 col-xl-6 col-xxl-4">
 
-            <div className="text-center p-3 rounded-3 mb-4 bg-info bg-opacity-25">
-              <h5 className="fw-bold mb-1">ยอดรวมที่ต้องชำระ</h5>
-              <h2 className="fw-bold text-dark">
-                {total.toLocaleString("th-TH")} บาท
-              </h2>
-            </div>
+              <div className="bg-white p-4 shadow-sm rounded-4">
 
-            <div className="p-4 text-center rounded-3 mb-4 border bg-light">
-              <h6 className="fw-semibold mb-2">สแกนเพื่อชำระเงิน</h6>
+                <div className="text-center p-3 rounded-3 mb-4 bg-info bg-opacity-25">
+                  <h5 className="fw-bold mb-1">ยอดรวมที่ต้องชำระ</h5>
+                  <h2 className="fw-bold text-dark">
+                    {total.toLocaleString("th-TH")} บาท
+                  </h2>
+                </div>
 
-              <img
-                src={qrSrc}
-                width="250"
-                alt="QR PromptPay"
-                className="my-3 border rounded shadow-sm"
-              />
+                <div className="p-4 text-center rounded-3 mb-4 border bg-light">
+                  <h6 className="fw-semibold mb-2">สแกนเพื่อชำระเงิน</h6>
 
-              {!isInLine ? (
+                  <img
+                    src={qrSrc}
+                    className="img-fluid my-3 border rounded shadow-sm"
+                    style={{ maxWidth: 260 }}
+                    alt="QR PromptPay"
+                  />
+
+                  {!isInLine ? (
+                    <button
+                      className="btn btn-success w-100 fw-semibold"
+                      onClick={async () => {
+                        const res = await fetch(qrSrc);
+                        const blob = await res.blob();
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.download = `QR-${total}.png`;
+                        link.click();
+                        URL.revokeObjectURL(url);
+                      }}
+                    >
+                      ดาวน์โหลด QR
+                    </button>
+                  ) : (
+                    <p className="small text-danger fw-semibold">
+                      (กดค้างที่ QR แล้วเลือก “บันทึกภาพ”)
+                    </p>
+                  )}
+                </div>
+
                 <button
-                  className="btn btn-success w-100 fw-semibold"
-                  onClick={async () => {
-                    const res = await fetch(qrSrc);
-                    const blob = await res.blob();
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement("a");
-                    link.href = url;
-                    link.download = `QR-${total}.png`;
-                    link.click();
-                    URL.revokeObjectURL(url);
-                  }}
+                  className="btn btn-primary w-100 fw-bold py-3"
+                  onClick={() => nav("/upload-slip", { state: room })}
                 >
-                  ดาวน์โหลด QR
+                  ดำเนินการต่อ
                 </button>
-              ) : (
-                <p className="small text-danger fw-semibold">
-                  (กดค้างที่ QR แล้วเลือก “บันทึกภาพ”)
-                </p>
-              )}
+
+              </div>
             </div>
-
-            <button
-              className="btn btn-primary w-100 fw-bold py-3"
-              onClick={() => nav("/upload-slip", { state: room })}
-            >
-              ดำเนินการต่อ
-            </button>
-
           </div>
+
         </div>
       </div>
     </>
