@@ -43,7 +43,7 @@ export default function UploadSlip() {
     return (
       <>
         <LiffNav />
-        <div className="text-center py-5" style={{ paddingTop: "80px" }}>
+        <div className="container text-center pt-5 mt-4">
           <h4 className="text-danger">ไม่พบข้อมูลห้อง</h4>
           <button className="btn btn-primary mt-3" onClick={() => nav("/")}>
             กลับหน้าแรก
@@ -56,7 +56,7 @@ export default function UploadSlip() {
     return (
       <>
         <LiffNav />
-        <div className="text-center py-5" style={{ paddingTop: "80px" }}>
+        <div className="text-center py-5 mt-5">
           <div className="spinner-border text-success" />
           <p className="mt-3">กำลังตรวจสอบการเข้าสู่ระบบ...</p>
         </div>
@@ -66,16 +66,16 @@ export default function UploadSlip() {
   return (
     <>
       <LiffNav />
-      <div
-        className="container"
-        style={{
-          paddingTop: "90px",
-          paddingBottom: "40px",
-          background: "#f6f9ff",
-          minHeight: "100vh",
-        }}
-      >
-        <UploadSlipForm room={room} accessToken={accessToken!} />
+      <div className="pt-5"></div>
+
+      <div className="pb-5 min-vh-100 bg-light">
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-12 col-md-8 col-xl-6">
+              <UploadSlipForm room={room} accessToken={accessToken!} />
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
@@ -91,14 +91,12 @@ function UploadSlipForm({
   accessToken: string;
 }) {
   const nav = useNavigate();
-
   const u = useUploadSlip({ room, accessToken });
 
   return (
     <form
       onSubmit={u.handleSubmit}
-      className="p-4 shadow-lg rounded-4 bg-white mx-auto"
-      style={{ maxWidth: "560px" }}
+      className="p-4 shadow-lg rounded-4 bg-white"
     >
       <h3 className="fw-bold text-center mb-4 text-primary">
         กรอกข้อมูลเพื่อยืนยันการจอง
@@ -171,7 +169,8 @@ function UploadSlipForm({
         <div className="text-center mb-3">
           <img
             src={u.slipPreviewUrl}
-            style={{ maxWidth: "300px", borderRadius: "12px" }}
+            className="img-fluid rounded-3"
+            style={{ maxWidth: "300px" }}
           />
         </div>
       )}
@@ -193,10 +192,7 @@ function UploadSlipForm({
         >
           {u.loading ? (
             <>
-              <span
-                className="spinner-border spinner-border-sm me-2"
-                role="status"
-              />
+              <span className="spinner-border spinner-border-sm me-2" />
               กำลังบันทึก...
             </>
           ) : (
