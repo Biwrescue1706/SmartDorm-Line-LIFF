@@ -73,7 +73,7 @@ export default function PaymentChoice() {
       <div className="pb-5 min-vh-100 bg-light">
         <div className="container">
 
-          <div className="shadow p-4 mb-4 text-white text-center rounded-4 bg-primary bg-gradient">
+          <div className="shadow p-4 mt-3 mb-4 text-white text-center rounded-4 bg-primary bg-gradient">
             <h3 className="fw-bold mb-0">ชำระเงินค่าจองห้องพัก</h3>
             <small className="opacity-75">
               ชำระผ่าน PromptPay เพื่อดำเนินการต่อ
