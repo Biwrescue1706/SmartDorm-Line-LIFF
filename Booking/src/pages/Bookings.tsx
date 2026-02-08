@@ -15,10 +15,8 @@ export default function Bookings() {
   const { rooms, loading } = useRooms(true);
   const nav = useNavigate();
 
-  // 👉 default = ชั้น 1
   const [selectedFloor, setSelectedFloor] = useState<string>("1");
 
-  /* ------------------ FLOORS ------------------ */
   const allFloors = useMemo(() => {
     const floors = rooms
       .map((r) => getFloor(r.number))
@@ -27,15 +25,12 @@ export default function Bookings() {
     return Array.from(new Set(floors)).sort((a, b) => a - b);
   }, [rooms]);
 
-  /* ------------------ FILTER ------------------ */
   const filteredRooms = useMemo(() => {
     if (selectedFloor === "ทั้งหมด") return rooms;
-
     const floorNum = Number(selectedFloor);
     return rooms.filter((r) => getFloor(r.number) === floorNum);
   }, [rooms, selectedFloor]);
 
-  /* ------------------ SORT ------------------ */
   const sortedRooms = useMemo(() => {
     return [...filteredRooms].sort((a, b) => {
       if (a.status === 0 && b.status !== 0) return -1;
@@ -44,7 +39,6 @@ export default function Bookings() {
     });
   }, [filteredRooms]);
 
-  /* ------------------ ACTION ------------------ */
   const handleSelect = (room: Room) => {
     if (room.status !== 0) return;
     nav(`/bookings/${room.roomId}`, { state: room });
@@ -54,14 +48,12 @@ export default function Bookings() {
     <>
       <LiffNav />
 
-      {/* spacer สำหรับ nav fixed */}
       <div className="pt-5"></div>
 
-      <div className="pb-5 min-vh-100 bg-light">
+      <div className="pb-5 mb-4 min-vh-100 bg-light">
         <div className="container">
 
-          {/* HEADER */}
-          <div className="shadow-sm p-4 mb-4 rounded-4 text-white bg-primary bg-gradient text-center">
+          <div className="shadow-sm p-4 mb-4 rounded-4 mt-3 text-white bg-primary bg-gradient text-center">
             <h3 className="fw-bold mb-1">
               รายการห้องพัก SmartDorm
             </h3>
@@ -70,7 +62,6 @@ export default function Bookings() {
             </p>
           </div>
 
-          {/* FLOOR SELECTOR */}
           <div className="text-center mb-4">
             <label className="fw-semibold me-2 fs-5 text-primary">
               เลือกชั้น :
@@ -90,7 +81,6 @@ export default function Bookings() {
             </select>
           </div>
 
-          {/* CONTENT */}
           {loading ? (
             <div className="text-center text-muted py-4">
               ⏳ กำลังโหลดข้อมูลห้อง...
@@ -100,7 +90,7 @@ export default function Bookings() {
               ❌ ไม่มีห้องในชั้นที่เลือก
             </div>
           ) : (
-            <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+            <div className="row row-cols-2 row-cols-sm-6 row-cols-xxl-12 g-3">
               {sortedRooms.map((room) => {
                 const isAvailable = room.status === 0;
                 const total =
