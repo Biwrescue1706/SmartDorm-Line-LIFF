@@ -69,19 +69,17 @@ export default function PaymentChoice() {
     <>
       <LiffNav />
 
-      <div className="pt-5"></div>
+      <div className="pt-5 min-vh-100 bg-light">
+        <div className="container-sm container-xl container-xxl">
 
-      <div className="pb-5 min-vh-100 bg-light">
-        <div className="container">
-
-          <div className="shadow text-white text-center py-4 rounded-4 mb-4 bg-primary bg-gradient mt-3">
+          <div className="shadow text-white text-center py-4 rounded-4 mb-4 bg-primary bg-gradient">
             <h3 className="fw-bold mb-0">ชำระเงินค่าจองห้องพัก</h3>
             <small className="opacity-75">
               ชำระผ่าน PromptPay เพื่อดำเนินการต่อ
             </small>
           </div>
 
-          <div className="bg-white p-4 shadow-sm rounded-4 mx-auto" style={{ maxWidth: 520 }}>
+          <div className="bg-white p-4 shadow-sm rounded-4 mx-auto col-12 col-md-8 col-xl-6">
 
             <div className="text-center p-3 rounded-3 mb-4 bg-info bg-opacity-25">
               <h5 className="fw-bold mb-1">ยอดรวมที่ต้องชำระ</h5>
