@@ -54,7 +54,10 @@ export default function Bookings() {
     <>
       <LiffNav />
 
-      <div className="pt-5 pb-5 min-vh-100 bg-light">
+      {/* spacer สำหรับ nav fixed */}
+      <div className="pt-5"></div>
+
+      <div className="pb-5 min-vh-100 bg-light">
         <div className="container">
 
           {/* HEADER */}
@@ -161,6 +164,7 @@ export default function Bookings() {
               })}
             </div>
           )}
+
         </div>
       </div>
     </>
