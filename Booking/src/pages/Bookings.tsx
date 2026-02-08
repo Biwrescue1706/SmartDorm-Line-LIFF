@@ -1,4 +1,3 @@
-// Booking/src/pages/Bookings.tsx
 import { useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { useRooms } from "../hooks/useRooms";
@@ -16,8 +15,8 @@ export default function Bookings() {
   const { rooms, loading } = useRooms(true);
   const nav = useNavigate();
 
-  // ใช้ string เพื่อรองรับ "ทั้งหมด"
-  const [selectedFloor, setSelectedFloor] = useState<string>("ทั้งหมด");
+  // 👉 default = ชั้น 1
+  const [selectedFloor, setSelectedFloor] = useState<string>("1");
 
   /* ------------------ FLOORS ------------------ */
   const allFloors = useMemo(() => {
@@ -55,27 +54,15 @@ export default function Bookings() {
     <>
       <LiffNav />
 
-      <div
-        style={{
-          paddingTop: "78px",
-          paddingBottom: "60px",
-          background: "#f6faff",
-          minHeight: "100vh",
-        }}
-      >
+      <div className="pt-5 pb-5 min-vh-100 bg-light">
         <div className="container">
+
           {/* HEADER */}
-          <div
-            className="shadow-sm p-4 mb-4 rounded-4"
-            style={{
-              background: "linear-gradient(135deg,#38A3FF,#7B2CBF)",
-              color: "white",
-            }}
-          >
-            <h3 className="fw-bold mb-1 text-center">
+          <div className="shadow-sm p-4 mb-4 rounded-4 text-white bg-primary bg-gradient text-center">
+            <h3 className="fw-bold mb-1">
               รายการห้องพัก SmartDorm
             </h3>
-            <p className="text-center mb-0 opacity-75">
+            <p className="mb-0 opacity-75">
               เลือกชั้นเพื่อดูห้องว่าง
             </p>
           </div>
@@ -85,12 +72,9 @@ export default function Bookings() {
             <label className="fw-semibold me-2 fs-5 text-primary">
               เลือกชั้น :
             </label>
+
             <select
-              className="form-select d-inline-block text-center fw-semibold shadow-sm"
-              style={{
-                width: "170px",
-                borderRadius: "12px",
-              }}
+              className="form-select d-inline-block text-center fw-semibold shadow-sm w-auto rounded-3"
               value={selectedFloor}
               onChange={(e) => setSelectedFloor(e.target.value)}
             >
@@ -116,29 +100,25 @@ export default function Bookings() {
             <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
               {sortedRooms.map((room) => {
                 const isAvailable = room.status === 0;
-                const total = room.rent + room.deposit + room.bookingFee;
+                const total =
+                  room.rent + room.deposit + room.bookingFee;
 
                 return (
                   <div key={room.roomId} className="col">
                     <div
-                      className="card h-100 border-0 shadow-sm"
+                      className={`card h-100 border-0 shadow-sm rounded-3 ${
+                        isAvailable
+                          ? ""
+                          : "bg-secondary bg-opacity-10 opacity-75"
+                      }`}
                       style={{
-                        borderRadius: "12px",
-                        background: isAvailable ? "white" : "#f1f1f1",
                         cursor: isAvailable ? "pointer" : "default",
-                        pointerEvents: isAvailable ? "auto" : "none",
-                        opacity: isAvailable ? 1 : 0.6,
-                        transition: "transform .1s ease, box-shadow .1s ease",
                       }}
-                      onClick={isAvailable ? () => handleSelect(room) : undefined}
-                      onMouseDown={(e) => {
-                        if (isAvailable)
-                          e.currentTarget.style.transform = "scale(0.97)";
-                      }}
-                      onMouseUp={(e) => {
-                        if (isAvailable)
-                          e.currentTarget.style.transform = "scale(1)";
-                      }}
+                      onClick={
+                        isAvailable
+                          ? () => handleSelect(room)
+                          : undefined
+                      }
                     >
                       <div className="card-body text-center d-flex flex-column">
                         <h4 className="fw-bold mb-2 text-primary">
@@ -146,16 +126,21 @@ export default function Bookings() {
                         </h4>
 
                         <small>ขนาด : {room.size}</small>
-                        <small>ค่าเช่า : {room.rent.toLocaleString()}</small>
                         <small>
-                          ค่าประกัน : {room.deposit.toLocaleString()}
+                          ค่าเช่า : {room.rent.toLocaleString()}
                         </small>
                         <small>
-                          ค่าจอง : {room.bookingFee.toLocaleString()}
+                          ค่าประกัน :
+                          {room.deposit.toLocaleString()}
+                        </small>
+                        <small>
+                          ค่าจอง :
+                          {room.bookingFee.toLocaleString()}
                         </small>
 
                         <small className="fw-semibold text-success mt-1">
-                          รวมทั้งหมด : {total.toLocaleString()}
+                          รวมทั้งหมด :
+                          {total.toLocaleString()}
                         </small>
 
                         <div className="mt-2">
