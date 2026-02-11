@@ -4,7 +4,7 @@ import { logoutLiff, ensureLiffReady } from "../lib/liff";
 import NavBar from "../components/NavBar";
 
 export default function ThankYou() {
-  const [countdown, setCountdown] = useState(5);
+  const [countdown, setCountdown] = useState(9);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
