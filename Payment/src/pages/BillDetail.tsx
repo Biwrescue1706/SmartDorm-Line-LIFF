@@ -161,16 +161,16 @@ export default function BillDetail() {
 
                 <table
                   className="table table-bordered text-center w-100"
-                  style={{ tableLayout: "fixed" }}
+                  style={{ tableLayout: "fixed", fontSize: "13px" }}
                 >
                   <thead className="table-light">
                     <tr>
-                      <th>#</th>
-                      <th>รายการ</th>
-                      <th>มิเตอร์ครั้งหลัง</th>
-                      <th>มิเตอร์ครั้งก่อน</th>
-                      <th>หน่วยที่ใช้</th>
-                      <th>ราคา</th>
+                      <th style={{ wordBreak: "break-word" }}>#</th>
+                      <th style={{ wordBreak: "break-word" }}>รายการ</th>
+                      <th style={{ wordBreak: "break-word" }}>มิเตอร์ครั้งหลัง</th>
+                      <th style={{ wordBreak: "break-word" }}>มิเตอร์ครั้งก่อน</th>
+                      <th style={{ wordBreak: "break-word" }}>หน่วยที่ใช้</th>
+                      <th style={{ wordBreak: "break-word" }}>ราคา</th>
                     </tr>
                   </thead>
 
@@ -207,7 +207,7 @@ export default function BillDetail() {
                     </tr>
                     <tr>
                       <td colSpan={5} className="text-end">VAT 7%</td>
-                      <td>{vat.toFixed(2)}</td>
+                      <td>{vat.toLocaleString()}</td>
                     </tr>
                     <tr className="table-success">
                       <td colSpan={5} className="text-end">รวม</td>
@@ -220,6 +220,25 @@ export default function BillDetail() {
                     </tr>
                   </tfoot>
                 </table>
+
+                {/* ปุ่ม */}
+                {bill.billStatus === 0 && (
+                  <div className="text-center mt-4">
+                    <button
+                      className="btn btn-outline-secondary me-3"
+                      onClick={() => nav("/mybills")}
+                    >
+                      ยกเลิก
+                    </button>
+
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => nav("/payment-choice", { state: bill })}
+                    >
+                      ยืนยัน
+                    </button>
+                  </div>
+                )}
 
               </div>
             </div>
