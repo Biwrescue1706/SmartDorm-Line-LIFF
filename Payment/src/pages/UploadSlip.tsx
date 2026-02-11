@@ -91,8 +91,15 @@ export default function UploadSlip() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      Swal.fire("ส่งสลิปสำเร็จ", "ขอบคุณที่ชำระเงิน", "success");
-      nav("/thankyou");
+      Swal.fire({
+  icon: "success",
+  title: "ส่งสลิปสำเร็จ",
+  text: "ขอบคุณที่ชำระเงิน",
+  showConfirmButton: false,
+  timer: 1800,
+}).then(() => {
+  nav("/thankyou");
+});
     } catch (err: any) {
       Swal.fire("❌ ไม่สามารถส่งสลิปได้", err.message, "error");
     } finally {
