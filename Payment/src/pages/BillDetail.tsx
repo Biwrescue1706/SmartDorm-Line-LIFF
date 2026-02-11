@@ -29,6 +29,9 @@ interface BillDetail {
   booking: { fullName: string };
 }
 
+const money = (n: number) =>
+  n.toLocaleString(undefined, { minimumFractionDigits: 2 });
+
 const formatThaiDate = (d: string) => {
   const t = new Date(d);
   const m = [
@@ -142,7 +145,6 @@ export default function BillDetail() {
 
               <div className="bg-white p-4 rounded-4 shadow-sm">
 
-                {/* ผู้เช่า */}
                 <h5 className="fw-bold border-start border-4 border-primary ps-2 mb-3">
                   ข้อมูลผู้เช่า
                 </h5>
@@ -154,7 +156,6 @@ export default function BillDetail() {
                   <strong>วันครบกำหนด :</strong> {formatThaiDate(bill.dueDate)}
                 </p>
 
-                {/* ตาราง */}
                 <h5 className="fw-bold border-start border-4 border-primary ps-2 mt-4 mb-3">
                   รายละเอียดค่าใช้จ่าย
                 </h5>
@@ -163,14 +164,23 @@ export default function BillDetail() {
                   className="table table-bordered text-center w-100"
                   style={{ tableLayout: "fixed", fontSize: "13px" }}
                 >
+                  <colgroup>
+                    <col style={{ width: "8%" }} />
+                    <col style={{ width: "20%" }} />
+                    <col style={{ width: "16%" }} />
+                    <col style={{ width: "16%" }} />
+                    <col style={{ width: "14%" }} />
+                    <col style={{ width: "26%" }} />
+                  </colgroup>
+
                   <thead className="table-light">
                     <tr>
-                      <th style={{ wordBreak: "break-word" }}>#</th>
-                      <th style={{ wordBreak: "break-word" }}>รายการ</th>
-                      <th style={{ wordBreak: "break-word" }}>มิเตอร์ครั้งหลัง</th>
-                      <th style={{ wordBreak: "break-word" }}>มิเตอร์ครั้งก่อน</th>
-                      <th style={{ wordBreak: "break-word" }}>หน่วยที่ใช้</th>
-                      <th style={{ wordBreak: "break-word" }}>ราคา</th>
+                      <th>#</th>
+                      <th>รายการ</th>
+                      <th>มิเตอร์ครั้งหลัง</th>
+                      <th>มิเตอร์ครั้งก่อน</th>
+                      <th>หน่วยที่ใช้</th>
+                      <th>ราคา</th>
                     </tr>
                   </thead>
 
@@ -179,7 +189,7 @@ export default function BillDetail() {
                       <tr key={i}>
                         <td>{i + 1}</td>
                         {r.map((c, idx) => (
-                          <td key={idx} style={{ wordBreak: "break-word" }}>
+                          <td key={idx}>
                             {typeof c === "number"
                               ? c.toLocaleString()
                               : c}
@@ -202,16 +212,16 @@ export default function BillDetail() {
 
                   <tfoot className="fw-semibold">
                     <tr>
-                      <td colSpan={5} className="text-end">ก่อน VAT</td>
-                      <td>{beforeVat.toFixed(2)}</td>
+                      <td colSpan={5} className="text-end">ราคาก่อน VAT</td>
+                      <td className="text-end">{money(beforeVat)}</td>
                     </tr>
                     <tr>
                       <td colSpan={5} className="text-end">VAT 7%</td>
-                      <td>{vat.toLocaleString()}</td>
+                      <td className="text-end">{money(vat)}</td>
                     </tr>
                     <tr className="table-success">
                       <td colSpan={5} className="text-end">รวม</td>
-                      <td>{bill.total.toLocaleString()}</td>
+                      <td className="text-end">{bill.total.toLocaleString()}</td>
                     </tr>
                     <tr>
                       <td colSpan={6} className="text-start">
@@ -221,7 +231,6 @@ export default function BillDetail() {
                   </tfoot>
                 </table>
 
-                {/* ปุ่ม */}
                 {bill.billStatus === 0 && (
                   <div className="text-center mt-4">
                     <button
