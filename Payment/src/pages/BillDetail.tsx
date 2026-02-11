@@ -38,7 +38,6 @@ const formatThaiDate = (d: string) => {
   return `${t.getDate()} ${m[t.getMonth()]} ${t.getFullYear() + 543}`;
 };
 
-/* ===================== NUMBER TO THAI BAHT ===================== */
 const numberToThaiBaht = (num: number) => {
   const th = ["ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า"];
   const unit = ["","สิบ","ร้อย","พัน","หมื่น","แสน","ล้าน"];
@@ -114,16 +113,12 @@ export default function BillDetail() {
   const beforeVat = bill.total - vat;
   const thaiText = numberToThaiBaht(bill.total);
 
-  const today = new Date();
-  const due = new Date(bill.dueDate);
-  let isOverdue = false;
-  let overdueDays = 0;
-
-  if (bill.billStatus === 0 && today > due) {
-    isOverdue = true;
-    const diff = today.getTime() - due.getTime();
-    overdueDays = Math.ceil(diff / (1000 * 60 * 60 * 24));
-  }
+  const rows = [
+    ["ค่าน้ำ", bill.wAfter, bill.wBefore, bill.wUnits, bill.waterCost],
+    ["ค่าไฟ", bill.eAfter, bill.eBefore, bill.eUnits, bill.electricCost],
+    ["ค่าเช่า", "-", "-", "-", bill.rent],
+    ["ส่วนกลาง", "-", "-", "-", bill.service],
+  ];
 
   return (
     <>
@@ -132,7 +127,6 @@ export default function BillDetail() {
 
       <div className="pb-5 min-vh-100 bg-light">
 
-        {/* HEADER */}
         <div className="bg-primary text-white text-center py-4 shadow">
           <h4 className="fw-bold">ใบแจ้งหนี้</h4>
           <small>หอพัก 47/21 ม.1 ต.บ้านสวน อ.เมืองชลบุรี จ.ชลบุรี</small>
@@ -142,121 +136,77 @@ export default function BillDetail() {
           </small>
         </div>
 
-        {/* CARD */}
         <div className="container mt-4">
           <div className="row justify-content-center">
             <div className="col-12 col-md-10 col-xl-8">
 
               <div className="bg-white p-4 rounded-4 shadow-sm">
 
-                <h5 className="fw-bold border-start border-4 border-primary ps-2 mb-3">
-                  ข้อมูลผู้เช่า
-                </h5>
-
-                <p><strong>ชื่อลูกค้า :</strong> {bill.booking.fullName}</p>
-                <p><strong>ห้อง :</strong> {bill.room.number}</p>
-                <p><strong>ประจำเดือน :</strong> {formatThaiDate(bill.month)}</p>
-                <p className={isOverdue ? "text-danger" : ""}>
-                  <strong>
-                    {isOverdue
-                      ? `เกินกำหนด ${overdueDays} วัน`
-                      : "วันครบกำหนดชำระ"} :
-                  </strong>{" "}
-                  {formatThaiDate(bill.dueDate)}
-                </p>
-
                 <h5 className="fw-bold border-start border-4 border-primary ps-2 mt-4 mb-3">
                   รายละเอียดค่าใช้จ่าย
                 </h5>
 
-                <div>
-                  <table
-                    className="table table-bordered text-center w-100"
-                    style={{ tableLayout: "fixed" }}
-                  >
-                    <thead className="table-light">
-                      <tr>
-                        <th>รายการ</th>
-                        <th>หลัง</th>
-                        <th>ก่อน</th>
-                        <th>หน่วย</th>
-                        <th>เงิน</th>
+                <table
+                  className="table table-bordered text-center w-100"
+                  style={{ tableLayout: "fixed" }}
+                >
+                  <thead className="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>รายการ</th>
+                      <th>มิเตอร์ครั้งหลัง</th>
+                      <th>มิเตอร์ครั้งก่อน</th>
+                      <th>หน่วยที่ใช้</th>
+                      <th>ราคา</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {rows.map((r, i) => (
+                      <tr key={i}>
+                        <td>{i + 1}</td>
+                        {r.map((c, idx) => (
+                          <td key={idx} style={{ wordBreak: "break-word" }}>
+                            {typeof c === "number"
+                              ? c.toLocaleString()
+                              : c}
+                          </td>
+                        ))}
                       </tr>
-                    </thead>
-                    <tbody>
+                    ))}
+
+                    {bill.overdueDays > 0 && (
                       <tr>
-                        <td>ค่าน้ำ</td>
-                        <td>{bill.wAfter}</td>
-                        <td>{bill.wBefore}</td>
-                        <td>{bill.wUnits}</td>
-                        <td>{bill.waterCost.toLocaleString()}</td>
-                      </tr>
-                      <tr>
-                        <td>ค่าไฟ</td>
-                        <td>{bill.eAfter}</td>
-                        <td>{bill.eBefore}</td>
-                        <td>{bill.eUnits}</td>
-                        <td>{bill.electricCost.toLocaleString()}</td>
-                      </tr>
-                      <tr>
-                        <td>ค่าเช่า</td>
-                        <td colSpan={3}>-</td>
-                        <td>{bill.rent.toLocaleString()}</td>
-                      </tr>
-                      <tr>
-                        <td>ส่วนกลาง</td>
-                        <td colSpan={3}>-</td>
-                        <td>{bill.service.toLocaleString()}</td>
-                      </tr>
-                      <tr>
+                        <td>{rows.length + 1}</td>
                         <td>ค่าปรับ</td>
-                        <td colSpan={3}>
-                          {bill.overdueDays > 0
-                            ? `ปรับ ${bill.overdueDays} วัน`
-                            : "-"}
+                        <td colSpan={3} className="text-center">
+                          ปรับ {bill.overdueDays} วัน
                         </td>
                         <td>{bill.fine.toLocaleString()}</td>
                       </tr>
-                    </tbody>
-                    <tfoot className="fw-semibold">
-                      <tr>
-                        <td colSpan={4} className="text-end">ก่อน VAT</td>
-                        <td>{beforeVat.toFixed(2)}</td>
-                      </tr>
-                      <tr>
-                        <td colSpan={4} className="text-end">VAT 7%</td>
-                        <td>{vat.toFixed(2)}</td>
-                      </tr>
-                      <tr className="table-success">
-                        <td colSpan={4} className="text-end">รวม</td>
-                        <td>{bill.total.toLocaleString()}</td>
-                      </tr>
-                      <tr>
-                        <td colSpan={5} className="text-start">
-                          ({thaiText})
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
+                    )}
+                  </tbody>
 
-                {bill.billStatus === 0 && (
-                  <div className="text-center mt-4">
-                    <button
-                      className="btn btn-outline-secondary me-3"
-                      onClick={() => nav("/mybills")}
-                    >
-                      ยกเลิก
-                    </button>
-
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => nav("/payment-choice", { state: bill })}
-                    >
-                      ยืนยัน
-                    </button>
-                  </div>
-                )}
+                  <tfoot className="fw-semibold">
+                    <tr>
+                      <td colSpan={5} className="text-end">ก่อน VAT</td>
+                      <td>{beforeVat.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td colSpan={5} className="text-end">VAT 7%</td>
+                      <td>{vat.toFixed(2)}</td>
+                    </tr>
+                    <tr className="table-success">
+                      <td colSpan={5} className="text-end">รวม</td>
+                      <td>{bill.total.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                      <td colSpan={6} className="text-start">
+                        ({thaiText})
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
 
               </div>
             </div>
