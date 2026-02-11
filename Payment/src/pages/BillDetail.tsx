@@ -142,6 +142,19 @@ export default function BillDetail() {
 
               <div className="bg-white p-4 rounded-4 shadow-sm">
 
+                {/* ผู้เช่า */}
+                <h5 className="fw-bold border-start border-4 border-primary ps-2 mb-3">
+                  ข้อมูลผู้เช่า
+                </h5>
+
+                <p><strong>ชื่อลูกค้า :</strong> {bill.booking.fullName}</p>
+                <p><strong>ห้อง :</strong> {bill.room.number}</p>
+                <p><strong>ประจำเดือน :</strong> {formatThaiDate(bill.month)}</p>
+                <p>
+                  <strong>วันครบกำหนด :</strong> {formatThaiDate(bill.dueDate)}
+                </p>
+
+                {/* ตาราง */}
                 <h5 className="fw-bold border-start border-4 border-primary ps-2 mt-4 mb-3">
                   รายละเอียดค่าใช้จ่าย
                 </h5>
