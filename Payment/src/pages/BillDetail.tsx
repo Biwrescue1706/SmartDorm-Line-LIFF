@@ -175,12 +175,12 @@ export default function BillDetail() {
 
                   <thead className="table-light">
                     <tr>
-                      <th>#</th>
-                      <th>รายการ</th>
-                      <th>มิเตอร์ครั้งหลัง</th>
-                      <th>มิเตอร์ครั้งก่อน</th>
-                      <th>หน่วยที่ใช้</th>
-                      <th>ราคา</th>
+                      <th className="text-center">#</th>
+                      <th className="text-center">รายการ</th>
+                      <th className="text-center">มิเตอร์ครั้งหลัง</th>
+                      <th className="text-center">มิเตอร์ครั้งก่อน</th>
+                      <th className="text-center">หน่วยที่ใช้</th>
+                      <th className="text-center">ราคา</th>
                     </tr>
                   </thead>
 
@@ -224,7 +224,7 @@ export default function BillDetail() {
                       <td className="text-end">{bill.total.toLocaleString()}</td>
                     </tr>
                     <tr>
-                      <td colSpan={6} className="text-start">
+                      <td colSpan={6} className="text-center">
                         ({thaiText})
                       </td>
                     </tr>
