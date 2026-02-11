@@ -8,10 +8,10 @@ import NavBar from "../components/NavBar";
 
 interface Bill {
   billId: string;
-  month?: string;
+  month: string;
   total: number;
-  status: number; // 0 = unpaid, 1 = paid
-  dueDate?: string; // 🟣 เพิ่ม field สำหรับวันที่กำหนดชำระ
+  billStatus: number;
+  dueDate: string;
   room?: { number?: string };
 }
 
@@ -69,16 +69,16 @@ export default function MyBills() {
         });
 
         const unpaid = unpaidRes.data.bills.map((b: any) => ({
-          ...b,
-          status: 0,
-          room: b.room ?? { number: b.roomNumber ?? "-" },
-        }));
+  ...b,
+  billStatus: 0,
+  room: b.room ?? { number: b.roomNumber ?? "-" },
+}));
 
         const paid = paidRes.data.bills.map((b: any) => ({
-          ...b,
-          status: 1,
-          room: b.room ?? { number: b.roomNumber ?? "-" },
-        }));
+  ...b,
+  billStatus: 1,
+  room: b.room ?? { number: b.roomNumber ?? "-" },
+}));
 
         const allBills = [...unpaid, ...paid];
         setBills(allBills);
@@ -115,7 +115,7 @@ export default function MyBills() {
     if (!selectedRoom) return;
 
     const filtered = bills
-      .filter((b) => b.room?.number === selectedRoom && b.status === 0)
+      .filter((b) => b.room?.number === selectedRoom && b.billStatus === 0)
       .sort(
         (a, b) =>
           new Date(b.month ?? "").getTime() -
