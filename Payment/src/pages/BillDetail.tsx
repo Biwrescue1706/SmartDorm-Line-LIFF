@@ -128,7 +128,6 @@ export default function BillDetail() {
   return (
     <>
       <NavBar />
-
       <div className="pt-5"></div>
 
       <div className="pb-5 min-vh-100 bg-light">
@@ -138,7 +137,9 @@ export default function BillDetail() {
           <h4 className="fw-bold">ใบแจ้งหนี้</h4>
           <small>หอพัก 47/21 ม.1 ต.บ้านสวน อ.เมืองชลบุรี จ.ชลบุรี</small>
           <br />
-          <small className="opacity-75">เลขที่ใบแจ้งหนี้ : {bill.billId}</small>
+          <small className="opacity-75">
+            เลขที่ใบแจ้งหนี้ : {bill.billId}
+          </small>
         </div>
 
         {/* CARD */}
@@ -157,7 +158,9 @@ export default function BillDetail() {
                 <p><strong>ประจำเดือน :</strong> {formatThaiDate(bill.month)}</p>
                 <p className={isOverdue ? "text-danger" : ""}>
                   <strong>
-                    {isOverdue ? `เกินกำหนด ${overdueDays} วัน` : "วันครบกำหนดชำระ"} :
+                    {isOverdue
+                      ? `เกินกำหนด ${overdueDays} วัน`
+                      : "วันครบกำหนดชำระ"} :
                   </strong>{" "}
                   {formatThaiDate(bill.dueDate)}
                 </p>
@@ -166,8 +169,11 @@ export default function BillDetail() {
                   รายละเอียดค่าใช้จ่าย
                 </h5>
 
-                <div className="table-responsive">
-                  <table className="table table-bordered text-center">
+                <div>
+                  <table
+                    className="table table-bordered text-center w-100"
+                    style={{ tableLayout: "fixed" }}
+                  >
                     <thead className="table-light">
                       <tr>
                         <th>รายการ</th>
@@ -205,7 +211,9 @@ export default function BillDetail() {
                       <tr>
                         <td>ค่าปรับ</td>
                         <td colSpan={3}>
-                          {bill.overdueDays > 0 ? `ปรับ ${bill.overdueDays} วัน` : "-"}
+                          {bill.overdueDays > 0
+                            ? `ปรับ ${bill.overdueDays} วัน`
+                            : "-"}
                         </td>
                         <td>{bill.fine.toLocaleString()}</td>
                       </tr>
@@ -224,7 +232,9 @@ export default function BillDetail() {
                         <td>{bill.total.toLocaleString()}</td>
                       </tr>
                       <tr>
-                        <td colSpan={5} className="text-start">({thaiText})</td>
+                        <td colSpan={5} className="text-start">
+                          ({thaiText})
+                        </td>
                       </tr>
                     </tfoot>
                   </table>
