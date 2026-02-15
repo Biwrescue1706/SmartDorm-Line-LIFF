@@ -1,6 +1,6 @@
 import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import type { Room } from "../types/Room";
+import type { Room } from "../types/All";
 import { API_BASE } from "../config";
 import { GetRoomById } from "../apis/endpoint.api";
 import Swal from "sweetalert2";
