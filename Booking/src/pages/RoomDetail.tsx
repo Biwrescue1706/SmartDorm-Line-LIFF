@@ -1,16 +1,80 @@
-import { useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import type { Room } from "../types/Room";
+import { API_BASE } from "../config";
+import { GetRoomById } from "../apis/endpoint.api";
 import Swal from "sweetalert2";
+
+export function useRoomDetail() {
+  const { state } = useLocation();
+  const { roomId } = useParams();
+  const [room, setRoom] = useState<Room | null>((state as Room) || null);
+  const [loading, setLoading] = useState(!state && !!roomId);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (state) return;
+
+    if (!roomId) {
+      setError("ไม่พบรหัสห้อง");
+      return;
+    }
+
+    setLoading(true);
+    fetch(`${API_BASE}${GetRoomById(roomId)}`)
+      .then(async (res) => {
+        if (!res.ok) throw new Error("ไม่สามารถโหลดข้อมูลห้องได้");
+        const data: Room = await res.json();
+        setRoom(data);
+      })
+      .catch(() => {
+        setError("โหลดข้อมูลห้องไม่สำเร็จ");
+        Swal.fire({
+          icon: "error",
+          title: "โหลดข้อมูลห้องไม่สำเร็จ",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+      })
+      .finally(() => setLoading(false));
+  }, [roomId, state]);
+
+  return { room, roomId, loading, error };
+}
+
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useRoomDetail } from "../hooks/useRoomDetail";
 import { refreshLiffToken, logoutLiff } from "../lib/liff";
-import { API_BASE } from "../config";
 import LiffNav from "../components/LiffNav";
 
 export default function RoomDetail() {
   const { room, roomId, loading, error } = useRoomDetail();
   const nav = useNavigate();
 
+  // ✅ dorm profile state
+  const [profile, setProfile] = useState({
+    service: 0,
+    waterRate: 0,
+    electricRate: 0,
+    overdueFinePerDay: 0,
+  });
+
+  // ✅ ดึง dorm profile
+  useEffect(() => {
+    fetch(`${API_BASE}/dorm-profile`)
+      .then((r) => r.json())
+      .then((d) =>
+        setProfile({
+          service: d.service ?? 0,
+          waterRate: d.waterRate ?? 0,
+          electricRate: d.electricRate ?? 0,
+          overdueFinePerDay: d.overdueFinePerDay ?? 0,
+        })
+      )
+      .catch(() => console.warn("โหลด dorm profile ไม่สำเร็จ"));
+  }, []);
+
+  // auth check
   useEffect(() => {
     (async () => {
       try {
@@ -73,7 +137,6 @@ export default function RoomDetail() {
   return (
     <>
       <LiffNav />
-
       <div className="pt-5"></div>
 
       <div className="pb-5 min-vh-100 bg-light">
@@ -88,48 +151,48 @@ export default function RoomDetail() {
             <table className="table align-middle text-center table-bordered">
               <thead className="table-light">
                 <tr>
-                  <th className="text-center">รายการ</th>
+                  <th>รายการ</th>
                   <th>ค่าใช้จ่าย</th>
                 </tr>
               </thead>
 
               <tbody>
                 <tr>
-                  <th className="bg-light text-center">หมายเลขห้อง</th>
+                  <th className="bg-light">หมายเลขห้อง</th>
                   <td className="fw-semibold">{room.number}</td>
                 </tr>
                 <tr>
-                  <th className="bg-light text-center">ขนาดห้อง</th>
+                  <th className="bg-light">ขนาดห้อง</th>
                   <td className="fw-semibold">{room.size}</td>
                 </tr>
                 <tr>
-                  <th className="bg-light text-center">ค่าเช่า</th>
+                  <th className="bg-light">ค่าเช่า</th>
                   <td className="fw-bold text-primary">
                     {room.rent.toLocaleString("th-TH")} บาท
                   </td>
                 </tr>
                 <tr>
-                  <th className="bg-light text-center">เงินประกัน</th>
+                  <th className="bg-light">เงินประกัน</th>
                   <td>{room.deposit.toLocaleString("th-TH")} บาท</td>
                 </tr>
                 <tr>
-                  <th className="bg-light text-center">ค่าจอง</th>
+                  <th className="bg-light">ค่าจอง</th>
                   <td>{room.bookingFee.toLocaleString("th-TH")} บาท</td>
                 </tr>
                 <tr>
-                  <th className="bg-light text-center">ค่าส่วนกลาง</th>
-                  <td>50 บาท / เดือน</td>
+                  <th className="bg-light">ค่าส่วนกลาง</th>
+                  <td>{profile.service} บาท / เดือน</td>
                 </tr>
                 <tr>
-                  <th className="bg-light text-center">ค่าไฟฟ้า</th>
-                  <td>7 บาท / หน่วย</td>
+                  <th className="bg-light">ค่าไฟฟ้า</th>
+                  <td>{profile.electricRate} บาท / หน่วย</td>
                 </tr>
                 <tr>
-                  <th className="bg-light text-center">ค่าน้ำ</th>
-                  <td>19 บาท / หน่วย</td>
+                  <th className="bg-light">ค่าน้ำ</th>
+                  <td>{profile.waterRate} บาท / หน่วย</td>
                 </tr>
                 <tr className="table-success fw-bold">
-                  <th className="text-center">รวมทั้งหมด</th>
+                  <th>รวมทั้งหมด</th>
                   <td className="text-success">
                     {total.toLocaleString("th-TH")} บาท
                   </td>
@@ -137,8 +200,8 @@ export default function RoomDetail() {
                 <tr>
                   <td colSpan={2} className="text-muted small fst-italic text-start">
                     ( ตัดรอบบิลวันที่ 25 ของเดือน <br />
-                    กำหนดชำระบิล ตั้งแต่วันแจ้งบิล ถึง วันที่ 5 ของทุกเดือน <br />
-                    หากชำระค่าเช่าเกินวันที่ 5 อัตราการปรับ วันละ 50 บาท )
+                    กำหนดชำระบิล ถึงวันที่ 5 ของทุกเดือน <br />
+                    หากชำระเกินกำหนด ปรับวันละ {profile.overdueFinePerDay} บาท )
                   </td>
                 </tr>
               </tbody>
@@ -159,8 +222,8 @@ export default function RoomDetail() {
                 ยืนยัน
               </button>
             </div>
-          </div>
 
+          </div>
         </div>
       </div>
     </>
