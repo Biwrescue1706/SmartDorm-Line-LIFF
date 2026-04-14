@@ -104,7 +104,10 @@ export default function UploadSlip() {
       form.append("accessToken", token);
       form.append("slip", file);
 
-      await axios.post(`${API_BASE}/payment/create`, form);
+      await axios.post(`${API_BASE}/payment/create`, form, {
+  timeout: 30000,
+  withCredentials: false,
+});
 
       Swal.fire({
         icon: "success",
