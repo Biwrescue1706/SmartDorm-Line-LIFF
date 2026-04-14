@@ -104,9 +104,7 @@ export default function UploadSlip() {
       form.append("accessToken", token);
       form.append("slip", file);
 
-      await axios.post(`${API_BASE}/payment/create`, form, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await axios.post(`${API_BASE}/payment/create`, form);
 
       Swal.fire({
         icon: "success",
