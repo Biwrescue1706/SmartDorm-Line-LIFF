@@ -9,9 +9,9 @@ import { refreshLiffToken } from "../lib/liff";
 import NavBar from "../components/NavBar";
 
 /**
- * ย่อขนาดรูป
+ * 🔥 บีบรูป (แรงขึ้น + ลดขนาด)
  */
-const compressImage = (file: File, quality = 0.6): Promise<File> => {
+const compressImage = (file: File, quality = 0.4): Promise<File> => {
   return new Promise((resolve) => {
     const img = new Image();
     img.src = URL.createObjectURL(file);
@@ -20,7 +20,7 @@ const compressImage = (file: File, quality = 0.6): Promise<File> => {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d")!;
 
-      const maxW = 1080;
+      const maxW = 720; // 🔥 ลดจาก 1080 → 720
       let w = img.width;
       let h = img.height;
 
@@ -42,7 +42,7 @@ const compressImage = (file: File, quality = 0.6): Promise<File> => {
           );
         },
         "image/jpeg",
-        quality
+        quality // 🔥 ลด quality เหลือ 0.4
       );
     };
   });
@@ -57,7 +57,6 @@ export default function UploadSlip() {
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // cleanup preview memory
   useEffect(() => {
     return () => {
       if (preview) URL.revokeObjectURL(preview);
@@ -67,23 +66,27 @@ export default function UploadSlip() {
   const onSelectFile = async (file: File | null) => {
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      Swal.fire({
-        title: "กำลังลดขนาดรูป...",
-        html: "กำลังประมวลผลภาพสลิป โปรดรอ",
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading(),
-      });
+    Swal.fire({
+      title: "กำลังประมวลผลรูป...",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
 
-      const compressed = await compressImage(file, 0.55);
-      Swal.close();
+    const compressed = await compressImage(file);
 
-      setFile(compressed);
-      setPreview(URL.createObjectURL(compressed));
-    } else {
-      setFile(file);
-      setPreview(URL.createObjectURL(file));
+    Swal.close();
+
+    // 🔥 กันไฟล์ใหญ่เกิน
+    if (compressed.size > 1 * 1024 * 1024) {
+      return Swal.fire(
+        "ไฟล์ใหญ่เกิน",
+        "กรุณาเลือกรูปไม่เกิน 1MB",
+        "warning"
+      );
     }
+
+    setFile(compressed);
+    setPreview(URL.createObjectURL(compressed));
   };
 
   const handleSubmit = async () => {
@@ -105,9 +108,9 @@ export default function UploadSlip() {
       form.append("slip", file);
 
       await axios.post(`${API_BASE}/payment/create`, form, {
-  timeout: 30000,
-  withCredentials: false,
-});
+        timeout: 30000, // 🔥 กัน timeout
+        withCredentials: false,
+      });
 
       Swal.fire({
         icon: "success",
@@ -120,12 +123,12 @@ export default function UploadSlip() {
       });
 
     } catch (err: any) {
-      console.log("SERVER ERROR:", err.response?.data);
+      console.log("SERVER ERROR:", err);
 
       Swal.fire(
         "❌ ไม่สามารถส่งสลิปได้",
-        err.response?.data?.message ||
-          JSON.stringify(err.response?.data) ||
+        err?.response?.data?.error ||
+          err?.response?.data?.message ||
           err.message,
         "error"
       );
