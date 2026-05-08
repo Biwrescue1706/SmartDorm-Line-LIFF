@@ -89,7 +89,7 @@ export default function ReturnableRooms() {
         style={{
           minHeight: "100vh",
           background: BG_SOFT,
-          padding: "78px 16px 32px",
+          padding: "70px 10px 10px",
         }}
       >
         <div
@@ -106,7 +106,7 @@ export default function ReturnableRooms() {
               overflow: "hidden",
               boxShadow:
                 "0 12px 30px rgba(74,0,128,0.08)",
-              marginBottom: 22,
+              marginBottom: 10,
             }}
           >
             <div
@@ -119,7 +119,7 @@ export default function ReturnableRooms() {
 
             <div
               style={{
-                padding: 24,
+                padding: 10,
               }}
             >
               <h1
