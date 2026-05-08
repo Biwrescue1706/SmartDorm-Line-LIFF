@@ -123,138 +123,455 @@ export default function BillDetail() {
     ["ส่วนกลาง", "-", "-", "-", bill.service],
   ];
 
-  return (
-    <>
-      <NavBar />
-      <div className="pt-5"></div>
+  // UI MODERN STYLE VERSION
+// เปลี่ยนเฉพาะ return ได้เลย
 
-      <div className="pb-5 min-vh-100 bg-light">
+return (
+  <>
+    <NavBar />
 
-        <div className="bg-primary text-white text-center py-4 shadow">
-          <h4 className="fw-bold">ใบแจ้งหนี้</h4>
-          <small>หอพัก 47/21 ม.1 ต.บ้านสวน อ.เมืองชลบุรี จ.ชลบุรี</small>
-          <br />
-          <small className="opacity-75">
-            เลขที่ใบแจ้งหนี้ : {bill.billId}
-          </small>
-        </div>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#F6F4FA",
+        padding: "88px 16px 40px",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 860,
+          margin: "0 auto",
+        }}
+      >
+        {/* HEADER */}
+        <div
+          style={{
+            background: "#fff",
+            borderRadius: 30,
+            padding: 28,
+            marginBottom: 20,
+            boxShadow: "0 12px 28px rgba(74,0,128,0.08)",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          {/* TOP BAR */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: 6,
+              background:
+                "linear-gradient(90deg,#4A0080 0%, #7B2BC7 100%)",
+            }}
+          />
 
-        <div className="container mt-4">
-          <div className="row justify-content-center">
-            <div className="col-12 col-md-10 col-xl-8">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 16,
+            }}
+          >
+            <div>
+              <h1
+                style={{
+                  margin: 0,
+                  fontSize: 32,
+                  fontWeight: 800,
+                  color: "#4A0080",
+                }}
+              >
+                🧾 ใบแจ้งหนี้
+              </h1>
 
-              <div className="bg-white p-4 rounded-4 shadow-sm">
+              <p
+                style={{
+                  marginTop: 10,
+                  marginBottom: 0,
+                  color: "#7B7490",
+                  fontSize: 14,
+                  lineHeight: 1.7,
+                }}
+              >
+                หอพัก 47/21 ม.1 ต.บ้านสวน
+                <br />
+                อ.เมืองชลบุรี จ.ชลบุรี
+              </p>
+            </div>
 
-                <h5 className="fw-bold border-start border-4 border-primary ps-2 mb-3">
-                  ข้อมูลผู้เช่า
-                </h5>
+            <div
+              style={{
+                background: "#F5EEFC",
+                padding: "14px 18px",
+                borderRadius: 18,
+                minWidth: 240,
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 12,
+                  color: "#7B7490",
+                  marginBottom: 6,
+                  fontWeight: 600,
+                }}
+              >
+                เลขที่ใบแจ้งหนี้
+              </div>
 
-                <p><strong>ชื่อลูกค้า :</strong> {bill.booking.fullName}</p>
-                <p><strong>ห้อง :</strong> {bill.room.number}</p>
-                <p><strong>ประจำเดือน :</strong> {formatThaiDate(bill.month)}</p>
-                <p>
-                  <strong>วันครบกำหนด :</strong> {formatThaiDate(bill.dueDate)}
-                </p>
-
-                <h5 className="fw-bold border-start border-4 border-primary ps-2 mt-4 mb-3">
-                  รายละเอียดค่าใช้จ่าย
-                </h5>
-
-                <table
-                  className="table table-bordered text-center w-100"
-                  style={{ tableLayout: "fixed", fontSize: "13px" }}
-                >
-                  <colgroup>
-                    <col style={{ width: "8%" }} />
-                    <col style={{ width: "20%" }} />
-                    <col style={{ width: "16%" }} />
-                    <col style={{ width: "16%" }} />
-                    <col style={{ width: "14%" }} />
-                    <col style={{ width: "26%" }} />
-                  </colgroup>
-
-                  <thead className="table-light">
-                    <tr>
-                      <th className="text-center">#</th>
-                      <th className="text-center">รายการ</th>
-                      <th className="text-center">มิเตอร์ครั้งหลัง</th>
-                      <th className="text-center">มิเตอร์ครั้งก่อน</th>
-                      <th className="text-center">หน่วยที่ใช้</th>
-                      <th className="text-center">ราคา</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {rows.map((r, i) => (
-                      <tr key={i}>
-                        <td>{i + 1}</td>
-                        {r.map((c, idx) => (
-                          <td key={idx}>
-                            {typeof c === "number"
-                              ? c.toLocaleString()
-                              : c}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-
-                    {bill.overdueDays > 0 && (
-                      <tr>
-                        <td>{rows.length + 1}</td>
-                        <td>ค่าปรับ</td>
-                        <td colSpan={3} className="text-center">
-                          ปรับ {bill.overdueDays} วัน
-                        </td>
-                        <td>{bill.fine.toLocaleString()}</td>
-                      </tr>
-                    )}
-                  </tbody>
-
-                  <tfoot className="fw-semibold">
-                    <tr>
-                      <td colSpan={5} className="text-end">ราคาก่อน VAT</td>
-                      <td className="text-end">{money(beforeVat)}</td>
-                    </tr>
-                    <tr>
-                      <td colSpan={5} className="text-end">VAT 7%</td>
-                      <td className="text-end">{money(vat)}</td>
-                    </tr>
-                    <tr className="table-success">
-                      <td colSpan={5} className="text-end">รวม</td>
-                      <td className="text-end">{bill.total.toLocaleString()}</td>
-                    </tr>
-                    <tr>
-                      <td colSpan={6} className="text-center">
-                        ({thaiText})
-                      </td>
-                    </tr>
-                  </tfoot>
-                </table>
-
-                {bill.billStatus === 0 && (
-                  <div className="text-center mt-4">
-                    <button
-                      className="btn btn-outline-secondary me-3"
-                      onClick={() => nav("/mybills")}
-                    >
-                      ยกเลิก
-                    </button>
-
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => nav("/payment-choice", { state: bill })}
-                    >
-                      ยืนยัน
-                    </button>
-                  </div>
-                )}
-
+              <div
+                style={{
+                  fontSize: 15,
+                  fontWeight: 700,
+                  color: "#2D1A47",
+                  wordBreak: "break-all",
+                }}
+              >
+                {bill.billId}
               </div>
             </div>
           </div>
         </div>
 
+        {/* CUSTOMER */}
+        <div
+          style={{
+            background: "#fff",
+            borderRadius: 30,
+            padding: 26,
+            marginBottom: 20,
+            boxShadow: "0 12px 28px rgba(74,0,128,0.08)",
+          }}
+        >
+          <h3
+            style={{
+              marginTop: 0,
+              marginBottom: 22,
+              color: "#4A0080",
+              fontWeight: 800,
+              fontSize: 22,
+            }}
+          >
+            👤 ข้อมูลผู้เช่า
+          </h3>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
+              gap: 16,
+            }}
+          >
+            {[
+              ["ชื่อผู้เช่า", bill.booking.fullName],
+              ["ห้องพัก", bill.room.number],
+              ["ประจำเดือน", formatThaiDate(bill.month)],
+              ["กำหนดชำระ", formatThaiDate(bill.dueDate)],
+            ].map(([label, value], i) => (
+              <div
+                key={i}
+                style={{
+                  background: "#FAF9FC",
+                  borderRadius: 18,
+                  padding: "16px 18px",
+                  border: "1px solid #EFE9F7",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 12,
+                    color: "#7B7490",
+                    marginBottom: 6,
+                    fontWeight: 600,
+                  }}
+                >
+                  {label}
+                </div>
+
+                <div
+                  style={{
+                    color: "#2D1A47",
+                    fontWeight: 700,
+                    fontSize: 15,
+                  }}
+                >
+                  {value}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* TABLE */}
+        <div
+          style={{
+            background: "#fff",
+            borderRadius: 30,
+            padding: 24,
+            boxShadow: "0 12px 28px rgba(74,0,128,0.08)",
+            overflowX: "auto",
+          }}
+        >
+          <h3
+            style={{
+              marginTop: 0,
+              marginBottom: 20,
+              color: "#4A0080",
+              fontWeight: 800,
+              fontSize: 22,
+            }}
+          >
+            📋 รายละเอียดค่าใช้จ่าย
+          </h3>
+
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "separate",
+              borderSpacing: 0,
+              overflow: "hidden",
+              borderRadius: 18,
+              minWidth: 700,
+            }}
+          >
+            <thead>
+              <tr
+                style={{
+                  background:
+                    "linear-gradient(135deg,#4A0080 0%, #6E1AB5 100%)",
+                  color: "#fff",
+                }}
+              >
+                {[
+                  "#",
+                  "รายการ",
+                  "มิเตอร์ล่าสุด",
+                  "มิเตอร์ก่อนหน้า",
+                  "หน่วย",
+                  "ราคา",
+                ].map((h, i) => (
+                  <th
+                    key={i}
+                    style={{
+                      padding: "16px 14px",
+                      fontSize: 14,
+                      fontWeight: 700,
+                      textAlign: "center",
+                    }}
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            <tbody>
+              {rows.map((r, i) => (
+                <tr
+                  key={i}
+                  style={{
+                    background: i % 2 === 0 ? "#FAF9FC" : "#fff",
+                  }}
+                >
+                  <td
+                    style={{
+                      padding: 14,
+                      textAlign: "center",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {i + 1}
+                  </td>
+
+                  {r.map((c, idx) => (
+                    <td
+                      key={idx}
+                      style={{
+                        padding: 14,
+                        textAlign: "center",
+                        color: "#2D1A47",
+                        borderBottom: "1px solid #F1EDF7",
+                      }}
+                    >
+                      {typeof c === "number"
+                        ? c.toLocaleString()
+                        : c}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+
+              {bill.overdueDays > 0 && (
+                <tr style={{ background: "#FFF8E8" }}>
+                  <td
+                    style={{
+                      padding: 14,
+                      textAlign: "center",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {rows.length + 1}
+                  </td>
+
+                  <td
+                    style={{
+                      padding: 14,
+                      textAlign: "center",
+                    }}
+                  >
+                    ค่าปรับ
+                  </td>
+
+                  <td
+                    colSpan={3}
+                    style={{
+                      padding: 14,
+                      textAlign: "center",
+                    }}
+                  >
+                    ปรับ {bill.overdueDays} วัน
+                  </td>
+
+                  <td
+                    style={{
+                      padding: 14,
+                      textAlign: "center",
+                      fontWeight: 700,
+                      color: "#B45309",
+                    }}
+                  >
+                    {bill.fine.toLocaleString()}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+
+          {/* SUMMARY */}
+          <div
+            style={{
+              marginTop: 24,
+              background: "#FAF9FC",
+              borderRadius: 24,
+              padding: 24,
+              border: "1px solid #EFE9F7",
+            }}
+          >
+            {[
+              ["ราคาก่อน VAT", money(beforeVat)],
+              ["VAT 7%", money(vat)],
+            ].map(([label, value], i) => (
+              <div
+                key={i}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: 14,
+                  color: "#2D1A47",
+                }}
+              >
+                <span>{label}</span>
+                <strong>{value}</strong>
+              </div>
+            ))}
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: 18,
+                paddingTop: 18,
+                borderTop: "1px dashed #D9CFF0",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 18,
+                  fontWeight: 800,
+                  color: "#4A0080",
+                }}
+              >
+                รวมทั้งหมด
+              </span>
+
+              <span
+                style={{
+                  fontSize: 28,
+                  fontWeight: 800,
+                  color: "#4A0080",
+                }}
+              >
+                ฿ {bill.total.toLocaleString()}
+              </span>
+            </div>
+
+            <div
+              style={{
+                marginTop: 18,
+                textAlign: "center",
+                color: "#7B7490",
+                fontSize: 14,
+              }}
+            >
+              ({thaiText})
+            </div>
+          </div>
+
+          {/* BUTTONS */}
+          {bill.billStatus === 0 && (
+            <div
+              style={{
+                display: "flex",
+                gap: 14,
+                marginTop: 26,
+                flexWrap: "wrap",
+              }}
+            >
+              <button
+                onClick={() => nav("/mybills")}
+                style={{
+                  flex: 1,
+                  minWidth: 150,
+                  padding: "15px",
+                  borderRadius: 18,
+                  border: "1.5px solid #D9CFF0",
+                  background: "#fff",
+                  color: "#4A0080",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                ยกเลิก
+              </button>
+
+              <button
+                onClick={() =>
+                  nav("/payment-choice", { state: bill })
+                }
+                style={{
+                  flex: 1,
+                  minWidth: 150,
+                  padding: "15px",
+                  borderRadius: 18,
+                  border: "none",
+                  background:
+                    "linear-gradient(135deg,#4A0080 0%, #6E1AB5 100%)",
+                  color: "#fff",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  boxShadow:
+                    "0 8px 20px rgba(74,0,128,0.18)",
+                }}
+              >
+                ดำเนินการชำระ
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </>
-  );
-}
+    </div>
+  </>
+);
