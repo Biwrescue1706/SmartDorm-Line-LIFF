@@ -1,11 +1,3 @@
-ตอนนี้ LiffNav.tsx พัง เพราะมีแค่ return (...) ลอย ๆ ไม่มี function ครอบ ทำให้ TS ฟ้องว่า
-
-A 'return' statement can only be used within a function body.
-
-แล้วพอมัน compile ไม่ผ่าน ก็เลยเกิด error ต่อว่า ไม่มี default export
-
-แก้โดยเอาไฟล์ src/components/LiffNav.tsx เป็นแบบนี้ทั้งหมด 👇
-
 // src/components/LiffNav.tsx
 
 import {
