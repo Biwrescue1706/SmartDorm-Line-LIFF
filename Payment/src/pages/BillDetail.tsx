@@ -383,20 +383,19 @@ export default function BillDetail() {
             </div>
           </div>
 
-          {/* TABLE */}
+          {/* DETAIL */}
           <div
             style={{
               background: "#fff",
               borderRadius: 30,
               padding: 24,
               boxShadow: "0 12px 28px rgba(74,0,128,0.08)",
-              overflowX: "auto",
             }}
           >
             <h3
               style={{
                 marginTop: 0,
-                marginBottom: 20,
+                marginBottom: 22,
                 color: "#4A0080",
                 fontWeight: 800,
                 fontSize: 22,
@@ -405,126 +404,245 @@ export default function BillDetail() {
               📋 รายละเอียดค่าใช้จ่าย
             </h3>
 
-            <table
+            <div
               style={{
-                width: "100%",
-                borderCollapse: "separate",
-                borderSpacing: 0,
-                minWidth: 700,
+                display: "flex",
+                flexDirection: "column",
+                gap: 14,
               }}
             >
-              <thead>
-                <tr
+              {rows.map((r, i) => (
+                <div
+                  key={i}
                   style={{
-                    background:
-                      "linear-gradient(135deg,#4A0080 0%, #6E1AB5 100%)",
-                    color: "#fff",
+                    background: "#FAF9FC",
+                    borderRadius: 22,
+                    padding: 18,
+                    border: "1px solid #EFE9F7",
                   }}
                 >
-                  {[
-                    "#",
-                    "รายการ",
-                    "มิเตอร์ล่าสุด",
-                    "มิเตอร์ก่อนหน้า",
-                    "หน่วย",
-                    "ราคา",
-                  ].map((h, i) => (
-                    <th
-                      key={i}
-                      style={{
-                        padding: "16px 14px",
-                        fontSize: 14,
-                        fontWeight: 700,
-                        textAlign: "center",
-                      }}
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-
-              <tbody>
-                {rows.map((r, i) => (
-                  <tr
-                    key={i}
+                  <div
                     style={{
-                      background: i % 2 === 0 ? "#FAF9FC" : "#fff",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: 14,
                     }}
                   >
-                    <td
-                      style={{
-                        padding: 14,
-                        textAlign: "center",
-                        fontWeight: 700,
-                      }}
-                    >
-                      {i + 1}
-                    </td>
-
-                    {r.map((c, idx) => (
-                      <td
-                        key={idx}
+                    <div>
+                      <div
                         style={{
-                          padding: 14,
-                          textAlign: "center",
-                          color: "#2D1A47",
-                          borderBottom: "1px solid #F1EDF7",
+                          fontSize: 13,
+                          color: "#7B7490",
+                          marginBottom: 5,
+                          fontWeight: 600,
                         }}
                       >
-                        {typeof c === "number"
-                          ? c.toLocaleString()
-                          : c}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
+                        รายการ
+                      </div>
 
-                {bill.overdueDays > 0 && (
-                  <tr style={{ background: "#FFF8E8" }}>
-                    <td
+                      <div
+                        style={{
+                          fontSize: 22,
+                          fontWeight: 800,
+                          color: "#4A0080",
+                        }}
+                      >
+                        {r[0]}
+                      </div>
+                    </div>
+
+                    <div
                       style={{
-                        padding: 14,
-                        textAlign: "center",
+                        background: "#F5EEFC",
+                        color: "#4A0080",
+                        padding: "10px 14px",
+                        borderRadius: 14,
+                        fontSize: 13,
                         fontWeight: 700,
                       }}
                     >
-                      {rows.length + 1}
-                    </td>
+                      #{i + 1}
+                    </div>
+                  </div>
 
-                    <td
+                  {typeof r[1] === "number" && (
+                    <div
                       style={{
-                        padding: 14,
-                        textAlign: "center",
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr 1fr",
+                        gap: 10,
+                        marginBottom: 14,
                       }}
                     >
-                      ค่าปรับ
-                    </td>
+                      <div
+                        style={{
+                          background: "#fff",
+                          borderRadius: 14,
+                          padding: 12,
+                          textAlign: "center",
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: 11,
+                            color: "#7B7490",
+                            marginBottom: 5,
+                          }}
+                        >
+                          มิเตอร์ล่าสุด
+                        </div>
 
-                    <td
-                      colSpan={3}
+                        <div
+                          style={{
+                            fontWeight: 800,
+                            fontSize: 18,
+                            color: "#2D1A47",
+                          }}
+                        >
+                          {r[1]}
+                        </div>
+                      </div>
+
+                      <div
+                        style={{
+                          background: "#fff",
+                          borderRadius: 14,
+                          padding: 12,
+                          textAlign: "center",
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: 11,
+                            color: "#7B7490",
+                            marginBottom: 5,
+                          }}
+                        >
+                          มิเตอร์ก่อนหน้า
+                        </div>
+
+                        <div
+                          style={{
+                            fontWeight: 800,
+                            fontSize: 18,
+                            color: "#2D1A47",
+                          }}
+                        >
+                          {r[2]}
+                        </div>
+                      </div>
+
+                      <div
+                        style={{
+                          background: "#fff",
+                          borderRadius: 14,
+                          padding: 12,
+                          textAlign: "center",
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: 11,
+                            color: "#7B7490",
+                            marginBottom: 5,
+                          }}
+                        >
+                          จำนวนหน่วย
+                        </div>
+
+                        <div
+                          style={{
+                            fontWeight: 800,
+                            fontSize: 18,
+                            color: "#2D1A47",
+                          }}
+                        >
+                          {r[3]}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div
+                    style={{
+                      background:
+                        "linear-gradient(135deg,#4A0080 0%, #6E1AB5 100%)",
+                      borderRadius: 16,
+                      padding: "14px 16px",
+                      color: "#fff",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <span
                       style={{
-                        padding: 14,
-                        textAlign: "center",
+                        fontSize: 14,
+                        opacity: 0.9,
                       }}
                     >
-                      ปรับ {bill.overdueDays} วัน
-                    </td>
+                      ราคา
+                    </span>
 
-                    <td
+                    <span
                       style={{
-                        padding: 14,
-                        textAlign: "center",
-                        fontWeight: 700,
-                        color: "#B45309",
+                        fontSize: 24,
+                        fontWeight: 800,
                       }}
                     >
-                      {bill.fine.toLocaleString()}
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                      ฿{" "}
+                      {typeof r[4] === "number"
+                        ? r[4].toLocaleString()
+                        : r[4]}
+                    </span>
+                  </div>
+                </div>
+              ))}
+
+              {bill.overdueDays > 0 && (
+                <div
+                  style={{
+                    background: "#FFF8E8",
+                    borderRadius: 22,
+                    padding: 18,
+                    border: "1px solid #FFE2A8",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 13,
+                      color: "#8C6A00",
+                      marginBottom: 8,
+                      fontWeight: 600,
+                    }}
+                  >
+                    ค่าปรับ
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 700,
+                      color: "#5B4300",
+                      marginBottom: 10,
+                    }}
+                  >
+                    ปรับ {bill.overdueDays} วัน
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: 28,
+                      fontWeight: 800,
+                      color: "#B45309",
+                    }}
+                  >
+                    ฿ {bill.fine.toLocaleString()}
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* SUMMARY */}
             <div
@@ -579,7 +697,7 @@ export default function BillDetail() {
 
                 <span
                   style={{
-                    fontSize: 28,
+                    fontSize: 30,
                     fontWeight: 800,
                     color: "#4A0080",
                   }}
@@ -599,59 +717,6 @@ export default function BillDetail() {
                 ({thaiText})
               </div>
             </div>
-
-            {/* BUTTONS */}
-            {bill.billStatus === 0 && (
-              <div
-                style={{
-                  display: "flex",
-                  gap: 14,
-                  marginTop: 26,
-                  flexWrap: "wrap",
-                }}
-              >
-                <button
-                  onClick={() => nav("/mybills")}
-                  style={{
-                    flex: 1,
-                    minWidth: 150,
-                    padding: "15px",
-                    borderRadius: 18,
-                    border: "1.5px solid #D9CFF0",
-                    background: "#fff",
-                    color: "#4A0080",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                  }}
-                >
-                  ย้อนกลับ
-                </button>
-
-                <button
-                  onClick={() =>
-                    nav("/payment-choice", {
-                      state: bill,
-                    })
-                  }
-                  style={{
-                    flex: 1,
-                    minWidth: 150,
-                    padding: "15px",
-                    borderRadius: 18,
-                    border: "none",
-                    background:
-                      "linear-gradient(135deg,#4A0080 0%, #6E1AB5 100%)",
-                    color: "#fff",
-                    fontWeight: 800,
-                    cursor: "pointer",
-                    boxShadow:
-                      "0 8px 20px rgba(74,0,128,0.18)",
-                  }}
-                >
-                  ดำเนินการชำระ
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </div>
