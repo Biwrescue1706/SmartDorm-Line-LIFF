@@ -86,6 +86,16 @@ export default function LiffNav() {
             >
               SmartDorm
             </div>
+
+            <div
+              style={{
+                fontSize: "11px",
+                opacity: 0.85,
+                marginTop: 2,
+              }}
+            >
+              Dormitory Management
+            </div>
           </div>
         </div>
 
