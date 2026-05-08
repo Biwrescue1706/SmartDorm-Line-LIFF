@@ -1,5 +1,4 @@
 // src/components/LiffNav.tsx
-
 import {
   useNavigate,
   useLocation,
@@ -9,110 +8,115 @@ export default function LiffNav() {
   const nav = useNavigate();
   const location = useLocation();
 
-  // ✅ แสดง back เฉพาะหน้า checkout detail
+  // ✅ แสดงปุ่ม back เฉพาะหน้า /checkout/:bookingId
   const isCheckoutDetail =
     /^\/checkout\/[^/]+$/.test(
       location.pathname
     );
 
   const handleBack = () => {
+    // ✅ กลับไปหน้าแรกเสมอ
     nav("/");
   };
 
   return (
     <nav
-      className="navbar fixed-top shadow-sm"
       style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        minHeight: "55px",
         background:
-          "linear-gradient(135deg,#4A0080 0%, #7B2BC7 100%)",
-        minHeight: "64px",
+          "linear-gradient(135deg, #38A3FF, #7B2CBF)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        boxShadow:
+          "0 4px 12px rgba(0,0,0,0.25)",
         zIndex: 999,
       }}
     >
-      <div className="container position-relative">
-
-        {/* BACK BUTTON */}
-        {isCheckoutDetail && (
-          <button
-            onClick={handleBack}
-            className="btn btn-sm position-absolute start-0 top-50 translate-middle-y ms-2"
-            style={{
-              background:
-                "rgba(255,255,255,0.15)",
-              border:
-                "1px solid rgba(255,255,255,0.25)",
-              color: "#fff",
-              borderRadius: "14px",
-              width: "42px",
-              height: "42px",
-              backdropFilter:
-                "blur(8px)",
-              fontSize: "20px",
-              fontWeight: 700,
-            }}
-          >
-            ←
-          </button>
-        )}
-
-        {/* CENTER */}
-        <div
-          className="mx-auto d-flex align-items-center gap-2"
+      {/* ⬅️ Back Button */}
+      {isCheckoutDetail && (
+        <button
+          onClick={handleBack}
           style={{
-            userSelect: "none",
+            position: "absolute",
+            left: "14px",
+            top: "50%",
+            transform:
+              "translateY(-50%)",
+            background:
+              "rgba(255,255,255,0.2)",
+            border:
+              "1px solid rgba(255,255,255,0.35)",
+            backdropFilter:
+              "blur(10px)",
+            color: "white",
+            borderRadius: "12px",
+            padding: "4px 10px",
+            fontSize: "1.4rem",
+            cursor: "pointer",
+            transition:
+              "all .2s ease",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.opacity =
+              "0.85")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.opacity =
+              "1")
+          }
+        >
+          ←
+        </button>
+      )}
+
+      {/* 🏫 Title + Logo */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          pointerEvents: "none",
+        }}
+      >
+        <span
+          style={{
+            fontSize: "1rem",
+            fontWeight: 700,
+            letterSpacing: ".3px",
+            fontFamily:
+              "Prompt, Segoe UI, sans-serif",
+            color: "#ffffff",
+            textShadow:
+              "0 1px 3px rgba(0,0,0,0.35)",
           }}
         >
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "14px",
-              width: "38px",
-              height: "38px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent:
-                "center",
-              boxShadow:
-                "0 4px 12px rgba(0,0,0,0.12)",
-            }}
-          >
-            <img
-              src="https://manage.smartdorm-biwboong.shop/assets/SmartDorm.webp"
-              alt="SmartDorm"
-              style={{
-                width: "26px",
-                height: "26px",
-                objectFit:
-                  "contain",
-              }}
-            />
-          </div>
+          🏫 SmartDorm
+        </span>
 
-          <div className="text-white">
-            <div
-              style={{
-                fontSize: "18px",
-                fontWeight: 800,
-                lineHeight: 1.1,
-                letterSpacing: ".3px",
-              }}
-            >
-              SmartDorm
-            </div>
-
-            <div
-              style={{
-                fontSize: "11px",
-                opacity: 0.85,
-                marginTop: 2,
-              }}
-            >
-              Checkout System
-            </div>
-          </div>
-        </div>
-
+        <img
+          src="https://manage.smartdorm-biwboong.shop/assets/SmartDorm.webp"
+          alt="SmartDorm Logo"
+          style={{
+            width: "22px",
+            height: "22px",
+            background: "white",
+            borderRadius: "8px",
+            padding: "2px",
+            boxShadow:
+              "0 2px 5px rgba(0,0,0,0.3)",
+          }}
+        />
       </div>
+
+      {/* balance right */}
+      {isCheckoutDetail && (
+        <div style={{ width: "36px" }} />
+      )}
     </nav>
   );
 }
