@@ -83,173 +83,91 @@ export default function Bookings() {
       <LiffNav />
 
       <div
+        className="min-vh-100 py-4"
         style={{
-          minHeight: "100vh",
           background: "#F6F4FA",
-          padding:
-            "88px 16px 40px",
         }}
       >
-        <div
-          style={{
-            maxWidth: 1200,
-            margin: "0 auto",
-          }}
-        >
+        <div className="container">
+
           {/* HEADER */}
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: 32,
-              padding: 28,
-              marginBottom: 24,
-              boxShadow:
-                "0 12px 28px rgba(74,0,128,0.08)",
-              position: "relative",
-              overflow: "hidden",
-            }}
-          >
+          <div className="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 mt-5">
+
             <div
               style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
                 height: 6,
                 background:
                   "linear-gradient(90deg,#4A0080 0%, #7B2BC7 100%)",
               }}
             />
 
-            <h1
-              style={{
-                margin: 0,
-                fontSize: 34,
-                fontWeight: 800,
-                color: "#4A0080",
-                marginBottom: 10,
-              }}
-            >
-              🏢 รายการห้องพัก
-            </h1>
+            <div className="card-body p-4">
+              <h1 className="fw-bold text-primary mb-2">
+                🏢 รายการห้องพัก
+              </h1>
 
-            <p
-              style={{
-                margin: 0,
-                color: "#7B7490",
-                fontSize: 15,
-              }}
-            >
-              เลือกชั้นเพื่อดูห้องว่าง
-            </p>
+              <p className="text-muted mb-0">
+                เลือกชั้นเพื่อดูห้องว่าง
+              </p>
+            </div>
           </div>
 
           {/* FILTER */}
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: 24,
-              padding: 20,
-              marginBottom: 24,
-              boxShadow:
-                "0 12px 28px rgba(74,0,128,0.08)",
-              display: "flex",
-              alignItems: "center",
-              gap: 14,
-              flexWrap: "wrap",
-            }}
-          >
-            <div
-              style={{
-                color: "#4A0080",
-                fontWeight: 700,
-                fontSize: 16,
-              }}
-            >
-              เลือกชั้น :
-            </div>
+          <div className="card border-0 shadow-sm rounded-4 mb-4">
+            <div className="card-body d-flex flex-wrap align-items-center gap-3">
 
-            <select
-              value={selectedFloor}
-              onChange={(e) =>
-                setSelectedFloor(
-                  e.target.value
-                )
-              }
-              style={{
-                border:
-                  "1.5px solid #D9CFF0",
-                borderRadius: 14,
-                padding:
-                  "12px 16px",
-                background: "#FAF9FC",
-                color: "#2D1A47",
-                fontWeight: 700,
-                outline: "none",
-                minWidth: 140,
-              }}
-            >
-              <option value="ทั้งหมด">
-                ทุกชั้น
-              </option>
+              <div className="fw-bold text-primary">
+                เลือกชั้น :
+              </div>
 
-              {allFloors.map((f) => (
-                <option
-                  key={f}
-                  value={f.toString()}
-                >
-                  ชั้น {f}
+              <select
+                className="form-select w-auto rounded-3 fw-semibold"
+                value={selectedFloor}
+                onChange={(e) =>
+                  setSelectedFloor(
+                    e.target.value
+                  )
+                }
+              >
+                <option value="ทั้งหมด">
+                  ทุกชั้น
                 </option>
-              ))}
-            </select>
+
+                {allFloors.map((f) => (
+                  <option
+                    key={f}
+                    value={f.toString()}
+                  >
+                    ชั้น {f}
+                  </option>
+                ))}
+              </select>
+
+            </div>
           </div>
 
-          {/* CONTENT */}
+          {/* LOADING */}
           {loading ? (
-            <div
-              style={{
-                background: "#fff",
-                borderRadius: 28,
-                padding: 50,
-                textAlign: "center",
-                boxShadow:
-                  "0 12px 28px rgba(74,0,128,0.08)",
-              }}
-            >
-              <div className="spinner-border text-primary"></div>
+            <div className="card border-0 shadow-sm rounded-4">
+              <div className="card-body text-center py-5">
 
-              <p
-                style={{
-                  marginTop: 18,
-                  color: "#7B7490",
-                }}
-              >
-                กำลังโหลดข้อมูลห้อง...
-              </p>
+                <div className="spinner-border text-primary"></div>
+
+                <p className="text-muted mt-3 mb-0">
+                  กำลังโหลดข้อมูลห้อง...
+                </p>
+
+              </div>
             </div>
           ) : sortedRooms.length === 0 ? (
-            <div
-              style={{
-                background: "#fff",
-                borderRadius: 28,
-                padding: 50,
-                textAlign: "center",
-                boxShadow:
-                  "0 12px 28px rgba(74,0,128,0.08)",
-                color: "#7B7490",
-              }}
-            >
-              ❌ ไม่มีห้องในชั้นที่เลือก
+            <div className="card border-0 shadow-sm rounded-4">
+              <div className="card-body text-center py-5 text-muted">
+                ❌ ไม่มีห้องในชั้นที่เลือก
+              </div>
             </div>
           ) : (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fill,minmax(260px,1fr))",
-                gap: 20,
-              }}
-            >
+            <div className="row g-4">
+
               {sortedRooms.map((room) => {
                 const isAvailable =
                   room.status === 0;
@@ -262,212 +180,136 @@ export default function Bookings() {
                 return (
                   <div
                     key={room.roomId}
-                    onClick={
-                      isAvailable
-                        ? () =>
-                            handleSelect(
-                              room
-                            )
-                        : undefined
-                    }
-                    style={{
-                      background:
-                        "#fff",
-                      borderRadius: 28,
-                      padding: 22,
-                      boxShadow:
-                        "0 12px 28px rgba(74,0,128,0.08)",
-                      cursor:
-                        isAvailable
-                          ? "pointer"
-                          : "default",
-                      transition:
-                        "0.2s",
-                      opacity:
-                        isAvailable
-                          ? 1
-                          : 0.65,
-                      border:
-                        isAvailable
-                          ? "1px solid #EFE9F7"
-                          : "1px solid #E5E7EB",
-                    }}
+                    className="col-12 col-sm-6 col-lg-4 col-xl-3"
                   >
-                    {/* ROOM NUMBER */}
                     <div
+                      className={`card h-100 border-0 shadow-sm rounded-4 ${
+                        !isAvailable
+                          ? "opacity-75"
+                          : ""
+                      }`}
                       style={{
-                        display: "flex",
-                        justifyContent:
-                          "space-between",
-                        alignItems:
-                          "center",
-                        marginBottom: 18,
+                        cursor:
+                          isAvailable
+                            ? "pointer"
+                            : "default",
+                        transition:
+                          "0.2s",
                       }}
+                      onClick={
+                        isAvailable
+                          ? () =>
+                              handleSelect(
+                                room
+                              )
+                          : undefined
+                      }
                     >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: 13,
-                            color:
-                              "#7B7490",
-                            marginBottom: 6,
-                            fontWeight: 600,
-                          }}
-                        >
-                          หมายเลขห้อง
+                      <div className="card-body p-4 d-flex flex-column">
+
+                        {/* TOP */}
+                        <div className="d-flex justify-content-between align-items-start mb-4">
+
+                          <div>
+                            <small className="text-muted fw-semibold d-block mb-1">
+                              หมายเลขห้อง
+                            </small>
+
+                            <h2 className="fw-bold text-primary mb-0">
+                              {room.number}
+                            </h2>
+                          </div>
+
+                          <span
+                            className={`badge rounded-pill px-3 py-2 ${
+                              isAvailable
+                                ? "bg-success-subtle text-success"
+                                : "bg-danger-subtle text-danger"
+                            }`}
+                          >
+                            {isAvailable
+                              ? "ว่าง"
+                              : "ไม่ว่าง"}
+                          </span>
+
                         </div>
 
+                        {/* INFO */}
+                        <div className="d-flex flex-column gap-2">
+
+                          {[
+                            [
+                              "ขนาดห้อง",
+                              room.size,
+                            ],
+                            [
+                              "ค่าเช่า",
+                              `${room.rent.toLocaleString()} บาท`,
+                            ],
+                            [
+                              "ค่าประกัน",
+                              `${room.deposit.toLocaleString()} บาท`,
+                            ],
+                            [
+                              "ค่าจอง",
+                              `${room.bookingFee.toLocaleString()} บาท`,
+                            ],
+                          ].map(
+                            (
+                              [label, value],
+                              i
+                            ) => (
+                              <div
+                                key={i}
+                                className="d-flex justify-content-between align-items-center rounded-3 p-3"
+                                style={{
+                                  background:
+                                    "#FAF9FC",
+                                  border:
+                                    "1px solid #EFE9F7",
+                                }}
+                              >
+                                <small className="text-muted fw-semibold">
+                                  {label}
+                                </small>
+
+                                <span className="fw-bold text-dark">
+                                  {value}
+                                </span>
+                              </div>
+                            )
+                          )}
+
+                        </div>
+
+                        {/* TOTAL */}
                         <div
+                          className="rounded-4 text-white p-3 mt-4"
                           style={{
-                            fontSize: 30,
-                            fontWeight: 800,
-                            color:
-                              "#4A0080",
+                            background:
+                              "linear-gradient(135deg,#4A0080 0%, #6E1AB5 100%)",
                           }}
                         >
-                          {room.number}
-                        </div>
-                      </div>
-
-                      <div
-                        style={{
-                          background:
-                            isAvailable
-                              ? "#DCFCE7"
-                              : "#FEE2E2",
-                          color:
-                            isAvailable
-                              ? "#166534"
-                              : "#B91C1C",
-                          padding:
-                            "8px 14px",
-                          borderRadius: 999,
-                          fontSize: 13,
-                          fontWeight: 700,
-                        }}
-                      >
-                        {isAvailable
-                          ? "ว่าง"
-                          : "ไม่ว่าง"}
-                      </div>
-                    </div>
-
-                    {/* INFO */}
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection:
-                          "column",
-                        gap: 10,
-                      }}
-                    >
-                      {[
-                        [
-                          "ขนาดห้อง",
-                          room.size,
-                        ],
-                        [
-                          "ค่าเช่า",
-                          `${room.rent.toLocaleString()} บาท`,
-                        ],
-                        [
-                          "ค่าประกัน",
-                          `${room.deposit.toLocaleString()} บาท`,
-                        ],
-                        [
-                          "ค่าจอง",
-                          `${room.bookingFee.toLocaleString()} บาท`,
-                        ],
-                      ].map(
-                        (
-                          [label, value],
-                          i
-                        ) => (
-                          <div
-                            key={i}
+                          <small
                             style={{
-                              background:
-                                "#FAF9FC",
-                              borderRadius: 16,
-                              padding:
-                                "12px 14px",
-                              border:
-                                "1px solid #EFE9F7",
-                              display:
-                                "flex",
-                              justifyContent:
-                                "space-between",
-                              alignItems:
-                                "center",
+                              opacity: 0.85,
                             }}
                           >
-                            <span
-                              style={{
-                                fontSize: 13,
-                                color:
-                                  "#7B7490",
-                                fontWeight: 600,
-                              }}
-                            >
-                              {label}
-                            </span>
+                            รวมทั้งหมด
+                          </small>
 
-                            <span
-                              style={{
-                                fontWeight: 700,
-                                color:
-                                  "#2D1A47",
-                              }}
-                            >
-                              {value}
-                            </span>
-                          </div>
-                        )
-                      )}
-                    </div>
-
-                    {/* TOTAL */}
-                    <div
-                      style={{
-                        marginTop: 18,
-                        background:
-                          "linear-gradient(135deg,#4A0080 0%, #6E1AB5 100%)",
-                        borderRadius: 18,
-                        padding:
-                          "16px 18px",
-                        color: "#fff",
-                        display: "flex",
-                        justifyContent:
-                          "space-between",
-                        alignItems:
-                          "center",
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: 12,
-                            opacity: 0.9,
-                            marginBottom: 4,
-                          }}
-                        >
-                          รวมทั้งหมด
+                          <h4 className="fw-bold mb-0 mt-1">
+                            ฿{" "}
+                            {total.toLocaleString()}
+                          </h4>
                         </div>
 
-                        <div
-                          style={{
-                            fontSize: 24,
-                            fontWeight: 800,
-                          }}
-                        >
-                          ฿{" "}
-                          {total.toLocaleString()}
-                        </div>
                       </div>
                     </div>
                   </div>
                 );
               })}
+
             </div>
           )}
         </div>
