@@ -1,4 +1,5 @@
 // src/components/LiffNav.tsx
+
 import { useNavigate, useLocation } from "react-router-dom";
 
 export default function LiffNav() {
@@ -10,87 +11,85 @@ export default function LiffNav() {
     location.pathname.startsWith("/payment") ||
     location.pathname.startsWith("/upload-slip");
 
-  const handleBack = () => nav(-1);
-
   return (
     <nav
+      className="navbar navbar-expand-lg fixed-top shadow-sm"
       style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        minHeight: "55px",
-        background: "linear-gradient(135deg, #38A3FF, #7B2CBF)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+        background:
+          "linear-gradient(135deg,#4A0080 0%, #7B2BC7 100%)",
+        minHeight: "64px",
         zIndex: 999,
       }}
     >
-      {/* ปุ่มย้อนกลับ */}
-      {showBack && (
-        <button
-          onClick={handleBack}
-          style={{
-            position: "absolute",
-            left: "14px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            background: "rgba(255,255,255,0.2)",
-            border: "1px solid rgba(255,255,255,0.35)",
-            backdropFilter: "blur(10px)",
-            color: "white",
-            borderRadius: "12px",
-            padding: "4px 10px",
-            fontSize: "1.4rem",
-            cursor: "pointer",
-            transition: "all .2s ease",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.8")}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-        >
-          ←
-        </button>
-      )}
+      <div className="container position-relative">
 
-      {/* Title + Logo (อยู่กลางจริง) */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          pointerEvents: "none",
-        }}
-      >
-        <span
+        {/* BACK BUTTON */}
+        {showBack && (
+          <button
+            onClick={() => nav(-1)}
+            className="btn btn-sm position-absolute start-0 top-50 translate-middle-y ms-2"
+            style={{
+              background: "rgba(255,255,255,0.15)",
+              border: "1px solid rgba(255,255,255,0.25)",
+              color: "#fff",
+              borderRadius: "14px",
+              width: "42px",
+              height: "42px",
+              backdropFilter: "blur(8px)",
+              fontSize: "20px",
+              fontWeight: 700,
+            }}
+          >
+            ←
+          </button>
+        )}
+
+        {/* CENTER */}
+        <div
+          className="mx-auto d-flex align-items-center gap-2"
           style={{
-            fontSize: "1rem",
-            fontWeight: 700,
-            letterSpacing: ".3px",
-            fontFamily: "Prompt, Segoe UI, sans-serif",
-            textShadow: "0 1px 3px #ffffffff",
+            userSelect: "none",
           }}
         >
-          🏫 SmartDorm
-        </span>
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: "14px",
+              width: "38px",
+              height: "38px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow:
+                "0 4px 12px rgba(0,0,0,0.12)",
+            }}
+          >
+            <img
+              src="https://manage.smartdorm-biwboong.shop/assets/SmartDorm.webp"
+              alt="SmartDorm"
+              style={{
+                width: "26px",
+                height: "26px",
+                objectFit: "contain",
+              }}
+            />
+          </div>
 
-        <img
-          src="https://manage.smartdorm-biwboong.shop/assets/SmartDorm.webp"
-          alt="SmartDorm Logo"
-          style={{
-            width: "22px",
-            height: "22px",
-            background: "white",
-            borderRadius: "8px",
-            padding: "2px",
-            boxShadow: "0 2px 5px rgba(0,0,0,0.3)",
-          }}
-        />
+          <div className="text-white">
+            <div
+              style={{
+                fontSize: "18px",
+                fontWeight: 800,
+                lineHeight: 1.1,
+                letterSpacing: ".3px",
+              }}
+            >
+              SmartDorm
+            </div>
+          </div>
+        </div>
+
       </div>
-
-      {/* Balance Right */}
-      {showBack && <div style={{ width: "36px" }} />}
     </nav>
   );
 }
