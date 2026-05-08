@@ -119,35 +119,43 @@ export default function ReturnableRooms() {
 
                 <div className="card-body p-4 p-md-5">
 
-                  <div className="d-flex align-items-center gap-3 mb-3">
+                  <div className="d-flex align-items-center gap-3 mb-3 flex-wrap">
 
+                    {/* ICON */}
                     <div
                       className="d-flex justify-content-center align-items-center rounded-4"
                       style={{
-                        width: "72px",
-                        height: "72px",
+                        width: "78px",
+                        height: "78px",
                         background:
                           "linear-gradient(135deg,#EEE5FF,#F8F4FF)",
-                        fontSize: "38px",
+                        fontSize: "42px",
+                        flexShrink: 0,
                       }}
                     >
                       🏠
                     </div>
 
+                    {/* TITLE */}
                     <div>
                       <h1
-                        className="fw-bold mb-1"
+                        className="fw-bold mb-2"
                         style={{
                           color: "#4A0080",
                           fontSize:
-                            "2.2rem",
+                            "clamp(2rem,7vw,2.8rem)",
                           lineHeight: 1,
                         }}
                       >
                         คืนห้องพัก
                       </h1>
 
-                      <div className="text-muted">
+                      <div
+                        className="text-muted"
+                        style={{
+                          fontSize: "15px",
+                        }}
+                      >
                         เลือกห้องที่ต้องการคืน
                       </div>
                     </div>
@@ -161,7 +169,7 @@ export default function ReturnableRooms() {
               {!loading &&
                 bookings.length > 0 && (
                   <div
-                    className="card border-0 rounded-5 mb-4"
+                    className="card border-0 rounded-5 mb-4 overflow-hidden"
                     style={{
                       boxShadow:
                         "0 10px 24px rgba(74,0,128,.08)",
@@ -180,17 +188,19 @@ export default function ReturnableRooms() {
                       </label>
 
                       <select
-                        className="form-select form-select-lg rounded-4 border-0"
+                        className="form-select rounded-4 border-0"
                         style={{
                           background:
                             "#F7F4FC",
                           padding:
-                            "16px",
+                            "14px 16px",
                           fontWeight: 700,
                           color:
                             "#2D1A47",
                           boxShadow:
                             "inset 0 0 0 1px #E9DDF8",
+                          fontSize:
+                            "1rem",
                         }}
                         value={selectedRoom}
                         onChange={(e) =>
@@ -221,7 +231,7 @@ export default function ReturnableRooms() {
               {/* LOADING */}
               {loading ? (
                 <div
-                  className="card border-0 rounded-5"
+                  className="card border-0 rounded-5 overflow-hidden"
                   style={{
                     boxShadow:
                       "0 10px 24px rgba(74,0,128,.08)",
@@ -250,7 +260,7 @@ export default function ReturnableRooms() {
               ) : filteredBookings.length ===
                 0 ? (
                 <div
-                  className="card border-0 rounded-5"
+                  className="card border-0 rounded-5 overflow-hidden"
                   style={{
                     boxShadow:
                       "0 10px 24px rgba(74,0,128,.08)",
@@ -306,7 +316,7 @@ export default function ReturnableRooms() {
                         <div className="card-body p-4">
 
                           {/* ROOM HEADER */}
-                          <div className="d-flex justify-content-between align-items-start mb-4">
+                          <div className="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3">
 
                             <div>
 
@@ -328,7 +338,7 @@ export default function ReturnableRooms() {
                                   color:
                                     "#2563EB",
                                   fontSize:
-                                    "56px",
+                                    "clamp(3rem,14vw,4.5rem)",
                                   lineHeight:
                                     1,
                                 }}
@@ -341,16 +351,16 @@ export default function ReturnableRooms() {
                             </div>
 
                             <span
-                              className="badge rounded-pill"
+                              className="badge rounded-pill align-self-start"
                               style={{
                                 background:
                                   "#DCFCE7",
                                 color:
                                   "#166534",
                                 padding:
-                                  "12px 18px",
+                                  "10px 16px",
                                 fontSize:
-                                  "14px",
+                                  "13px",
                                 fontWeight:
                                   700,
                               }}
@@ -390,6 +400,8 @@ export default function ReturnableRooms() {
                                   style={{
                                     color:
                                       "#2D1A47",
+                                    fontSize:
+                                      "16px",
                                   }}
                                 >
                                   {formatDate(
@@ -426,6 +438,8 @@ export default function ReturnableRooms() {
                                   style={{
                                     color:
                                       "#2D1A47",
+                                    fontSize:
+                                      "16px",
                                   }}
                                 >
                                   {formatDate(
