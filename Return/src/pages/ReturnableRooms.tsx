@@ -21,11 +21,11 @@ export default function ReturnableRooms() {
     formatDate,
   } = useReturnableRooms();
 
-  // ✅ state เลือกห้อง
+  // เลือกห้อง
   const [selectedRoom, setSelectedRoom] =
     useState("ทั้งหมด");
 
-  // ✅ options ห้อง
+  // ห้องทั้งหมด
   const roomOptions = useMemo(() => {
     const rooms = bookings.map(
       (b) => b.room?.number ?? "-"
@@ -37,7 +37,7 @@ export default function ReturnableRooms() {
     ];
   }, [bookings]);
 
-  // ✅ filter ห้อง
+  // filter ห้อง
   const filteredBookings = useMemo(() => {
     if (selectedRoom === "ทั้งหมด")
       return bookings;
@@ -48,6 +48,7 @@ export default function ReturnableRooms() {
     );
   }, [bookings, selectedRoom]);
 
+  // AUTH CHECK
   if (checkingAuth) {
     return (
       <>
@@ -85,11 +86,14 @@ export default function ReturnableRooms() {
     <>
       <LiffNav />
 
+      {/* PAGE */}
       <div
         style={{
           minHeight: "100vh",
           background: BG_SOFT,
-          padding: "70px 10px 10px",
+
+          // ✅ ลดช่องว่างด้านบน
+          padding: "8px 10px 16px",
         }}
       >
         <div
@@ -106,9 +110,10 @@ export default function ReturnableRooms() {
               overflow: "hidden",
               boxShadow:
                 "0 12px 30px rgba(74,0,128,0.08)",
-              marginBottom: 10,
+              marginBottom: 16,
             }}
           >
+            {/* TOP BAR */}
             <div
               style={{
                 height: 6,
@@ -117,20 +122,22 @@ export default function ReturnableRooms() {
               }}
             />
 
+            {/* CONTENT */}
             <div
               style={{
-                padding: 10,
+                padding: 22,
               }}
             >
               <h1
                 style={{
                   margin: 0,
-                  fontSize: 30,
+                  fontSize: 32,
                   fontWeight: 800,
                   color: SCB_PURPLE,
                   display: "flex",
                   alignItems: "center",
                   gap: 10,
+                  lineHeight: 1.2,
                 }}
               >
                 🏠 คืนห้องพัก
@@ -138,7 +145,7 @@ export default function ReturnableRooms() {
 
               <p
                 style={{
-                  marginTop: 10,
+                  marginTop: 12,
                   marginBottom: 0,
                   color: "#6B6480",
                   fontSize: 14,
@@ -150,25 +157,25 @@ export default function ReturnableRooms() {
             </div>
           </div>
 
-          {/* ✅ FILTER ห้อง */}
+          {/* FILTER */}
           {!loading &&
             bookings.length > 0 && (
               <div
                 style={{
                   background: CARD_BG,
-                  borderRadius: 24,
+                  borderRadius: 26,
                   padding: 18,
-                  marginBottom: 22,
+                  marginBottom: 18,
                   boxShadow:
                     "0 10px 28px rgba(74,0,128,0.08)",
                 }}
               >
                 <div
                   style={{
-                    fontSize: 14,
-                    fontWeight: 700,
+                    fontSize: 15,
+                    fontWeight: 800,
                     color: SCB_PURPLE,
-                    marginBottom: 10,
+                    marginBottom: 12,
                   }}
                 >
                   🔎 เลือกห้องที่จะคืน
@@ -185,7 +192,7 @@ export default function ReturnableRooms() {
                     width: "100%",
                     border:
                       "1.5px solid #E8DDF7",
-                    borderRadius: 16,
+                    borderRadius: 18,
                     padding:
                       "14px 16px",
                     background:
@@ -218,8 +225,8 @@ export default function ReturnableRooms() {
             <div
               style={{
                 background: CARD_BG,
-                borderRadius: 22,
-                padding: 28,
+                borderRadius: 24,
+                padding: 32,
                 textAlign: "center",
                 color: SCB_PURPLE,
                 fontWeight: 700,
@@ -242,8 +249,8 @@ export default function ReturnableRooms() {
             <div
               style={{
                 background: CARD_BG,
-                borderRadius: 24,
-                padding: 36,
+                borderRadius: 28,
+                padding: 40,
                 textAlign: "center",
                 boxShadow:
                   "0 10px 30px rgba(74,0,128,0.08)",
@@ -251,7 +258,7 @@ export default function ReturnableRooms() {
             >
               <div
                 style={{
-                  fontSize: 42,
+                  fontSize: 48,
                 }}
               >
                 🏡
@@ -259,7 +266,7 @@ export default function ReturnableRooms() {
 
               <h3
                 style={{
-                  marginTop: 14,
+                  marginTop: 16,
                   marginBottom: 8,
                   color: TEXT_DARK,
                 }}
@@ -342,7 +349,7 @@ export default function ReturnableRooms() {
                           margin: 0,
                           color:
                             SCB_PURPLE,
-                          fontSize: 34,
+                          fontSize: 38,
                           fontWeight: 800,
                           lineHeight: 1,
                         }}
@@ -359,10 +366,10 @@ export default function ReturnableRooms() {
                         color:
                           SCB_PURPLE,
                         padding:
-                          "10px 14px",
-                        borderRadius: 14,
+                          "10px 16px",
+                        borderRadius: 16,
                         fontSize: 13,
-                        fontWeight: 700,
+                        fontWeight: 800,
                       }}
                     >
                       พร้อมคืน
@@ -378,13 +385,14 @@ export default function ReturnableRooms() {
                       gap: 12,
                     }}
                   >
+                    {/* BOOK DATE */}
                     <div
                       style={{
                         background:
                           "#FAF9FC",
-                        borderRadius: 16,
+                        borderRadius: 18,
                         padding:
-                          "14px 16px",
+                          "15px 16px",
                         border:
                           "1px solid #F0EAF7",
                       }}
@@ -394,8 +402,8 @@ export default function ReturnableRooms() {
                           fontSize: 12,
                           color:
                             "#8B84A3",
-                          marginBottom: 5,
-                          fontWeight: 600,
+                          marginBottom: 6,
+                          fontWeight: 700,
                         }}
                       >
                         📅 วันที่จอง
@@ -405,8 +413,8 @@ export default function ReturnableRooms() {
                         style={{
                           color:
                             TEXT_DARK,
-                          fontWeight: 700,
-                          fontSize: 15,
+                          fontWeight: 800,
+                          fontSize: 16,
                         }}
                       >
                         {formatDate(
@@ -415,13 +423,14 @@ export default function ReturnableRooms() {
                       </div>
                     </div>
 
+                    {/* CHECKIN */}
                     <div
                       style={{
                         background:
                           "#FAF9FC",
-                        borderRadius: 16,
+                        borderRadius: 18,
                         padding:
-                          "14px 16px",
+                          "15px 16px",
                         border:
                           "1px solid #F0EAF7",
                       }}
@@ -431,8 +440,8 @@ export default function ReturnableRooms() {
                           fontSize: 12,
                           color:
                             "#8B84A3",
-                          marginBottom: 5,
-                          fontWeight: 600,
+                          marginBottom: 6,
+                          fontWeight: 700,
                         }}
                       >
                         🛏️ วันเข้าพักจริง
@@ -442,8 +451,8 @@ export default function ReturnableRooms() {
                         style={{
                           color:
                             TEXT_DARK,
-                          fontWeight: 700,
-                          fontSize: 15,
+                          fontWeight: 800,
+                          fontSize: 16,
                         }}
                       >
                         {formatDate(
@@ -464,8 +473,8 @@ export default function ReturnableRooms() {
                     style={{
                       width: "100%",
                       marginTop: 20,
-                      padding: "15px",
-                      borderRadius: 18,
+                      padding: "16px",
+                      borderRadius: 20,
                       border: "none",
                       cursor: "pointer",
                       fontWeight: 800,
@@ -474,7 +483,7 @@ export default function ReturnableRooms() {
                         "linear-gradient(135deg,#4A0080,#6F1AB6)",
                       color: "#FFF",
                       boxShadow:
-                        "0 8px 20px rgba(74,0,128,0.22)",
+                        "0 10px 24px rgba(74,0,128,0.22)",
                     }}
                   >
                     คืนห้อง
