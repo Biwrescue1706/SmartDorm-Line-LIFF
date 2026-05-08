@@ -1,81 +1,115 @@
 // src/components/NavBar.tsx
-import { useNavigate, useLocation } from "react-router-dom";
+
+import {
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 
 export default function NavBar() {
   const nav = useNavigate();
   const location = useLocation();
 
-  // แสดงปุ่มย้อนกลับเฉพาะหน้าที่ต้องการ
   const showBack =
-    location.pathname === "/bill-detail" ||
-    location.pathname === "/payment-choice" ||
-    location.pathname === "/upload-slip";
+    location.pathname ===
+      "/bill-detail" ||
+    location.pathname ===
+      "/payment-choice" ||
+    location.pathname ===
+      "/upload-slip";
 
   return (
     <nav
+      className="navbar fixed-top shadow-sm"
       style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        minHeight: "55px", // ✅ ใช้ minHeight แทน height
-        background: "linear-gradient(135deg, #38A3FF, #7B2CBF)",
-        color: "white",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.12)", // เงาบางลง
+        background:
+          "linear-gradient(135deg,#4A0080 0%, #7B2BC7 100%)",
+        minHeight: "64px",
         zIndex: 999,
       }}
     >
-      {/* ปุ่มย้อนกลับฝั่งซ้าย */}
-      {showBack && (
-        <button
-          onClick={() => nav(-1)}
+      <div className="container position-relative">
+
+        {/* BACK BUTTON */}
+        {showBack && (
+          <button
+            onClick={() => nav(-1)}
+            className="btn btn-sm position-absolute start-0 top-50 translate-middle-y ms-2"
+            style={{
+              background:
+                "rgba(255,255,255,0.15)",
+              border:
+                "1px solid rgba(255,255,255,0.25)",
+              color: "#fff",
+              borderRadius: "14px",
+              width: "42px",
+              height: "42px",
+              backdropFilter:
+                "blur(8px)",
+              fontSize: "20px",
+              fontWeight: 700,
+            }}
+          >
+            ←
+          </button>
+        )}
+
+        {/* CENTER */}
+        <div
+          className="mx-auto d-flex align-items-center gap-2"
           style={{
-            position: "absolute",
-            left: "16px",
-            top: "50%", // ยึดกลางจริง
-            transform: "translateY(-50%)",
-            background: "rgb(102, 96, 96)",
-            border: "none",
-            padding: "4px 10px",
-            borderRadius: "10px",
-            color: "white",
-            fontSize: "1rem",
-            cursor: "pointer",
-            backdropFilter: "blur(8px)",
+            userSelect: "none",
           }}
         >
-          ←
-        </button>
-      )}
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: "14px",
+              width: "38px",
+              height: "38px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent:
+                "center",
+              boxShadow:
+                "0 4px 12px rgba(0,0,0,0.12)",
+            }}
+          >
+            <img
+              src="https://manage.smartdorm-biwboong.shop/assets/SmartDorm.webp"
+              alt="SmartDorm"
+              style={{
+                width: "26px",
+                height: "26px",
+                objectFit:
+                  "contain",
+              }}
+            />
+          </div>
 
-      {/* โลโก้ + ข้อความตรงกลาง */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          pointerEvents: "none",
-          lineHeight: "1", // กันความสูงจาก emoji
-        }}
-      >
-        <span style={{ fontWeight: 700, fontSize: "1rem" }}>
-          SmartDorm
-        </span>
-        <img
-          src="https://manage.smartdorm-biwboong.shop/assets/SmartDorm.webp"
-          alt="SmartDorm Logo"
-          style={{
-            width: "22px",
-            height: "22px",
-            borderRadius: "6px",
-            background: "white",
-            padding: "2px",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
-          }}
-        />
+          <div className="text-white">
+            <div
+              style={{
+                fontSize: "18px",
+                fontWeight: 800,
+                lineHeight: 1.1,
+                letterSpacing: ".3px",
+              }}
+            >
+              SmartDorm
+            </div>
+
+            <div
+              style={{
+                fontSize: "11px",
+                opacity: 0.85,
+                marginTop: 2,
+              }}
+            >
+              Payment System
+            </div>
+          </div>
+        </div>
+
       </div>
     </nav>
   );
