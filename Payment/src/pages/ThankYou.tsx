@@ -9,7 +9,7 @@ import NavBar from "../components/NavBar";
 
 export default function ThankYou() {
   const [countdown, setCountdown] =
-    useState(9);
+    useState(5);
 
   useEffect(() => {
     let interval: ReturnType<
