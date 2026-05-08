@@ -717,6 +717,58 @@ export default function BillDetail() {
                 ({thaiText})
               </div>
             </div>
+         {/* BUTTONS */}
+            {bill.billStatus === 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  gap: 14,
+                  marginTop: 26,
+                  flexWrap: "wrap",
+                }}
+              >
+                <button
+                  onClick={() => nav("/mybills")}
+                  style={{
+                    flex: 1,
+                    minWidth: 150,
+                    padding: "15px",
+                    borderRadius: 18,
+                    border: "1.5px solid #D9CFF0",
+                    background: "#fff",
+                    color: "#4A0080",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  ย้อนกลับ
+                </button>
+
+                <button
+                  onClick={() =>
+                    nav("/payment-choice", {
+                      state: bill,
+                    })
+                  }
+                  style={{
+                    flex: 1,
+                    minWidth: 150,
+                    padding: "15px",
+                    borderRadius: 18,
+                    border: "none",
+                    background:
+                      "linear-gradient(135deg,#4A0080 0%, #6E1AB5 100%)",
+                    color: "#fff",
+                    fontWeight: 800,
+                    cursor: "pointer",
+                    boxShadow:
+                      "0 8px 20px rgba(74,0,128,0.18)",
+                  }}
+                >
+                  ดำเนินการชำระ
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
