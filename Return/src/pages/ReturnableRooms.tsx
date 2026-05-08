@@ -1,50 +1,17 @@
 // src/pages/ReturnableRooms.tsx
-
-import {
-  useMemo,
-  useState,
-} from "react";
-
 import { useNavigate } from "react-router-dom";
-
 import LiffNav from "../components/LiffNav";
 import { useReturnableRooms } from "../hooks/useReturnableRooms";
 
+const SCB_PURPLE = "#4A0080";
+const SCB_PURPLE_LIGHT = "#F4ECFB";
+const BG_SOFT = "#F7F5FA";
+const CARD_BG = "#FFFFFF";
+const TEXT_DARK = "#2D1A47";
+
 export default function ReturnableRooms() {
   const nav = useNavigate();
-
-  const {
-    checkingAuth,
-    loading,
-    bookings,
-    formatDate,
-  } = useReturnableRooms();
-
-  const [selectedRoom, setSelectedRoom] =
-    useState("ทั้งหมด");
-
-  // ห้องทั้งหมด
-  const roomOptions = useMemo(() => {
-    const rooms = bookings.map(
-      (b) => b.room?.number ?? "-"
-    );
-
-    return [
-      "ทั้งหมด",
-      ...Array.from(new Set(rooms)),
-    ];
-  }, [bookings]);
-
-  // filter
-  const filteredBookings = useMemo(() => {
-    if (selectedRoom === "ทั้งหมด")
-      return bookings;
-
-    return bookings.filter(
-      (b) =>
-        b.room?.number === selectedRoom
-    );
-  }, [bookings, selectedRoom]);
+  const { checkingAuth, loading, bookings, formatDate } = useReturnableRooms();
 
   if (checkingAuth) {
     return (
@@ -52,34 +19,18 @@ export default function ReturnableRooms() {
         <LiffNav />
 
         <div
-          className="min-vh-100 d-flex justify-content-center align-items-center"
           style={{
-            background:
-              "linear-gradient(135deg,#F6F4FA,#FCFBFF)",
+            minHeight: "100vh",
+            background: BG_SOFT,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            color: SCB_PURPLE,
+            fontWeight: 700,
+            fontSize: 16,
           }}
         >
-          <div className="text-center">
-
-            <div
-              className="spinner-border mb-3"
-              style={{
-                color: "#6E1AB5",
-                width: "3rem",
-                height: "3rem",
-              }}
-            />
-
-            <div
-              className="fw-bold"
-              style={{
-                color: "#4A0080",
-                fontSize: "17px",
-              }}
-            >
-              กำลังตรวจสอบสิทธิ์...
-            </div>
-
-          </div>
+          กำลังตรวจสอบสิทธิ์...
         </div>
       </>
     );
@@ -90,403 +41,273 @@ export default function ReturnableRooms() {
       <LiffNav />
 
       <div
-        className="min-vh-100 py-4"
         style={{
-          background:
-            "linear-gradient(180deg,#F7F3FC 0%,#FCFBFF 100%)",
+          minHeight: "100vh",
+          background: BG_SOFT,
+          padding: "88px 16px 32px",
         }}
       >
-        <div className="container">
+        <div
+          style={{
+            maxWidth: 430,
+            margin: "0 auto",
+          }}
+        >
+          {/* Header */}
+          <div
+            style={{
+              marginBottom: 22,
+            }}
+          >
+            <h1
+              style={{
+                margin: 0,
+                fontSize: 26,
+                fontWeight: 800,
+                color: SCB_PURPLE,
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              🏠 คืนห้องพัก
+            </h1>
 
-          <div className="row justify-content-center">
-            <div className="col-12 col-md-10 col-lg-8 col-xl-6">
+            <p
+              style={{
+                marginTop: 8,
+                marginBottom: 0,
+                color: "#6B6480",
+                fontSize: 14,
+                lineHeight: 1.5,
+              }}
+            >
+              เลือกห้องที่ต้องการดำเนินการคืนห้องพัก
+            </p>
+          </div>
 
-              {/* HEADER */}
-              <div
-                className="card border-0 rounded-5 overflow-hidden mb-4"
+          {/* Loading */}
+          {loading ? (
+            <div
+              style={{
+                background: CARD_BG,
+                borderRadius: 22,
+                padding: 28,
+                textAlign: "center",
+                color: SCB_PURPLE,
+                fontWeight: 700,
+                boxShadow: "0 10px 30px rgba(74,0,128,0.08)",
+              }}
+            >
+              กำลังโหลดข้อมูล...
+            </div>
+          ) : bookings.length === 0 ? (
+            <div
+              style={{
+                background: CARD_BG,
+                borderRadius: 24,
+                padding: 36,
+                textAlign: "center",
+                boxShadow: "0 10px 30px rgba(74,0,128,0.08)",
+              }}
+            >
+              <div style={{ fontSize: 42 }}>🏡</div>
+
+              <h3
                 style={{
-                  boxShadow:
-                    "0 12px 30px rgba(74,0,128,.10)",
+                  marginTop: 14,
+                  marginBottom: 8,
+                  color: TEXT_DARK,
                 }}
               >
+                ไม่มีห้องที่สามารถคืนได้
+              </h3>
+
+              <p
+                style={{
+                  margin: 0,
+                  color: "#7A7391",
+                  fontSize: 14,
+                }}
+              >
+                ยังไม่มีรายการห้องที่อยู่ในสถานะคืนห้อง
+              </p>
+            </div>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 18,
+              }}
+            >
+              {bookings.map((b) => (
                 <div
+                  key={b.bookingId}
                   style={{
-                    height: "8px",
-                    background:
-                      "linear-gradient(90deg,#4A0080,#7B2BC7)",
+                    background: CARD_BG,
+                    borderRadius: 26,
+                    padding: 22,
+                    boxShadow: "0 10px 28px rgba(74,0,128,0.08)",
+                    border: "1px solid rgba(74,0,128,0.06)",
+                    position: "relative",
+                    overflow: "hidden",
                   }}
-                />
+                >
+                  {/* Top Accent */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: 6,
+                      background: `linear-gradient(90deg, ${SCB_PURPLE}, #7B2BC7)`,
+                    }}
+                  />
 
-                <div className="card-body p-4 p-md-5">
-
-                  <div className="d-flex align-items-center gap-3 mb-3 flex-wrap">
-
-                    {/* ICON */}
-                    <div
-                      className="d-flex justify-content-center align-items-center rounded-4"
-                      style={{
-                        width: "78px",
-                        height: "78px",
-                        background:
-                          "linear-gradient(135deg,#EEE5FF,#F8F4FF)",
-                        fontSize: "42px",
-                        flexShrink: 0,
-                      }}
-                    >
-                      🏠
-                    </div>
-
-                    {/* TITLE */}
+                  {/* Room */}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: 18,
+                    }}
+                  >
                     <div>
-                      <h1
-                        className="fw-bold mb-2"
+                      <div
                         style={{
-                          color: "#4A0080",
-                          fontSize:
-                            "clamp(2rem,7vw,2.8rem)",
+                          fontSize: 13,
+                          color: "#7E7695",
+                          marginBottom: 6,
+                          fontWeight: 600,
+                        }}
+                      >
+                        ห้องพัก
+                      </div>
+
+                      <h2
+                        style={{
+                          margin: 0,
+                          color: SCB_PURPLE,
+                          fontSize: 28,
+                          fontWeight: 800,
                           lineHeight: 1,
                         }}
                       >
-                        คืนห้องพัก
-                      </h1>
-
-                      <div
-                        className="text-muted"
-                        style={{
-                          fontSize: "15px",
-                        }}
-                      >
-                        เลือกห้องที่ต้องการคืน
-                      </div>
+                        {b.room?.number ?? "-"}
+                      </h2>
                     </div>
 
+                    <div
+                      style={{
+                        background: SCB_PURPLE_LIGHT,
+                        color: SCB_PURPLE,
+                        padding: "10px 14px",
+                        borderRadius: 14,
+                        fontSize: 13,
+                        fontWeight: 700,
+                      }}
+                    >
+                      พร้อมคืน
+                    </div>
                   </div>
 
-                </div>
-              </div>
-
-              {/* FILTER */}
-              {!loading &&
-                bookings.length > 0 && (
+                  {/* Info */}
                   <div
-                    className="card border-0 rounded-5 mb-4 overflow-hidden"
                     style={{
-                      boxShadow:
-                        "0 10px 24px rgba(74,0,128,.08)",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 12,
                     }}
                   >
-                    <div className="card-body p-4">
-
-                      <label
-                        className="fw-bold mb-3 d-block"
-                        style={{
-                          color: "#4A0080",
-                          fontSize: "16px",
-                        }}
-                      >
-                        🔎 เลือกห้องที่จะคืน
-                      </label>
-
-                      <select
-                        className="form-select rounded-4 border-0"
-                        style={{
-                          background:
-                            "#F7F4FC",
-                          padding:
-                            "14px 16px",
-                          fontWeight: 700,
-                          color:
-                            "#2D1A47",
-                          boxShadow:
-                            "inset 0 0 0 1px #E9DDF8",
-                          fontSize:
-                            "1rem",
-                        }}
-                        value={selectedRoom}
-                        onChange={(e) =>
-                          setSelectedRoom(
-                            e.target.value
-                          )
-                        }
-                      >
-                        {roomOptions.map(
-                          (room) => (
-                            <option
-                              key={room}
-                              value={room}
-                            >
-                              {room ===
-                              "ทั้งหมด"
-                                ? "ทุกห้อง"
-                                : `ห้อง ${room}`}
-                            </option>
-                          )
-                        )}
-                      </select>
-
-                    </div>
-                  </div>
-                )}
-
-              {/* LOADING */}
-              {loading ? (
-                <div
-                  className="card border-0 rounded-5 overflow-hidden"
-                  style={{
-                    boxShadow:
-                      "0 10px 24px rgba(74,0,128,.08)",
-                  }}
-                >
-                  <div className="card-body text-center py-5">
-
-                    <div
-                      className="spinner-border mb-3"
-                      style={{
-                        color: "#6E1AB5",
-                      }}
-                    />
-
-                    <div
-                      className="fw-bold"
-                      style={{
-                        color: "#4A0080",
-                      }}
-                    >
-                      กำลังโหลดข้อมูล...
-                    </div>
-
-                  </div>
-                </div>
-              ) : filteredBookings.length ===
-                0 ? (
-                <div
-                  className="card border-0 rounded-5 overflow-hidden"
-                  style={{
-                    boxShadow:
-                      "0 10px 24px rgba(74,0,128,.08)",
-                  }}
-                >
-                  <div className="card-body text-center py-5">
-
                     <div
                       style={{
-                        fontSize: 70,
+                        background: "#FAF9FC",
+                        borderRadius: 16,
+                        padding: "14px 16px",
+                        border: "1px solid #F0EAF7",
                       }}
                     >
-                      🏡
-                    </div>
-
-                    <h3
-                      className="fw-bold mt-3"
-                      style={{
-                        color: "#2D1A47",
-                      }}
-                    >
-                      ไม่มีห้องที่สามารถคืนได้
-                    </h3>
-
-                    <p className="text-muted mb-0">
-                      ยังไม่มีรายการห้องในระบบ
-                    </p>
-
-                  </div>
-                </div>
-              ) : (
-                <div className="d-flex flex-column gap-4">
-
-                  {filteredBookings.map(
-                    (b) => (
                       <div
-                        key={b.bookingId}
-                        className="card border-0 rounded-5 overflow-hidden"
                         style={{
-                          boxShadow:
-                            "0 12px 28px rgba(74,0,128,.10)",
+                          fontSize: 12,
+                          color: "#8B84A3",
+                          marginBottom: 5,
+                          fontWeight: 600,
                         }}
                       >
-                        {/* TOP LINE */}
-                        <div
-                          style={{
-                            height: "7px",
-                            background:
-                              "linear-gradient(90deg,#4A0080,#7B2BC7)",
-                          }}
-                        />
-
-                        <div className="card-body p-4">
-
-                          {/* ROOM HEADER */}
-                          <div className="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3">
-
-                            <div>
-
-                              <div
-                                className="fw-semibold mb-1"
-                                style={{
-                                  color:
-                                    "#8A7FA6",
-                                  fontSize:
-                                    "13px",
-                                }}
-                              >
-                                หมายเลขห้อง
-                              </div>
-
-                              <div
-                                className="fw-bold"
-                                style={{
-                                  color:
-                                    "#2563EB",
-                                  fontSize:
-                                    "clamp(3rem,14vw,4.5rem)",
-                                  lineHeight:
-                                    1,
-                                }}
-                              >
-                                {b.room
-                                  ?.number ??
-                                  "-"}
-                              </div>
-
-                            </div>
-
-                            <span
-                              className="badge rounded-pill align-self-start"
-                              style={{
-                                background:
-                                  "#DCFCE7",
-                                color:
-                                  "#166534",
-                                padding:
-                                  "10px 16px",
-                                fontSize:
-                                  "13px",
-                                fontWeight:
-                                  700,
-                              }}
-                            >
-                              พร้อมคืน
-                            </span>
-
-                          </div>
-
-                          {/* INFO */}
-                          <div className="row g-3">
-
-                            <div className="col-12 col-md-6">
-                              <div
-                                className="rounded-4 h-100 p-3"
-                                style={{
-                                  background:
-                                    "#FAF8FE",
-                                  border:
-                                    "1px solid #EFE7FA",
-                                }}
-                              >
-                                <div
-                                  className="fw-semibold mb-2"
-                                  style={{
-                                    color:
-                                      "#8B84A3",
-                                    fontSize:
-                                      "13px",
-                                  }}
-                                >
-                                  📅 วันที่จอง
-                                </div>
-
-                                <div
-                                  className="fw-bold"
-                                  style={{
-                                    color:
-                                      "#2D1A47",
-                                    fontSize:
-                                      "16px",
-                                  }}
-                                >
-                                  {formatDate(
-                                    b.bookingDate
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="col-12 col-md-6">
-                              <div
-                                className="rounded-4 h-100 p-3"
-                                style={{
-                                  background:
-                                    "#FAF8FE",
-                                  border:
-                                    "1px solid #EFE7FA",
-                                }}
-                              >
-                                <div
-                                  className="fw-semibold mb-2"
-                                  style={{
-                                    color:
-                                      "#8B84A3",
-                                    fontSize:
-                                      "13px",
-                                  }}
-                                >
-                                  🛏️ วันเข้าพักจริง
-                                </div>
-
-                                <div
-                                  className="fw-bold"
-                                  style={{
-                                    color:
-                                      "#2D1A47",
-                                    fontSize:
-                                      "16px",
-                                  }}
-                                >
-                                  {formatDate(
-                                    b.checkinAt
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-
-                          </div>
-
-                          {/* BUTTON */}
-                          <button
-                            disabled={
-                              loading
-                            }
-                            onClick={() =>
-                              nav(
-                                `/checkout/${b.bookingId}`
-                              )
-                            }
-                            className="btn w-100 fw-bold py-3 rounded-4 mt-4 text-white"
-                            style={{
-                              border:
-                                "none",
-                              fontSize:
-                                "17px",
-                              background:
-                                "linear-gradient(135deg,#4A0080,#6E1AB5)",
-                              boxShadow:
-                                "0 10px 24px rgba(74,0,128,.20)",
-                            }}
-                          >
-                            คืนห้อง
-                          </button>
-
-                        </div>
+                        วันที่จอง
                       </div>
-                    )
-                  )}
 
+                      <div
+                        style={{
+                          color: TEXT_DARK,
+                          fontWeight: 700,
+                          fontSize: 15,
+                        }}
+                      >
+                        {formatDate(b.bookingDate)}
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: "#FAF9FC",
+                        borderRadius: 16,
+                        padding: "14px 16px",
+                        border: "1px solid #F0EAF7",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: 12,
+                          color: "#8B84A3",
+                          marginBottom: 5,
+                          fontWeight: 600,
+                        }}
+                      >
+                        วันเข้าพักจริง
+                      </div>
+
+                      <div
+                        style={{
+                          color: TEXT_DARK,
+                          fontWeight: 700,
+                          fontSize: 15,
+                        }}
+                      >
+                        {formatDate(b.checkinAt)}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Button */}
+                  <button
+                    disabled={loading}
+                    onClick={() => nav(`/checkout/${b.bookingId}`)}
+                    style={{
+                      width: "100%",
+                      marginTop: 20,
+                      padding: "14px",
+                      borderRadius: 18,
+                      border: "none",
+                      cursor: "pointer",
+                      fontWeight: 800,
+                      fontSize: 15,
+                      background: `linear-gradient(135deg, ${SCB_PURPLE}, #6F1AB6)`,
+                      color: "#FFF",
+                      boxShadow: "0 8px 20px rgba(74,0,128,0.22)",
+                      transition: "0.2s",
+                    }}
+                  >
+                    คืนห้อง
+                  </button>
                 </div>
-              )}
-
+              ))}
             </div>
-          </div>
-
+          )}
         </div>
       </div>
     </>
