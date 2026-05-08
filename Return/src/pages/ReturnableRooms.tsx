@@ -1,6 +1,10 @@
 // src/pages/ReturnableRooms.tsx
 
-import { useMemo, useState } from "react";
+import {
+  useMemo,
+  useState,
+} from "react";
+
 import { useNavigate } from "react-router-dom";
 
 import LiffNav from "../components/LiffNav";
@@ -47,13 +51,34 @@ export default function ReturnableRooms() {
       <>
         <LiffNav />
 
-        <div className="min-vh-100 bg-light d-flex justify-content-center align-items-center">
+        <div
+          className="min-vh-100 d-flex justify-content-center align-items-center"
+          style={{
+            background:
+              "linear-gradient(135deg,#F6F4FA,#FCFBFF)",
+          }}
+        >
           <div className="text-center">
-            <div className="spinner-border text-primary mb-3"></div>
 
-            <div className="fw-semibold text-primary">
+            <div
+              className="spinner-border mb-3"
+              style={{
+                color: "#6E1AB5",
+                width: "3rem",
+                height: "3rem",
+              }}
+            />
+
+            <div
+              className="fw-bold"
+              style={{
+                color: "#4A0080",
+                fontSize: "17px",
+              }}
+            >
               กำลังตรวจสอบสิทธิ์...
             </div>
+
           </div>
         </div>
       </>
@@ -65,58 +90,108 @@ export default function ReturnableRooms() {
       <LiffNav />
 
       <div
-        className="min-vh-100 py-5"
+        className="min-vh-100 py-4"
         style={{
           background:
-            "linear-gradient(135deg,#F6F4FA 0%,#FCFBFF 100%)",
-          paddingTop: "88px",
+            "linear-gradient(180deg,#F7F3FC 0%,#FCFBFF 100%)",
         }}
       >
         <div className="container">
 
-          {/* HEADER */}
           <div className="row justify-content-center">
             <div className="col-12 col-md-10 col-lg-8 col-xl-6">
 
-              <div className="card border-0 shadow-sm rounded-5 overflow-hidden mb-4">
-
+              {/* HEADER */}
+              <div
+                className="card border-0 rounded-5 overflow-hidden mb-4"
+                style={{
+                  boxShadow:
+                    "0 12px 30px rgba(74,0,128,.10)",
+                }}
+              >
                 <div
                   style={{
-                    height: 6,
+                    height: "8px",
                     background:
-                      "linear-gradient(90deg,#4A0080 0%, #7B2BC7 100%)",
+                      "linear-gradient(90deg,#4A0080,#7B2BC7)",
                   }}
                 />
 
-                <div className="card-body p-4">
-                  <h2
-                    className="fw-bold mb-2"
-                    style={{
-                      color: "#4A0080",
-                    }}
-                  >
-                    🏠 คืนห้องพัก
-                  </h2>
+                <div className="card-body p-4 p-md-5">
 
-                  <p className="text-muted mb-0">
-                    เลือกห้องที่ต้องการดำเนินการคืนห้องพัก
-                  </p>
+                  <div className="d-flex align-items-center gap-3 mb-3">
+
+                    <div
+                      className="d-flex justify-content-center align-items-center rounded-4"
+                      style={{
+                        width: "72px",
+                        height: "72px",
+                        background:
+                          "linear-gradient(135deg,#EEE5FF,#F8F4FF)",
+                        fontSize: "38px",
+                      }}
+                    >
+                      🏠
+                    </div>
+
+                    <div>
+                      <h1
+                        className="fw-bold mb-1"
+                        style={{
+                          color: "#4A0080",
+                          fontSize:
+                            "2.2rem",
+                          lineHeight: 1,
+                        }}
+                      >
+                        คืนห้องพัก
+                      </h1>
+
+                      <div className="text-muted">
+                        เลือกห้องที่ต้องการคืน
+                      </div>
+                    </div>
+
+                  </div>
+
                 </div>
-
               </div>
 
               {/* FILTER */}
               {!loading &&
                 bookings.length > 0 && (
-                  <div className="card border-0 shadow-sm rounded-4 mb-4">
-                    <div className="card-body">
+                  <div
+                    className="card border-0 rounded-5 mb-4"
+                    style={{
+                      boxShadow:
+                        "0 10px 24px rgba(74,0,128,.08)",
+                    }}
+                  >
+                    <div className="card-body p-4">
 
-                      <label className="form-label fw-bold text-primary">
-                        เลือกห้องที่จะคืน
+                      <label
+                        className="fw-bold mb-3 d-block"
+                        style={{
+                          color: "#4A0080",
+                          fontSize: "16px",
+                        }}
+                      >
+                        🔎 เลือกห้องที่จะคืน
                       </label>
 
                       <select
-                        className="form-select form-select-lg rounded-4"
+                        className="form-select form-select-lg rounded-4 border-0"
+                        style={{
+                          background:
+                            "#F7F4FC",
+                          padding:
+                            "16px",
+                          fontWeight: 700,
+                          color:
+                            "#2D1A47",
+                          boxShadow:
+                            "inset 0 0 0 1px #E9DDF8",
+                        }}
                         value={selectedRoom}
                         onChange={(e) =>
                           setSelectedRoom(
@@ -145,12 +220,28 @@ export default function ReturnableRooms() {
 
               {/* LOADING */}
               {loading ? (
-                <div className="card border-0 shadow-sm rounded-5">
+                <div
+                  className="card border-0 rounded-5"
+                  style={{
+                    boxShadow:
+                      "0 10px 24px rgba(74,0,128,.08)",
+                  }}
+                >
                   <div className="card-body text-center py-5">
 
-                    <div className="spinner-border text-primary mb-3"></div>
+                    <div
+                      className="spinner-border mb-3"
+                      style={{
+                        color: "#6E1AB5",
+                      }}
+                    />
 
-                    <div className="fw-semibold text-primary">
+                    <div
+                      className="fw-bold"
+                      style={{
+                        color: "#4A0080",
+                      }}
+                    >
                       กำลังโหลดข้อมูล...
                     </div>
 
@@ -158,20 +249,31 @@ export default function ReturnableRooms() {
                 </div>
               ) : filteredBookings.length ===
                 0 ? (
-                <div className="card border-0 shadow-sm rounded-5">
+                <div
+                  className="card border-0 rounded-5"
+                  style={{
+                    boxShadow:
+                      "0 10px 24px rgba(74,0,128,.08)",
+                  }}
+                >
                   <div className="card-body text-center py-5">
 
                     <div
                       style={{
-                        fontSize: 54,
+                        fontSize: 70,
                       }}
                     >
                       🏡
                     </div>
 
-                    <h4 className="fw-bold mt-3">
+                    <h3
+                      className="fw-bold mt-3"
+                      style={{
+                        color: "#2D1A47",
+                      }}
+                    >
                       ไม่มีห้องที่สามารถคืนได้
-                    </h4>
+                    </h3>
 
                     <p className="text-muted mb-0">
                       ยังไม่มีรายการห้องในระบบ
@@ -186,43 +288,73 @@ export default function ReturnableRooms() {
                     (b) => (
                       <div
                         key={b.bookingId}
-                        className="card border-0 shadow-sm rounded-5 overflow-hidden"
+                        className="card border-0 rounded-5 overflow-hidden"
+                        style={{
+                          boxShadow:
+                            "0 12px 28px rgba(74,0,128,.10)",
+                        }}
                       >
-                        {/* TOP BAR */}
+                        {/* TOP LINE */}
                         <div
                           style={{
-                            height: 6,
+                            height: "7px",
                             background:
-                              "linear-gradient(90deg,#4A0080 0%, #7B2BC7 100%)",
+                              "linear-gradient(90deg,#4A0080,#7B2BC7)",
                           }}
                         />
 
                         <div className="card-body p-4">
 
-                          {/* TOP */}
-                          <div className="d-flex justify-content-between align-items-center mb-4">
+                          {/* ROOM HEADER */}
+                          <div className="d-flex justify-content-between align-items-start mb-4">
 
                             <div>
-                              <div className="text-muted small fw-semibold mb-1">
-                                ห้องพัก
-                              </div>
 
-                              <h1
-                                className="fw-bold mb-0"
+                              <div
+                                className="fw-semibold mb-1"
                                 style={{
                                   color:
-                                    "#4A0080",
+                                    "#8A7FA6",
                                   fontSize:
-                                    "42px",
+                                    "13px",
+                                }}
+                              >
+                                หมายเลขห้อง
+                              </div>
+
+                              <div
+                                className="fw-bold"
+                                style={{
+                                  color:
+                                    "#2563EB",
+                                  fontSize:
+                                    "56px",
+                                  lineHeight:
+                                    1,
                                 }}
                               >
                                 {b.room
                                   ?.number ??
                                   "-"}
-                              </h1>
+                              </div>
+
                             </div>
 
-                            <span className="badge rounded-pill text-bg-success px-3 py-2 fs-6">
+                            <span
+                              className="badge rounded-pill"
+                              style={{
+                                background:
+                                  "#DCFCE7",
+                                color:
+                                  "#166534",
+                                padding:
+                                  "12px 18px",
+                                fontSize:
+                                  "14px",
+                                fontWeight:
+                                  700,
+                              }}
+                            >
                               พร้อมคืน
                             </span>
 
@@ -232,34 +364,74 @@ export default function ReturnableRooms() {
                           <div className="row g-3">
 
                             <div className="col-12 col-md-6">
-                              <div className="bg-light rounded-4 p-3 h-100 border">
-
-                                <div className="small text-muted fw-semibold mb-1">
-                                  วันที่จอง
+                              <div
+                                className="rounded-4 h-100 p-3"
+                                style={{
+                                  background:
+                                    "#FAF8FE",
+                                  border:
+                                    "1px solid #EFE7FA",
+                                }}
+                              >
+                                <div
+                                  className="fw-semibold mb-2"
+                                  style={{
+                                    color:
+                                      "#8B84A3",
+                                    fontSize:
+                                      "13px",
+                                  }}
+                                >
+                                  📅 วันที่จอง
                                 </div>
 
-                                <div className="fw-bold">
+                                <div
+                                  className="fw-bold"
+                                  style={{
+                                    color:
+                                      "#2D1A47",
+                                  }}
+                                >
                                   {formatDate(
                                     b.bookingDate
                                   )}
                                 </div>
-
                               </div>
                             </div>
 
                             <div className="col-12 col-md-6">
-                              <div className="bg-light rounded-4 p-3 h-100 border">
-
-                                <div className="small text-muted fw-semibold mb-1">
-                                  วันเข้าพักจริง
+                              <div
+                                className="rounded-4 h-100 p-3"
+                                style={{
+                                  background:
+                                    "#FAF8FE",
+                                  border:
+                                    "1px solid #EFE7FA",
+                                }}
+                              >
+                                <div
+                                  className="fw-semibold mb-2"
+                                  style={{
+                                    color:
+                                      "#8B84A3",
+                                    fontSize:
+                                      "13px",
+                                  }}
+                                >
+                                  🛏️ วันเข้าพักจริง
                                 </div>
 
-                                <div className="fw-bold">
+                                <div
+                                  className="fw-bold"
+                                  style={{
+                                    color:
+                                      "#2D1A47",
+                                  }}
+                                >
                                   {formatDate(
                                     b.checkinAt
                                   )}
                                 </div>
-
                               </div>
                             </div>
 
@@ -275,16 +447,16 @@ export default function ReturnableRooms() {
                                 `/checkout/${b.bookingId}`
                               )
                             }
-                            className="btn w-100 text-white fw-bold py-3 rounded-4 mt-4"
+                            className="btn w-100 fw-bold py-3 rounded-4 mt-4 text-white"
                             style={{
-                              background:
-                                "linear-gradient(135deg,#4A0080 0%, #6E1AB5 100%)",
                               border:
                                 "none",
-                              boxShadow:
-                                "0 8px 20px rgba(74,0,128,0.18)",
                               fontSize:
-                                "16px",
+                                "17px",
+                              background:
+                                "linear-gradient(135deg,#4A0080,#6E1AB5)",
+                              boxShadow:
+                                "0 10px 24px rgba(74,0,128,.20)",
                             }}
                           >
                             คืนห้อง
