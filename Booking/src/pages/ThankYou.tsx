@@ -1,20 +1,34 @@
 // Booking/src/pages/ThankYou.tsx
+
 import { useEffect, useState } from "react";
-import { ensureLiffReady, logoutLiff } from "../lib/liff";
+import {
+  ensureLiffReady,
+  logoutLiff,
+} from "../lib/liff";
+
 import LiffNav from "../components/LiffNav";
 
 export default function ThankYou() {
-  const [countdown, setCountdown] = useState(5);
+  const [countdown, setCountdown] =
+    useState(5);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
+      setCountdown((prev) =>
+        prev > 0 ? prev - 1 : 0
+      );
     }, 1000);
 
-    const timer = setTimeout(async () => {
-      const ready = await ensureLiffReady();
-      if (ready) await logoutLiff();
-    }, 10000);
+    const timer = setTimeout(
+      async () => {
+        const ready =
+          await ensureLiffReady();
+
+        if (ready)
+          await logoutLiff();
+      },
+      10000
+    );
 
     return () => {
       clearInterval(interval);
@@ -26,107 +40,153 @@ export default function ThankYou() {
     <>
       <LiffNav />
 
-      {/* ===== PAGE BG ===== */}
       <div
-        className="d-flex justify-content-center align-items-center text-center"
+        className="min-vh-100 d-flex align-items-center justify-content-center py-5 px-3"
         style={{
-          height: "100vh",
-          background: "linear-gradient(135deg,#F2FBFF,#EAF7FF,#E7FFF4)",
-          fontFamily: "Prompt, sans-serif",
-          padding: "16px",
+          background:
+            "linear-gradient(135deg,#F6F4FA 0%,#FDFBFF 100%)",
         }}
       >
-        {/* ===== CARD ===== */}
         <div
-          className="p-4 rounded-4 bg-white"
+          className="card border-0 shadow-lg rounded-5 overflow-hidden"
           style={{
+            maxWidth: 460,
             width: "100%",
-            maxWidth: "430px",
-            boxShadow: "0 10px 28px rgba(0,0,0,0.18)",
-            animation: "fadeUp .8s ease",
-            border: "1px solid #f0f4ff",
           }}
         >
-          {/* ICON */}
+          {/* TOP BAR */}
           <div
-            className="mx-auto mb-4 d-flex align-items-center justify-content-center rounded-circle"
             style={{
-              width: "95px",
-              height: "95px",
-              background: "linear-gradient(135deg,#6FF5C2,#38A3FF)",
-              boxShadow: "0 6px 18px rgba(56,163,255,.45)",
+              height: 6,
+              background:
+                "linear-gradient(90deg,#4A0080 0%, #7B2BC7 100%)",
             }}
-          >
-            <span
+          />
+
+          <div className="card-body p-4 p-md-5 text-center">
+
+            {/* ICON */}
+            <div
+              className="mx-auto mb-4 d-flex align-items-center justify-content-center rounded-circle"
               style={{
-                fontSize: "50px",
-                fontWeight: "700",
-                color: "white",
+                width: 110,
+                height: 110,
+                background:
+                  "linear-gradient(135deg,#4A0080 0%, #7B2BC7 100%)",
+                boxShadow:
+                  "0 12px 28px rgba(74,0,128,0.25)",
               }}
             >
-              ✔
-            </span>
+              <span
+                style={{
+                  fontSize: 56,
+                  color: "#fff",
+                  fontWeight: 800,
+                }}
+              >
+                ✓
+              </span>
+            </div>
+
+            {/* TITLE */}
+            <h2
+              className="fw-bold mb-3"
+              style={{
+                color: "#4A0080",
+              }}
+            >
+              จองห้องสำเร็จ
+            </h2>
+
+            <p
+              className="mb-2"
+              style={{
+                color: "#6B7280",
+                fontSize: 15,
+                lineHeight: 1.7,
+              }}
+            >
+              ระบบได้รับข้อมูลการจองของคุณเรียบร้อยแล้ว
+              <br />
+              กรุณารอเจ้าหน้าที่ตรวจสอบข้อมูล
+            </p>
+
+            {/* COUNTDOWN */}
+            <div
+              className="rounded-4 py-3 px-4 mt-4 mb-4"
+              style={{
+                background: "#F6F0FD",
+                border:
+                  "1px solid #E9D8FD",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 14,
+                  color: "#7B7490",
+                  marginBottom: 6,
+                }}
+              >
+                ระบบจะปิดอัตโนมัติภายใน
+              </div>
+
+              <div
+                className="fw-bold"
+                style={{
+                  fontSize: 38,
+                  color: "#4A0080",
+                  lineHeight: 1,
+                }}
+              >
+                {countdown}
+              </div>
+
+              <div
+                style={{
+                  fontSize: 14,
+                  color: "#7B7490",
+                  marginTop: 6,
+                }}
+              >
+                วินาที
+              </div>
+            </div>
+
+            {/* BUTTON */}
+            <button
+              className="btn w-100 text-white fw-bold py-3 rounded-4"
+              style={{
+                background:
+                  "linear-gradient(135deg,#4A0080 0%, #6E1AB5 100%)",
+                border: "none",
+                boxShadow:
+                  "0 8px 20px rgba(74,0,128,0.18)",
+              }}
+              onClick={async () => {
+                const ready =
+                  await ensureLiffReady();
+
+                if (ready)
+                  await logoutLiff();
+              }}
+            >
+              ออกจากระบบทันที
+            </button>
+
+            {/* FOOTER */}
+            <div
+              className="mt-4"
+              style={{
+                fontSize: 13,
+                color: "#9CA3AF",
+              }}
+            >
+              ขอบคุณที่ใช้บริการ SmartDorm
+            </div>
+
           </div>
-
-          {/* TITLE */}
-          <h2 className="fw-bold" style={{ color: "#1B9C85" }}>
-            การทำรายการสำเร็จ
-          </h2>
-
-          <p className="text-muted mt-2 mb-1">
-            ระบบได้รับข้อมูลของคุณเรียบร้อยแล้ว
-          </p>
-
-          {/* COUNTDOWN */}
-          <p className="text-secondary small">
-            หน้าต่างนี้จะปิดภายใน{" "}
-            <span className="fw-bold text-success">{countdown}</span> วินาที
-          </p>
-
-          {/* SEPARATOR */}
-          <div
-            className="mx-auto my-4"
-            style={{
-              width: "65%",
-              height: "3px",
-              background: "linear-gradient(90deg,#6FF5C2,#38A3FF)",
-              borderRadius: "6px",
-            }}
-          ></div>
-
-          {/* LOGOUT BUTTON */}
-          <button
-            className="btn fw-semibold w-100 text-white py-3 mb-2"
-            style={{
-              borderRadius: "14px",
-              letterSpacing: "0.3px",
-              background: "linear-gradient(135deg,#7B2CBF,#4B008A)",
-              boxShadow: "0 4px 12px rgba(123,44,191,.35)",
-            }}
-            onClick={async () => {
-              const ready = await ensureLiffReady();
-              if (ready) await logoutLiff();
-            }}
-          >
-            ออกจากระบบทันที
-          </button>
-
-          {/* FOOT NOTE */}
-          <p className="small text-muted mt-3">
-            ขอบคุณที่ไว้วางใจ SmartDorm 💙
-          </p>
         </div>
       </div>
-
-      {/* ===== ANIMATION ===== */}
-      <style>
-        {`
-        @keyframes fadeUp {
-          from {opacity: 0; transform: translateY(25px);}
-          to   {opacity: 1; transform: translateY(0);}
-        }
-        `}
-      </style>
     </>
   );
 }
