@@ -31,6 +31,13 @@ billNumber: string;
   booking: { fullName: string };
 }
 
+interface DormProfile {
+  dormName: string;
+  address: string;
+  phone: string;
+  email: string;
+}
+
 const money = (n: number) =>
   n.toLocaleString(undefined, {
     minimumFractionDigits: 2,
@@ -109,6 +116,7 @@ export default function BillDetail() {
   const { billId } = state || {};
 
   const [bill, setBill] = useState<BillDetailType | null>(null);
+const [dorm, setDorm] = useState<DormProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -127,9 +135,13 @@ export default function BillDetail() {
 
         await refreshLiffToken();
 
-        const res = await axios.get(`${API_BASE}/bill/${billId}`);
+const [billRes, dormRes] = await Promise.all([
+  axios.get(`${API_BASE}/bill/${billId}`),
+  axios.get("https://hub.smartdorm-biwboong.shop/dorm-profile/"),
+]);
 
-        setBill(res.data);
+setBill(billRes.data);
+setDorm(dormRes.data);
       } catch {
         Swal.fire(
           "❌ โหลดข้อมูลล้มเหลว",
@@ -266,20 +278,32 @@ export default function BillDetail() {
                   🧾 ใบแจ้งหนี้
                 </h1>
 
-                <p
-                  style={{
-                    marginTop: 10,
-                    marginBottom: 0,
-                    color: "#7B7490",
-                    fontSize: 14,
-                    lineHeight: 1.7,
-                  }}
-                >
-                  หอพัก 47/21 ม.1 ต.บ้านสวน
-                  <br />
-                  อ.เมืองชลบุรี จ.ชลบุรี
-                </p>
-              </div>
+   {/* ข้อมูลหอพัก */}
+<p
+  style={{
+    marginTop: 10,
+    marginBottom: 0,
+    color: "#7B7490",
+    fontSize: 14,
+    lineHeight: 1.8,
+  }}
+>
+  <strong style={{ color: "#4A0080" }}>
+    {dorm?.dormName}
+  </strong>
+
+  <br />
+
+  {dorm?.address}
+
+  <br />
+
+  โทร: {dorm?.phone}
+
+  <br />
+
+  Email: {dorm?.email}
+</p>        </div>
 
               <div
                 style={{
