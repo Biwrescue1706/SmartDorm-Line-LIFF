@@ -144,102 +144,303 @@ export default function MyBills() {
     );
 
   // MAIN UI ---------------------------------------------------
-  return (
-<>
-      <NavBar />
-    <div className="smartdorm-page pb-4">
+  // UI สวยขึ้น + ดู modern + mobile friendly
+// เปลี่ยนเฉพาะส่วน return ได้เลย
 
-      {/* HEADER */}
-      <div className="text-center mb-4 mt-4">
-        <h2 className="fw-bold text-dark">🧾 รายการบิลที่รอชำระ</h2>
-      </div>
+return (
+  <>
+    <NavBar />
 
-      {/* เลือกห้อง */}
-      <div className="container mb-4">
-        <select
-          className="form-select text-center fw-semibold border-0 shadow-sm py-2"
-          style={{
-            background: "white",
-            borderRadius: "14px",
-            color: "#4B008A",
-          }}
-          value={selectedRoom}
-          onChange={(e) => setSelectedRoom(e.target.value)}
-        >
-          {rooms.map((room) => (
-            <option key={room} value={room}>
-              ห้อง {room}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* รายการบิล */}
-      <div className="container">
-
-        {filteredBills.map((b, i) => (
-          <div
-            key={i}
-            className="card shadow-sm border-0 rounded-4 mb-4 text-center"
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#F6F4FA",
+        padding: "90px 16px 32px",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 430,
+          margin: "0 auto",
+        }}
+      >
+        {/* HEADER */}
+        <div style={{ marginBottom: 22 }}>
+          <h1
             style={{
-              background: "white",
-              padding: "24px",
-              borderRadius: "18px",
+              margin: 0,
+              fontSize: 28,
+              fontWeight: 800,
+              color: "#4A0080",
             }}
           >
-            <div className="card-body">
+            🧾 บิลค้างชำระ
+          </h1>
 
-              {/* ห้อง */}
-              <span
-                className="badge px-4 py-2 mb-3"
+          <p
+            style={{
+              marginTop: 8,
+              color: "#7B7490",
+              fontSize: 14,
+            }}
+          >
+            ตรวจสอบและชำระค่าห้องพักของคุณ
+          </p>
+        </div>
+
+        {/* ROOM SELECT */}
+        <div
+          style={{
+            background: "#fff",
+            borderRadius: 22,
+            padding: 18,
+            marginBottom: 20,
+            boxShadow: "0 10px 24px rgba(74,0,128,0.06)",
+          }}
+        >
+          <div
+            style={{
+              fontSize: 13,
+              fontWeight: 700,
+              color: "#7B7490",
+              marginBottom: 10,
+            }}
+          >
+            เลือกห้อง
+          </div>
+
+          <select
+            value={selectedRoom}
+            onChange={(e) => setSelectedRoom(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "14px 16px",
+              borderRadius: 16,
+              border: "1.5px solid rgba(74,0,128,0.12)",
+              outline: "none",
+              fontSize: 15,
+              fontWeight: 700,
+              color: "#2D1A47",
+              background: "#FAF9FC",
+            }}
+          >
+            {rooms.map((room) => (
+              <option key={room} value={room}>
+                ห้อง {room}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* BILL LIST */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 18,
+          }}
+        >
+          {filteredBills.map((b, i) => (
+            <div
+              key={i}
+              style={{
+                background: "#fff",
+                borderRadius: 28,
+                padding: 22,
+                boxShadow: "0 10px 28px rgba(74,0,128,0.08)",
+                border: "1px solid rgba(74,0,128,0.05)",
+                position: "relative",
+                overflow: "hidden",
+              }}
+            >
+              {/* TOP BAR */}
+              <div
                 style={{
-                  background: "rgba(123,44,191,0.12)",
-                  color: "#7B2CBF",
-                  borderRadius: "12px",
-                  fontSize: "1rem",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: 6,
+                  background:
+                    "linear-gradient(90deg,#4A0080 0%, #7B2BC7 100%)",
+                }}
+              />
+
+              {/* ROOM */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 18,
                 }}
               >
-                ห้อง {b.room?.number}
-              </span>
+                <div>
+                  <div
+                    style={{
+                      fontSize: 13,
+                      color: "#7B7490",
+                      marginBottom: 6,
+                      fontWeight: 600,
+                    }}
+                  >
+                    ห้องพัก
+                  </div>
 
-              {/* เดือน */}
-              <p className="text-muted mb-1" style={{ fontSize: "1.05rem" }}>
-                เดือน {formatThaiMonth(b.month)}
-              </p>
+                  <h2
+                    style={{
+                      margin: 0,
+                      color: "#4A0080",
+                      fontSize: 30,
+                      fontWeight: 800,
+                      lineHeight: 1,
+                    }}
+                  >
+                    {b.room?.number}
+                  </h2>
+                </div>
 
-              {/* ราคา */}
-              <h2 className="fw-bold my-3" style={{ color: "#371B58" }}>
-                ฿ {b.total.toLocaleString()}
-              </h2>
+                <div
+                  style={{
+                    background: "#F5EEFC",
+                    color: "#4A0080",
+                    padding: "10px 14px",
+                    borderRadius: 14,
+                    fontSize: 13,
+                    fontWeight: 700,
+                  }}
+                >
+                  ค้างชำระ
+                </div>
+              </div>
 
-              {/* กำหนดชำระ */}
+              {/* MONTH */}
+              <div
+                style={{
+                  background: "#FAF9FC",
+                  borderRadius: 18,
+                  padding: "14px 16px",
+                  border: "1px solid #EFE9F7",
+                  marginBottom: 14,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 12,
+                    color: "#7B7490",
+                    marginBottom: 5,
+                    fontWeight: 600,
+                  }}
+                >
+                  เดือน
+                </div>
+
+                <div
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 700,
+                    color: "#2D1A47",
+                  }}
+                >
+                  {formatThaiMonth(b.month)}
+                </div>
+              </div>
+
+              {/* PRICE */}
+              <div
+                style={{
+                  background: "#FAF9FC",
+                  borderRadius: 18,
+                  padding: "18px 16px",
+                  border: "1px solid #EFE9F7",
+                  marginBottom: 14,
+                  textAlign: "center",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 12,
+                    color: "#7B7490",
+                    marginBottom: 8,
+                    fontWeight: 600,
+                  }}
+                >
+                  ยอดที่ต้องชำระ
+                </div>
+
+                <div
+                  style={{
+                    fontSize: 34,
+                    fontWeight: 800,
+                    color: "#4A0080",
+                    lineHeight: 1,
+                  }}
+                >
+                  ฿ {b.total.toLocaleString()}
+                </div>
+              </div>
+
+              {/* DUE DATE */}
               {b.dueDate && (
-                <h5 className="fw-bold text-secondary mb-4">
-                  กำหนดชำระ : {formatThaiDate(b.dueDate)}
-                </h5>
+                <div
+                  style={{
+                    background: "#FFF8E8",
+                    borderRadius: 16,
+                    padding: "14px 16px",
+                    border: "1px solid #FFE2A8",
+                    marginBottom: 18,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: "#8C6A00",
+                      marginBottom: 5,
+                      fontWeight: 600,
+                    }}
+                  >
+                    กำหนดชำระ
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: 15,
+                      fontWeight: 700,
+                      color: "#5B4300",
+                    }}
+                  >
+                    {formatThaiDate(b.dueDate)}
+                  </div>
+                </div>
               )}
 
-              {/* ปุ่ม */}
+              {/* BUTTON */}
               <button
-                className="btn w-100 fw-semibold py-2"
-                style={{
-                  background: "linear-gradient(135deg, #7B2CBF, #4B008A)",
-                  color: "white",
-                  borderRadius: "14px",
-                }}
                 onClick={() =>
-                  nav("/bill-detail", { state: { billId: b.billId } })
+                  nav("/bill-detail", {
+                    state: { billId: b.billId },
+                  })
                 }
+                style={{
+                  width: "100%",
+                  padding: "15px",
+                  borderRadius: 18,
+                  border: "none",
+                  cursor: "pointer",
+                  fontWeight: 800,
+                  fontSize: 15,
+                  background:
+                    "linear-gradient(135deg,#4A0080 0%, #6E1AB5 100%)",
+                  color: "#fff",
+                  boxShadow: "0 8px 20px rgba(74,0,128,0.20)",
+                }}
               >
                 ชำระบิล
               </button>
-
             </div>
-          </div>
-        ))}
-
+          ))}
+        </div>
       </div>
     </div>
-</>
-  );
-}
+  </>
+);
