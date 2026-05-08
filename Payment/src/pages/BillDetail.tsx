@@ -10,6 +10,7 @@ import NavBar from "../components/NavBar";
 
 interface BillDetailType {
   billId: string;
+billNumber: string;
   month: string;
   total: number;
   rent: number;
@@ -307,7 +308,7 @@ export default function BillDetail() {
                     wordBreak: "break-all",
                   }}
                 >
-                  {bill.billId}
+                  {bill.billNumber}
                 </div>
               </div>
             </div>
