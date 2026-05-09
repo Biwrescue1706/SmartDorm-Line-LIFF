@@ -9,30 +9,20 @@ const CARD = "#FFFFFF";
 export default function Bookings() {
   const { rooms, loading } = useRooms();
 
-  const [selectedFloor, setSelectedFloor] =
-    useState("ทั้งหมด");
+  const [selectedFloor, setSelectedFloor] = useState("ทั้งหมด");
 
   /* ---------- FLOOR OPTIONS ---------- */
   const floorOptions = useMemo(() => {
-    const floors = rooms.map((r) =>
-      String(r.floor)
-    );
+    const floors = rooms.map((r) => String(r.floor));
 
-    return [
-      "ทั้งหมด",
-      ...Array.from(new Set(floors)),
-    ];
+    return ["ทั้งหมด", ...Array.from(new Set(floors))];
   }, [rooms]);
 
   /* ---------- FILTER ---------- */
   const filteredRooms = useMemo(() => {
-    if (selectedFloor === "ทั้งหมด")
-      return rooms;
+    if (selectedFloor === "ทั้งหมด") return rooms;
 
-    return rooms.filter(
-      (r) =>
-        String(r.floor) === selectedFloor
-    );
+    return rooms.filter((r) => String(r.floor) === selectedFloor);
   }, [rooms, selectedFloor]);
 
   return (
@@ -42,14 +32,12 @@ export default function Bookings() {
       <div
         className="min-vh-100"
         style={{
-          background:
-            "linear-gradient(180deg,#F7F4FB 0%, #F4F7FF 100%)",
+          background: "linear-gradient(180deg,#F7F4FB 0%, #F4F7FF 100%)",
           paddingTop: "72px",
           fontFamily: "Prompt, sans-serif",
         }}
       >
         <div className="container py-3">
-
           <div
             className="mx-auto"
             style={{
@@ -60,8 +48,7 @@ export default function Bookings() {
             <div
               className="bg-white rounded-5 shadow-sm p-4 mb-4"
               style={{
-                border:
-                  "1px solid rgba(123,44,191,0.08)",
+                border: "1px solid rgba(123,44,191,0.08)",
               }}
             >
               <h1
@@ -89,12 +76,10 @@ export default function Bookings() {
             <div
               className="bg-white rounded-5 shadow-sm p-4 mb-4"
               style={{
-                border:
-                  "1px solid rgba(123,44,191,0.08)",
+                border: "1px solid rgba(123,44,191,0.08)",
               }}
             >
               <div className="d-flex align-items-center gap-3 flex-wrap">
-
                 <div
                   className="fw-bold"
                   style={{
@@ -108,11 +93,7 @@ export default function Bookings() {
                 <select
                   className="form-select"
                   value={selectedFloor}
-                  onChange={(e) =>
-                    setSelectedFloor(
-                      e.target.value
-                    )
-                  }
+                  onChange={(e) => setSelectedFloor(e.target.value)}
                   style={{
                     maxWidth: "150px",
                     borderRadius: "14px",
@@ -121,17 +102,11 @@ export default function Bookings() {
                   }}
                 >
                   {floorOptions.map((floor) => (
-                    <option
-                      key={floor}
-                      value={floor}
-                    >
-                      {floor === "ทั้งหมด"
-                        ? "ทุกชั้น"
-                        : `ชั้น ${floor}`}
+                    <option key={floor} value={floor}>
+                      {floor === "ทั้งหมด" ? "ทุกชั้น" : `ชั้น ${floor}`}
                     </option>
                   ))}
                 </select>
-
               </div>
             </div>
 
@@ -146,18 +121,11 @@ export default function Bookings() {
               </div>
             ) : (
               <div className="row g-4">
-
                 {filteredRooms.map((room) => {
-                  const total =
-                    room.price +
-                    room.deposit +
-                    room.bookingFee;
+                  const total = room.rent + room.deposit + room.bookingFee;
 
                   return (
-                    <div
-                      key={room.roomId}
-                      className="col-12 col-md-6"
-                    >
+                    <div key={room.roomId} className="col-12 col-md-6">
                       <div
                         className="card border-0 shadow-sm rounded-5 h-100 overflow-hidden"
                         style={{
@@ -174,10 +142,8 @@ export default function Bookings() {
                         />
 
                         <div className="card-body p-4">
-
                           {/* TOP */}
                           <div className="d-flex justify-content-between align-items-start mb-4">
-
                             <div>
                               <div
                                 style={{
@@ -205,22 +171,17 @@ export default function Bookings() {
                             <div
                               className="px-3 py-2 rounded-pill fw-semibold"
                               style={{
-                                background:
-                                  "#DCFCE7",
-                                color:
-                                  "#166534",
-                                fontSize:
-                                  "13px",
+                                background: "#DCFCE7",
+                                color: "#166534",
+                                fontSize: "13px",
                               }}
                             >
                               ว่าง
                             </div>
-
                           </div>
 
                           {/* DETAIL */}
                           <div className="d-flex flex-column gap-2">
-
                             <InfoRow
                               label="ขนาดห้อง"
                               value={`${room.width * room.length} ตร.ม. (${room.width} × ${room.length} ม.)`}
@@ -228,7 +189,7 @@ export default function Bookings() {
 
                             <InfoRow
                               label="ค่าเช่า"
-                              value={`${room.price.toLocaleString()} บาท`}
+                              value={`${room.rent.toLocaleString()} บาท`}
                             />
 
                             <InfoRow
@@ -240,7 +201,6 @@ export default function Bookings() {
                               label="ค่าจอง"
                               value={`${room.bookingFee.toLocaleString()} บาท`}
                             />
-
                           </div>
 
                           {/* TOTAL */}
@@ -267,21 +227,17 @@ export default function Bookings() {
                                 lineHeight: 1.1,
                               }}
                             >
-                              ฿{" "}
-                              {total.toLocaleString()}
+                              ฿ {total.toLocaleString()}
                             </div>
                           </div>
-
                         </div>
                       </div>
                     </div>
                   );
                 })}
-
               </div>
             )}
           </div>
-
         </div>
       </div>
     </>
@@ -290,20 +246,13 @@ export default function Bookings() {
 
 /* ---------- INFO ROW ---------- */
 
-function InfoRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
+function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div
       className="d-flex justify-content-between align-items-center"
       style={{
         background: "#FAF9FC",
-        border:
-          "1px solid rgba(123,44,191,0.08)",
+        border: "1px solid rgba(123,44,191,0.08)",
         borderRadius: "16px",
         padding: "14px 16px",
         gap: "12px",
