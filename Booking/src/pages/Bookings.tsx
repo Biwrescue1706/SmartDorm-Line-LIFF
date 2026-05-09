@@ -1,267 +1,343 @@
-// src/pages/Bookings.tsx
+// src/pages/Booking.tsx
 
 import { useMemo, useState } from "react";
-import LiffNav from "../components/LiffNav";
-import { useRooms } from "../hooks/useRooms";
 
+const BG = "#F7F5FA";
 const CARD = "#FFFFFF";
 
-export default function Bookings() {
-  const { rooms, loading } = useRooms();
+interface Room {
+  roomId: string;
+  number: string;
+  width: number;
+  length: number;
+  rent: number;
+  deposit: number;
+  bookingFee: number;
+  floor: number;
+}
 
-  const [selectedFloor, setSelectedFloor] = useState("ทั้งหมด");
+export default function RoomList({
+  rooms,
+}: {
+  rooms: Room[];
+}) {
+  const [selectedFloor, setSelectedFloor] =
+    useState("ทั้งหมด");
 
-  /* ---------- FLOOR OPTIONS ---------- */
+  /* FLOOR OPTIONS */
   const floorOptions = useMemo(() => {
-    const floors = rooms.map((r) => String(r.floor));
+    const floors = rooms.map((r) =>
+      String(r.floor)
+    );
 
-    return ["ทั้งหมด", ...Array.from(new Set(floors))];
+    return [
+      "ทั้งหมด",
+      ...Array.from(new Set(floors)),
+    ];
   }, [rooms]);
 
-  /* ---------- FILTER ---------- */
+  /* FILTER */
   const filteredRooms = useMemo(() => {
-    if (selectedFloor === "ทั้งหมด") return rooms;
+    if (selectedFloor === "ทั้งหมด")
+      return rooms;
 
-    return rooms.filter((r) => String(r.floor) === selectedFloor);
+    return rooms.filter(
+      (r) =>
+        String(r.floor) ===
+        selectedFloor
+    );
   }, [rooms, selectedFloor]);
 
   return (
-    <>
-      <LiffNav />
-
+    <div
+      style={{
+        minHeight: "100vh",
+        background: BG,
+        padding: "78px 12px 30px",
+        fontFamily:
+          "Prompt, sans-serif",
+      }}
+    >
       <div
-        className="min-vh-100"
         style={{
-          background: "linear-gradient(180deg,#F7F4FB 0%, #F4F7FF 100%)",
-          paddingTop: "72px",
-          fontFamily: "Prompt, sans-serif",
+          maxWidth: 1100,
+          margin: "0 auto",
         }}
       >
-        <div className="container py-3">
+        {/* HEADER */}
+        <div
+          style={{
+            background: CARD,
+            borderRadius: 28,
+            overflow: "hidden",
+            marginBottom: 18,
+            boxShadow:
+              "0 8px 24px rgba(74,0,128,.08)",
+          }}
+        >
           <div
-            className="mx-auto"
             style={{
-              maxWidth: "1200px",
+              height: 6,
+              background:
+                "linear-gradient(90deg,#4A0080,#7B2BC7)",
+            }}
+          />
+
+          <div
+            style={{
+              padding: 24,
             }}
           >
-            {/* HEADER */}
-            <div
-              className="bg-white rounded-5 shadow-sm p-4 mb-4"
+            <h1
               style={{
-                border: "1px solid rgba(123,44,191,0.08)",
+                margin: 0,
+                fontSize: 38,
+                lineHeight: 1.1,
+                color: "#2563EB",
+                fontWeight: 800,
               }}
             >
-              <h1
-                className="fw-bold mb-2"
-                style={{
-                  color: "#2563EB",
-                  fontSize: "clamp(2rem,5vw,3.5rem)",
-                  lineHeight: 1,
-                }}
-              >
-                🏢 รายการห้องพัก
-              </h1>
+              🏢 รายการห้องพัก
+            </h1>
 
-              <p
-                className="mb-0"
-                style={{
-                  color: "#6B7280",
-                }}
-              >
-                เลือกชั้นเพื่อดูห้องว่าง
-              </p>
-            </div>
-
-            {/* FILTER */}
-            <div
-              className="bg-white rounded-5 shadow-sm p-4 mb-4"
+            <p
               style={{
-                border: "1px solid rgba(123,44,191,0.08)",
+                marginTop: 10,
+                marginBottom: 0,
+                color: "#6B6480",
+                fontSize: 15,
               }}
             >
-              <div className="d-flex align-items-center gap-3 flex-wrap">
-                <div
-                  className="fw-bold"
-                  style={{
-                    color: "#2563EB",
-                    fontSize: "1.1rem",
-                  }}
-                >
-                  เลือกชั้น :
-                </div>
-
-                <select
-                  className="form-select"
-                  value={selectedFloor}
-                  onChange={(e) => setSelectedFloor(e.target.value)}
-                  style={{
-                    maxWidth: "150px",
-                    borderRadius: "14px",
-                    padding: "10px 14px",
-                    fontWeight: 600,
-                  }}
-                >
-                  {floorOptions.map((floor) => (
-                    <option key={floor} value={floor}>
-                      {floor === "ทั้งหมด" ? "ทุกชั้น" : `ชั้น ${floor}`}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* LOADING */}
-            {loading ? (
-              <div className="text-center py-5">
-                <div className="spinner-border text-primary mb-3" />
-
-                <div className="fw-semibold text-primary">
-                  กำลังโหลดข้อมูลห้อง...
-                </div>
-              </div>
-            ) : (
-              <div className="row g-4">
-                {filteredRooms.map((room) => {
-                  const total = room.rent + room.deposit + room.bookingFee;
-
-                  return (
-                    <div key={room.roomId} className="col-12 col-md-6">
-                      <div
-                        className="card border-0 shadow-sm rounded-5 h-100 overflow-hidden"
-                        style={{
-                          background: CARD,
-                        }}
-                      >
-                        {/* TOP BAR */}
-                        <div
-                          style={{
-                            height: "6px",
-                            background:
-                              "linear-gradient(90deg,#4A0080,#7B2CBF)",
-                          }}
-                        />
-
-                        <div className="card-body p-4">
-                          {/* TOP */}
-                          <div className="d-flex justify-content-between align-items-start mb-4">
-                            <div>
-                              <div
-                                style={{
-                                  fontSize: "13px",
-                                  color: "#6B7280",
-                                  fontWeight: 600,
-                                  marginBottom: "6px",
-                                }}
-                              >
-                                หมายเลขห้อง
-                              </div>
-
-                              <h2
-                                className="fw-bold mb-0"
-                                style={{
-                                  color: "#2563EB",
-                                  fontSize: "3rem",
-                                  lineHeight: 1,
-                                }}
-                              >
-                                {room.number}
-                              </h2>
-                            </div>
-
-                            <div
-                              className="px-3 py-2 rounded-pill fw-semibold"
-                              style={{
-                                background: "#DCFCE7",
-                                color: "#166534",
-                                fontSize: "13px",
-                              }}
-                            >
-                              ว่าง
-                            </div>
-                          </div>
-
-                          {/* DETAIL */}
-                          <div className="d-flex flex-column gap-2">
-                            <InfoRow
-                              label="ขนาดห้อง"
-                              value={`${room.width * room.length} ตร.ม. (${room.width} × ${room.length} ม.)`}
-                            />
-
-                            <InfoRow
-                              label="ค่าเช่า"
-                              value={`${room.rent.toLocaleString()} บาท`}
-                            />
-
-                            <InfoRow
-                              label="ค่าประกัน"
-                              value={`${room.deposit.toLocaleString()} บาท`}
-                            />
-
-                            <InfoRow
-                              label="ค่าจอง"
-                              value={`${room.bookingFee.toLocaleString()} บาท`}
-                            />
-                          </div>
-
-                          {/* TOTAL */}
-                          <div
-                            className="mt-4 rounded-5 p-4 text-white"
-                            style={{
-                              background:
-                                "linear-gradient(135deg,#5B0DB5,#7E22CE)",
-                            }}
-                          >
-                            <div
-                              style={{
-                                opacity: 0.9,
-                                fontSize: "14px",
-                              }}
-                            >
-                              รวมทั้งหมด
-                            </div>
-
-                            <div
-                              className="fw-bold"
-                              style={{
-                                fontSize: "2rem",
-                                lineHeight: 1.1,
-                              }}
-                            >
-                              ฿ {total.toLocaleString()}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+              เลือกชั้นเพื่อดูห้องว่าง
+            </p>
           </div>
         </div>
+
+        {/* FILTER */}
+        <div
+          style={{
+            background: CARD,
+            borderRadius: 24,
+            padding: 18,
+            marginBottom: 20,
+            boxShadow:
+              "0 8px 24px rgba(74,0,128,.08)",
+          }}
+        >
+          <div
+            style={{
+              fontSize: 15,
+              fontWeight: 700,
+              color: "#2563EB",
+              marginBottom: 10,
+            }}
+          >
+            เลือกชั้น :
+          </div>
+
+          <select
+            value={selectedFloor}
+            onChange={(e) =>
+              setSelectedFloor(
+                e.target.value
+              )
+            }
+            style={{
+              width: 180,
+              border:
+                "1px solid #E6DDF5",
+              borderRadius: 14,
+              padding:
+                "12px 14px",
+              background: "#FAF9FC",
+              fontWeight: 700,
+              fontSize: 15,
+              outline: "none",
+            }}
+          >
+            {floorOptions.map((f) => (
+              <option
+                key={f}
+                value={f}
+              >
+                {f === "ทั้งหมด"
+                  ? "ทุกชั้น"
+                  : `ชั้น ${f}`}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* ROOM LIST */}
+        <div className="row g-3">
+          {filteredRooms.map((room) => (
+            <div
+              key={room.roomId}
+              className="
+                col-6
+                col-md-4
+                col-xl-3
+              "
+            >
+              {/* CARD */}
+              <div
+                style={{
+                  background: "#fff",
+                  borderRadius: 24,
+                  padding: 16,
+                  boxShadow:
+                    "0 8px 24px rgba(74,0,128,0.08)",
+                  border:
+                    "1px solid rgba(74,0,128,0.06)",
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {/* TOP */}
+                <div
+                  className="d-flex justify-content-between align-items-start mb-3"
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: 11,
+                        color:
+                          "#7E7695",
+                        fontWeight: 600,
+                        marginBottom: 4,
+                      }}
+                    >
+                      หมายเลขห้อง
+                    </div>
+
+                    <div
+                      style={{
+                        fontSize:
+                          "2rem",
+                        fontWeight: 800,
+                        color:
+                          "#2563EB",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {room.number}
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background:
+                        "#DDF5E8",
+                      color:
+                        "#1D7A46",
+                      padding:
+                        "6px 12px",
+                      borderRadius: 999,
+                      fontSize: 11,
+                      fontWeight: 700,
+                    }}
+                  >
+                    ว่าง
+                  </div>
+                </div>
+
+                {/* INFO */}
+                <div
+                  className="d-flex flex-column gap-2"
+                >
+                  <InfoBox
+                    label="ขนาดห้อง"
+                    value={`${room.width} × ${room.length} ม.`}
+                  />
+
+                  <InfoBox
+                    label="ค่าเช่า"
+                    value={`${room.rent.toLocaleString()} บาท`}
+                  />
+
+                  <InfoBox
+                    label="ค่าประกัน"
+                    value={`${room.deposit.toLocaleString()} บาท`}
+                  />
+
+                  <InfoBox
+                    label="ค่าจอง"
+                    value={`${room.bookingFee.toLocaleString()} บาท`}
+                  />
+                </div>
+
+                {/* TOTAL */}
+                <div
+                  style={{
+                    marginTop: "auto",
+                    background:
+                      "linear-gradient(135deg,#4A0080,#6F1AB6)",
+                    borderRadius: 18,
+                    padding:
+                      "14px 16px",
+                    color: "#fff",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 11,
+                      opacity: 0.9,
+                      marginBottom: 4,
+                    }}
+                  >
+                    รวมทั้งหมด
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 800,
+                    }}
+                  >
+                    ฿{" "}
+                    {(
+                      room.rent +
+                      room.deposit +
+                      room.bookingFee
+                    ).toLocaleString()}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 
-/* ---------- INFO ROW ---------- */
+/* ================= INFO BOX ================= */
 
-function InfoRow({ label, value }: { label: string; value: string }) {
+function InfoBox({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
   return (
     <div
       className="d-flex justify-content-between align-items-center"
       style={{
         background: "#FAF9FC",
-        border: "1px solid rgba(123,44,191,0.08)",
-        borderRadius: "16px",
-        padding: "14px 16px",
-        gap: "12px",
+        border:
+          "1px solid rgba(123,44,191,0.08)",
+        borderRadius: "14px",
+        padding: "12px 12px",
+        gap: "10px",
       }}
     >
       <div
         style={{
-          color: "#4B5563",
-          fontSize: "14px",
+          color: "#7A7391",
+          fontSize: "11px",
+          fontWeight: 600,
         }}
       >
         {label}
@@ -270,8 +346,8 @@ function InfoRow({ label, value }: { label: string; value: string }) {
       <div
         className="fw-bold text-end"
         style={{
-          color: "#111827",
-          fontSize: "15px",
+          color: "#2D1A47",
+          fontSize: "13px",
         }}
       >
         {value}
