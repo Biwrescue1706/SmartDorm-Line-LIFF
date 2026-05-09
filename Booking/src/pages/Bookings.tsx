@@ -1,319 +1,357 @@
-import { useNavigate } from "react-router-dom";
-import { useState, useMemo } from "react";
-import { useRooms } from "../hooks/useRooms";
-import type { Room } from "../types/Room";
-import LiffNav from "../components/LiffNav";
+// src/pages/Booking.tsx
 
-/* ------------------ HELPERS ------------------ */
-const getFloor = (
-  roomNumber: string | number
-): number | null => {
-  const num = Number(roomNumber);
+import { useMemo, useState } from "react";
 
-  if (isNaN(num)) return null;
+const BG = "#F7F5FA";
+const CARD = "#FFFFFF";
 
-  return Math.floor(num / 100);
-};
+interface Room {
+  roomId: string;
+  number: string;
+  width: number;
+  length: number;
+  price: number;
+  deposit: number;
+  bookingFee: number;
+  floor: number;
+}
 
-export default function Bookings() {
-  const { rooms, loading } = useRooms(true);
-
-  const nav = useNavigate();
-
+export default function RoomList({
+  rooms,
+}: {
+  rooms: Room[];
+}) {
   const [selectedFloor, setSelectedFloor] =
-    useState<string>("1");
+    useState("ทั้งหมด");
 
-  const allFloors = useMemo(() => {
-    const floors = rooms
-      .map((r) => getFloor(r.number))
-      .filter(
-        (f): f is number => f !== null
-      );
-
-    return Array.from(new Set(floors)).sort(
-      (a, b) => a - b
+  /* FLOOR OPTIONS */
+  const floorOptions = useMemo(() => {
+    const floors = rooms.map((r) =>
+      String(r.floor)
     );
+
+    return [
+      "ทั้งหมด",
+      ...Array.from(new Set(floors)),
+    ];
   }, [rooms]);
 
+  /* FILTER */
   const filteredRooms = useMemo(() => {
     if (selectedFloor === "ทั้งหมด")
       return rooms;
 
-    const floorNum = Number(selectedFloor);
-
     return rooms.filter(
       (r) =>
-        getFloor(r.number) === floorNum
+        String(r.floor) ===
+        selectedFloor
     );
   }, [rooms, selectedFloor]);
 
-  const sortedRooms = useMemo(() => {
-    return [...filteredRooms].sort(
-      (a, b) => {
-        if (
-          a.status === 0 &&
-          b.status !== 0
-        )
-          return -1;
-
-        if (
-          a.status !== 0 &&
-          b.status === 0
-        )
-          return 1;
-
-        return (
-          parseInt(a.number) -
-          parseInt(b.number)
-        );
-      }
-    );
-  }, [filteredRooms]);
-
-  const handleSelect = (room: Room) => {
-    if (room.status !== 0) return;
-
-    nav(`/bookings/${room.roomId}`, {
-      state: room,
-    });
-  };
-
   return (
-    <>
-      <LiffNav />
-
+    <div
+      style={{
+        minHeight: "100vh",
+        background: BG,
+        padding: "78px 12px 30px",
+        fontFamily:
+          "Prompt, sans-serif",
+      }}
+    >
       <div
-        className="min-vh-100 py-4"
         style={{
-          background: "#F6F4FA",
+          maxWidth: 1100,
+          margin: "0 auto",
         }}
       >
-        <div className="container">
+        {/* HEADER */}
+        <div
+          style={{
+            background: CARD,
+            borderRadius: 28,
+            overflow: "hidden",
+            marginBottom: 18,
+            boxShadow:
+              "0 8px 24px rgba(74,0,128,.08)",
+          }}
+        >
+          <div
+            style={{
+              height: 6,
+              background:
+                "linear-gradient(90deg,#4A0080,#7B2BC7)",
+            }}
+          />
 
-          {/* HEADER */}
-          <div className="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 mt-5">
-
-            <div
+          <div
+            style={{
+              padding: 24,
+            }}
+          >
+            <h1
               style={{
-                height: 6,
-                background:
-                  "linear-gradient(90deg,#4A0080 0%, #7B2BC7 100%)",
+                margin: 0,
+                fontSize: 38,
+                lineHeight: 1.1,
+                color: "#2563EB",
+                fontWeight: 800,
               }}
-            />
+            >
+              🏢 รายการห้องพัก
+            </h1>
 
-            <div className="card-body p-4">
-              <h1 className="fw-bold text-primary mb-2">
-                🏢 รายการห้องพัก
-              </h1>
+            <p
+              style={{
+                marginTop: 10,
+                marginBottom: 0,
+                color: "#6B6480",
+                fontSize: 15,
+              }}
+            >
+              เลือกชั้นเพื่อดูห้องว่าง
+            </p>
+          </div>
+        </div>
 
-              <p className="text-muted mb-0">
-                เลือกชั้นเพื่อดูห้องว่าง
-              </p>
-            </div>
+        {/* FILTER */}
+        <div
+          style={{
+            background: CARD,
+            borderRadius: 24,
+            padding: 18,
+            marginBottom: 20,
+            boxShadow:
+              "0 8px 24px rgba(74,0,128,.08)",
+          }}
+        >
+          <div
+            style={{
+              fontSize: 15,
+              fontWeight: 700,
+              color: "#2563EB",
+              marginBottom: 10,
+            }}
+          >
+            เลือกชั้น :
           </div>
 
-          {/* FILTER */}
-          <div className="card border-0 shadow-sm rounded-4 mb-4">
-            <div className="card-body d-flex flex-wrap align-items-center gap-3">
-
-              <div className="fw-bold text-primary">
-                เลือกชั้น :
-              </div>
-
-              <select
-                className="form-select w-auto rounded-3 fw-semibold"
-                value={selectedFloor}
-                onChange={(e) =>
-                  setSelectedFloor(
-                    e.target.value
-                  )
-                }
+          <select
+            value={selectedFloor}
+            onChange={(e) =>
+              setSelectedFloor(
+                e.target.value
+              )
+            }
+            style={{
+              width: 180,
+              border:
+                "1px solid #E6DDF5",
+              borderRadius: 14,
+              padding:
+                "12px 14px",
+              background: "#FAF9FC",
+              fontWeight: 700,
+              fontSize: 15,
+              outline: "none",
+            }}
+          >
+            {floorOptions.map((f) => (
+              <option
+                key={f}
+                value={f}
               >
-                <option value="ทั้งหมด">
-                  ทุกชั้น
-                </option>
+                {f === "ทั้งหมด"
+                  ? "ทุกชั้น"
+                  : `ชั้น ${f}`}
+              </option>
+            ))}
+          </select>
+        </div>
 
-                {allFloors.map((f) => (
-                  <option
-                    key={f}
-                    value={f.toString()}
-                  >
-                    ชั้น {f}
-                  </option>
-                ))}
-              </select>
-
-            </div>
-          </div>
-
-          {/* LOADING */}
-          {loading ? (
-            <div className="card border-0 shadow-sm rounded-4">
-              <div className="card-body text-center py-5">
-
-                <div className="spinner-border text-primary"></div>
-
-                <p className="text-muted mt-3 mb-0">
-                  กำลังโหลดข้อมูลห้อง...
-                </p>
-
-              </div>
-            </div>
-          ) : sortedRooms.length === 0 ? (
-            <div className="card border-0 shadow-sm rounded-4">
-              <div className="card-body text-center py-5 text-muted">
-                ❌ ไม่มีห้องในชั้นที่เลือก
-              </div>
-            </div>
-          ) : (
-            <div className="row g-4">
-
-              {sortedRooms.map((room) => {
-                const isAvailable =
-                  room.status === 0;
-
-                const total =
-                  room.rent +
-                  room.deposit +
-                  room.bookingFee;
-
-                return (
-                  <div
-                    key={room.roomId}
-                    className="col-12 col-sm-6 col-lg-4 col-xl-3"
-                  >
+        {/* ROOM LIST */}
+        <div className="row g-3">
+          {filteredRooms.map((room) => (
+            <div
+              key={room.roomId}
+              className="
+                col-6
+                col-md-4
+                col-xl-3
+              "
+            >
+              {/* CARD */}
+              <div
+                style={{
+                  background: "#fff",
+                  borderRadius: 24,
+                  padding: 16,
+                  boxShadow:
+                    "0 8px 24px rgba(74,0,128,0.08)",
+                  border:
+                    "1px solid rgba(74,0,128,0.06)",
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {/* TOP */}
+                <div
+                  className="d-flex justify-content-between align-items-start mb-3"
+                >
+                  <div>
                     <div
-                      className={`card h-100 border-0 shadow-sm rounded-4 ${
-                        !isAvailable
-                          ? "opacity-75"
-                          : ""
-                      }`}
                       style={{
-                        cursor:
-                          isAvailable
-                            ? "pointer"
-                            : "default",
-                        transition:
-                          "0.2s",
+                        fontSize: 11,
+                        color:
+                          "#7E7695",
+                        fontWeight: 600,
+                        marginBottom: 4,
                       }}
-                      onClick={
-                        isAvailable
-                          ? () =>
-                              handleSelect(
-                                room
-                              )
-                          : undefined
-                      }
                     >
-                      <div className="card-body p-4 d-flex flex-column">
+                      หมายเลขห้อง
+                    </div>
 
-                        {/* TOP */}
-                        <div className="d-flex justify-content-between align-items-start mb-4">
-
-                          <div>
-                            <small className="text-muted fw-semibold d-block mb-1">
-                              หมายเลขห้อง
-                            </small>
-
-                            <h2 className="fw-bold text-primary mb-0">
-                              {room.number}
-                            </h2>
-                          </div>
-
-                          <span
-                            className={`badge rounded-pill px-3 py-2 ${
-                              isAvailable
-                                ? "bg-success-subtle text-success"
-                                : "bg-danger-subtle text-danger"
-                            }`}
-                          >
-                            {isAvailable
-                              ? "ว่าง"
-                              : "ไม่ว่าง"}
-                          </span>
-
-                        </div>
-
-                        {/* INFO */}
-                        <div className="d-flex flex-column gap-2">
-
-                          {[
-                            [
-                              "ขนาดห้อง",
-                              room.size,
-                            ],
-                            [
-                              "ค่าเช่า",
-                              `${room.rent.toLocaleString()} บาท`,
-                            ],
-                            [
-                              "ค่าประกัน",
-                              `${room.deposit.toLocaleString()} บาท`,
-                            ],
-                            [
-                              "ค่าจอง",
-                              `${room.bookingFee.toLocaleString()} บาท`,
-                            ],
-                          ].map(
-                            (
-                              [label, value],
-                              i
-                            ) => (
-                              <div
-                                key={i}
-                                className="d-flex justify-content-between align-items-center rounded-3 p-3"
-                                style={{
-                                  background:
-                                    "#FAF9FC",
-                                  border:
-                                    "1px solid #EFE9F7",
-                                }}
-                              >
-                                <small className="text-muted fw-semibold">
-                                  {label}
-                                </small>
-
-                                <span className="fw-bold text-dark">
-                                  {value}
-                                </span>
-                              </div>
-                            )
-                          )}
-
-                        </div>
-
-                        {/* TOTAL */}
-                        <div
-                          className="rounded-4 text-white p-3 mt-4"
-                          style={{
-                            background:
-                              "linear-gradient(135deg,#4A0080 0%, #6E1AB5 100%)",
-                          }}
-                        >
-                          <small
-                            style={{
-                              opacity: 0.85,
-                            }}
-                          >
-                            รวมทั้งหมด
-                          </small>
-
-                          <h4 className="fw-bold mb-0 mt-1">
-                            ฿{" "}
-                            {total.toLocaleString()}
-                          </h4>
-                        </div>
-
-                      </div>
+                    <div
+                      style={{
+                        fontSize:
+                          "2rem",
+                        fontWeight: 800,
+                        color:
+                          "#2563EB",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {room.number}
                     </div>
                   </div>
-                );
-              })}
 
+                  <div
+                    style={{
+                      background:
+                        "#DDF5E8",
+                      color:
+                        "#1D7A46",
+                      padding:
+                        "6px 12px",
+                      borderRadius: 999,
+                      fontSize: 11,
+                      fontWeight: 700,
+                    }}
+                  >
+                    ว่าง
+                  </div>
+                </div>
+
+                {/* INFO */}
+                <div
+                  className="d-flex flex-column gap-2"
+                >
+                  <InfoBox
+                    label="ขนาดห้อง"
+                    value={`${room.width} × ${room.length} ม.`}
+                  />
+
+                  <InfoBox
+                    label="ค่าเช่า"
+                    value={`${room.price.toLocaleString()} บาท`}
+                  />
+
+                  <InfoBox
+                    label="ค่าประกัน"
+                    value={`${room.deposit.toLocaleString()} บาท`}
+                  />
+
+                  <InfoBox
+                    label="ค่าจอง"
+                    value={`${room.bookingFee.toLocaleString()} บาท`}
+                  />
+                </div>
+
+                {/* TOTAL */}
+                <div
+                  style={{
+                    marginTop: "auto",
+                    background:
+                      "linear-gradient(135deg,#4A0080,#6F1AB6)",
+                    borderRadius: 18,
+                    padding:
+                      "14px 16px",
+                    color: "#fff",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 11,
+                      opacity: 0.9,
+                      marginBottom: 4,
+                    }}
+                  >
+                    รวมทั้งหมด
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 800,
+                    }}
+                  >
+                    ฿{" "}
+                    {(
+                      room.price +
+                      room.deposit +
+                      room.bookingFee
+                    ).toLocaleString()}
+                  </div>
+                </div>
+              </div>
             </div>
-          )}
+          ))}
         </div>
       </div>
-    </>
+    </div>
+  );
+}
+
+/* ================= INFO BOX ================= */
+
+function InfoBox({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div
+      className="d-flex justify-content-between align-items-center"
+      style={{
+        background: "#FAF9FC",
+        border:
+          "1px solid rgba(123,44,191,0.08)",
+        borderRadius: "14px",
+        padding: "12px 12px",
+        gap: "10px",
+      }}
+    >
+      <div
+        style={{
+          color: "#7A7391",
+          fontSize: "11px",
+          fontWeight: 600,
+        }}
+      >
+        {label}
+      </div>
+
+      <div
+        className="fw-bold text-end"
+        style={{
+          color: "#2D1A47",
+          fontSize: "13px",
+        }}
+      >
+        {value}
+      </div>
+    </div>
   );
 }
