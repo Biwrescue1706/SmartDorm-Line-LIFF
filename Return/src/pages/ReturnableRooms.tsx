@@ -91,8 +91,6 @@ export default function ReturnableRooms() {
         style={{
           minHeight: "100vh",
           background: BG_SOFT,
-
-          // ✅ ลดช่องว่างด้านบน
           padding: "8px 10px 16px",
         }}
       >

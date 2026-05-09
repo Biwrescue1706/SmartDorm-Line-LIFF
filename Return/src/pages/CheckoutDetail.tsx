@@ -50,7 +50,7 @@ export default function CheckoutDetail() {
         style={{
           minHeight: "100vh",
           background: BG_SOFT,
-          padding: "88px 16px 32px",
+          padding: "8px 10px 16px",
         }}
       >
         <div

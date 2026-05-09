@@ -35,7 +35,7 @@ export default function ThankYou() {
         style={{
           minHeight: "100vh",
           background: BG_SOFT,
-          padding: "88px 16px 32px",
+          padding: "8px 10px 16px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -48,7 +48,7 @@ export default function ThankYou() {
             maxWidth: 430,
             background: "#fff",
             borderRadius: 30,
-            padding: "34px 24px",
+            padding: "24px 12px",
             boxShadow: "0 14px 34px rgba(74,0,128,0.10)",
             border: "1px solid rgba(74,0,128,0.06)",
             position: "relative",
